@@ -3,7 +3,7 @@
 // Migration runner script
 const fs = require('fs');
 const path = require('path');
-const { client, connect, disconnect } = require('../db');
+const { client, connect, disconnect } = require('./db');
 
 async function runMigrations() {
   try {

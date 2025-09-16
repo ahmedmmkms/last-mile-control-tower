@@ -1,14 +1,17 @@
 // Database connection module
+require('dotenv').config();
 const { Client } = require('pg');
-const config = require('../config/config');
 
 // Create a new PostgreSQL client
 const client = new Client({
-  host: config.database.host,
-  port: config.database.port,
-  user: config.database.user,
-  password: config.database.password,
-  database: config.database.name,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Function to connect to the database

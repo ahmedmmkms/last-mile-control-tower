@@ -1,4 +1,6 @@
 // Configuration file for the application
+require('dotenv').config();
+
 module.exports = {
   // Server configuration
   server: {

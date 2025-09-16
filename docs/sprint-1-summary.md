@@ -7,7 +7,7 @@ This document tracks the progress of Sprint 1, which focuses on implementing the
 1. ✅ Implement backend APIs for core entities (Shipments, Routes, Drivers)
 2. ✅ Create dispatcher dashboard with route visualization
 3. ✅ Develop basic admin interface for managing core entities
-4. ✅ Implement database schema and seed data
+4. ⏳ Implement database schema and seed data (Infrastructure complete, connection issues)
 5. ✅ Enhance CI/CD pipeline with backend testing
 
 ## Progress Tracking
@@ -20,8 +20,9 @@ This document tracks the progress of Sprint 1, which focuses on implementing the
   - [x] Routes table (id, shipment_id, waypoints, status, estimated_time, actual_time, created_at, updated_at)
   - [x] Drivers table (id, name, phone, vehicle_type, status, current_location, created_at, updated_at)
 - [x] Create database migration files
-- [ ] Implement seed data for demo purposes
+- [x] Implement seed data for demo purposes
 - [x] Set up database connection and configuration
+- [!] Database connection timing out - needs network configuration
 
 #### Backend API Development
 - [ ] Implement Shipment controller with CRUD operations:
@@ -99,10 +100,10 @@ This document tracks the progress of Sprint 1, which focuses on implementing the
 - [ ] Implement automated API testing in CI pipeline
 
 ## Current Status
-Sprint 1 has begun. Database implementation is complete. Now working on API development.
+Sprint 1 in progress. Database infrastructure is complete but experiencing connection timeout issues. Need to resolve network configuration for Supabase connection. Moving forward with API development using mock data.
 
 ## Next Steps
-1. Implement core entity models
+1. Implement core entity models with mock data
 2. Develop API controllers for CRUD operations
-3. Create seed data for testing
-4. Begin implementing the dispatcher dashboard UI
+3. Begin implementing the dispatcher dashboard UI
+4. Resolve Supabase connection issues
