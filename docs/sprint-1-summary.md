@@ -15,13 +15,13 @@ This document tracks the progress of Sprint 1, which focuses on implementing the
 ### Backend Development (Core Entities & APIs)
 
 #### Database Implementation
-- [ ] Design and implement database schema for:
-  - [ ] Shipments table (id, tracking_number, status, origin, destination, assigned_driver_id, created_at, updated_at)
-  - [ ] Routes table (id, shipment_id, waypoints, status, estimated_time, actual_time, created_at, updated_at)
-  - [ ] Drivers table (id, name, phone, vehicle_type, status, current_location, created_at, updated_at)
-- [ ] Create database migration files
+- [x] Design and implement database schema for:
+  - [x] Shipments table (id, tracking_number, status, origin, destination, assigned_driver_id, created_at, updated_at)
+  - [x] Routes table (id, shipment_id, waypoints, status, estimated_time, actual_time, created_at, updated_at)
+  - [x] Drivers table (id, name, phone, vehicle_type, status, current_location, created_at, updated_at)
+- [x] Create database migration files
 - [ ] Implement seed data for demo purposes
-- [ ] Set up database connection and configuration
+- [x] Set up database connection and configuration
 
 #### Backend API Development
 - [ ] Implement Shipment controller with CRUD operations:
@@ -99,11 +99,10 @@ This document tracks the progress of Sprint 1, which focuses on implementing the
 - [ ] Implement automated API testing in CI pipeline
 
 ## Current Status
-Sprint 1 has not yet begun. This document will be updated as work progresses.
+Sprint 1 has begun. Database implementation is complete. Now working on API development.
 
 ## Next Steps
-1. Begin database schema implementation
-2. Set up database connection
-3. Create migration files
-4. Implement core entity models
-5. Develop API controllers
+1. Implement core entity models
+2. Develop API controllers for CRUD operations
+3. Create seed data for testing
+4. Begin implementing the dispatcher dashboard UI

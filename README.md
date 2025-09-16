@@ -31,6 +31,10 @@ This project follows a 3-sprint development approach with CI/CD pipeline for Ver
 - [Sprint 1 Plan](docs/sprint-1-plan.md) - 🚧 Planned
 - [Sprint 1 Progress](docs/sprint-1-summary.md) - ⏳ Not Started
 
+## Database Setup
+
+For detailed instructions on setting up a free PostgreSQL database, see our [Database Setup Guide](docs/database-setup-guide.md).
+
 ## Deployment
 
 For detailed instructions on deploying to Vercel, see our [Vercel Deployment Guide](docs/vercel-deployment-guide.md) or the [Step-by-Step Vercel Guide](docs/vercel-step-by-step-guide.md).
@@ -41,5 +45,8 @@ For information about setting up GitHub Actions for CI/CD, see our [GitHub Actio
 
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Start the development server: `npm run dev`
-4. Visit `http://localhost:3000` to view the API response
+3. Set up database (see [Database Setup Guide](docs/database-setup-guide.md))
+4. Copy `.env.example` to `.env` and update with your database credentials
+5. Run database migrations: `node src/database/migrate.js`
+6. Start the development server: `npm run dev`
+7. Visit `http://localhost:3000` to view the API response

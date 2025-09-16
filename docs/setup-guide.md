@@ -6,7 +6,7 @@ This document provides instructions for setting up the Last-Mile Delivery Contro
 
 - Node.js (version 14 or higher)
 - npm or yarn
-- PostgreSQL database
+- PostgreSQL database (see [Database Setup Guide](database-setup-guide.md) for free options)
 - Expo CLI for mobile development
 
 ## Installation
@@ -16,8 +16,13 @@ This document provides instructions for setting up the Last-Mile Delivery Contro
    ```bash
    npm install
    ```
-3. Set up environment variables (see .env.example)
-4. Run database migrations
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Update values according to your database setup (see [Database Setup Guide](database-setup-guide.md))
+4. Run database migrations:
+   ```bash
+   node src/database/migrate.js
+   ```
 5. Start the development server:
    ```bash
    npm start

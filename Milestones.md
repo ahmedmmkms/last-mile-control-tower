@@ -189,4 +189,14 @@ Based on the P2 milestones and allowing for CI/CD, we'll structure development i
 - Production deployment ready  
 - User documentation and guides 
   
-This plan allows for a systematic development approach with continuous integration and deployment, ensuring that stakeholders can review progress at regular intervals while working toward the complete showcase MVP. 
+This plan allows for a systematic development approach with continuous integration and deployment, ensuring that stakeholders can review progress at regular intervals while working toward the complete showcase MVP.
+
+## Database Setup Requirements
+
+For all sprints, a PostgreSQL database is required. A free database can be set up using:
+
+1. **Supabase** (Recommended) - Offers a generous free tier
+2. **Local PostgreSQL with Docker** - For development environments
+3. **Local PostgreSQL Installation** - Traditional installation
+
+See the detailed [Database Setup Guide](docs/database-setup-guide.md) for step-by-step instructions on setting up any of these options. 
