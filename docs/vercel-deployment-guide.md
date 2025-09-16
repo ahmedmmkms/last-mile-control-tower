@@ -51,6 +51,14 @@ In the Vercel dashboard:
 
 Vercel automatically deploys your application whenever you push changes to your main branch. For pull requests, Vercel creates preview deployments that can be accessed via unique URLs.
 
+This project also includes GitHub Actions workflows for CI/CD:
+- Automated testing on multiple Node.js versions
+- Deployment to Vercel using GitHub Actions
+
+For detailed instructions on setting up GitHub Actions, see our [GitHub Actions Setup Guide](github-actions-setup.md).
+
+**Note for Hobby Accounts:** The GitHub Actions workflows work perfectly with Vercel hobby accounts. You'll just need to find your Organization ID (usually your username) and Project ID (your project name) from the Vercel dashboard.
+
 ## Troubleshooting
 
 - If deployment fails, check the build logs in the Vercel dashboard

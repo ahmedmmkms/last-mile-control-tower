@@ -29,6 +29,8 @@ This project follows a 3-sprint development approach with CI/CD pipeline for Ver
 
 For detailed instructions on deploying to Vercel, see our [Vercel Deployment Guide](docs/vercel-deployment-guide.md) or the [Step-by-Step Vercel Guide](docs/vercel-step-by-step-guide.md).
 
+For information about setting up GitHub Actions for CI/CD, see our [GitHub Actions Setup Guide](docs/github-actions-setup.md).
+
 ## Getting Started
 
 1. Clone the repository
