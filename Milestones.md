@@ -21,7 +21,15 @@ For the showcase MVP, we'll focus on demonstrating the core functionality with a
   
 ## 2. Sprint Structure  
   
-Based on the P2 milestones and allowing for CI/CD, we'll structure development in 3 sprints of 2-3 weeks each: 
+Based on the P2 milestones and allowing for CI/CD, we'll structure development in 4 sprints of 2-3 weeks each:
+  
+### Sprint 0 (Week 0): Project Scaffolding & Vercel Setup
+- Create project folder structure based on MVP requirements
+- Set up package.json with project metadata
+- Initialize Git repository
+- Create basic README.md with project description
+- Set up Vercel deployment configuration
+- Create step-by-step deployment guide for Vercel 
   
 ### Sprint 1 (Weeks 1-3): Core Entities & Admin Dashboard 
 - Backend API development for core entities  

@@ -1,5 +1,24 @@
-node_modules  
-*.log  
-.env  
-dist  
-build 
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Expo files
+.expo/
+.web-assets.json
