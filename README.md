@@ -25,6 +25,12 @@ This project is an MVP for a Last-Mile Delivery Control Tower system that provid
 
 This project follows a 3-sprint development approach with CI/CD pipeline for Vercel deployment.
 
+### Sprint Progress
+
+- [Sprint 0 Summary](docs/sprint-0-summary.md) - ✅ Completed
+- [Sprint 1 Plan](docs/sprint-1-plan.md) - 🚧 Planned
+- [Sprint 1 Progress](docs/sprint-1-summary.md) - ⏳ Not Started
+
 ## Deployment
 
 For detailed instructions on deploying to Vercel, see our [Vercel Deployment Guide](docs/vercel-deployment-guide.md) or the [Step-by-Step Vercel Guide](docs/vercel-step-by-step-guide.md).
