@@ -121,7 +121,7 @@ Run-Test "Get Specific Route" {
 # Test 8: POST New Driver
 Run-Test "POST New Driver" {
     $newDriver = @{
-        name = "Test Driver"
+        name = "Test Driver $(Get-Random)"
         phone = "+1234567890"
         vehicle_type = "car"
         status = "available"
@@ -151,7 +151,7 @@ Run-Test "POST New Driver" {
 Run-Test "PUT Update Driver" {
     if ($script:createdDriverId) {
         $updatedDriver = @{
-            name = "Updated Test Driver"
+            name = "Updated Test Driver $(Get-Random)"
             phone = "+0987654321"
             vehicle_type = "bike"
             status = "busy"
@@ -163,7 +163,7 @@ Run-Test "PUT Update Driver" {
         
         try {
             $response = Invoke-RestMethod -Uri "$API_BASE_URL/drivers/$($script:createdDriverId)" -Method Put -Body ($updatedDriver | ConvertTo-Json) -ContentType "application/json"
-            if ($response.name -ne "Updated Test Driver") {
+            if ($response.name -ne $updatedDriver.name) {
                 throw "Driver was not updated correctly"
             }
             Write-Host "   Updated driver: $($response.name)" -ForegroundColor Gray
@@ -182,7 +182,7 @@ Run-Test "PUT Update Driver" {
 # Test 10: POST New Shipment
 Run-Test "POST New Shipment" {
     $newShipment = @{
-        tracking_number = "TRK-TEST-001"
+        tracking_number = "TRK-TEST-$(Get-Random)"
         status = "pending"
         origin = @{
             address = "123 Test St, New York, NY"
@@ -216,8 +216,11 @@ Run-Test "POST New Shipment" {
 # Test 11: PUT Update Shipment
 Run-Test "PUT Update Shipment" {
     if ($script:createdShipmentId) {
+        # Get the current shipment to preserve the tracking number
+        $currentShipment = Invoke-RestMethod -Uri "$API_BASE_URL/shipments/$($script:createdShipmentId)" -Method Get
+        
         $updatedShipment = @{
-            tracking_number = "TRK-TEST-001-UPDATED"
+            tracking_number = $currentShipment.tracking_number  # Keep the same tracking number
             status = "assigned"
             origin = @{
                 address = "123 Updated St, New York, NY"
@@ -234,10 +237,10 @@ Run-Test "PUT Update Shipment" {
         
         try {
             $response = Invoke-RestMethod -Uri "$API_BASE_URL/shipments/$($script:createdShipmentId)" -Method Put -Body ($updatedShipment | ConvertTo-Json) -ContentType "application/json"
-            if ($response.tracking_number -ne "TRK-TEST-001-UPDATED") {
+            if ($response.status -ne "assigned") {
                 throw "Shipment was not updated correctly"
             }
-            Write-Host "   Updated shipment: $($response.tracking_number)" -ForegroundColor Gray
+            Write-Host "   Updated shipment status: $($response.status)" -ForegroundColor Gray
         }
         catch {
             # Handle the case where PUT might fail on Vercel due to serverless limitations
@@ -296,7 +299,11 @@ Run-Test "POST New Route" {
 # Test 13: PUT Update Route
 Run-Test "PUT Update Route" {
     if ($script:createdRouteId) {
+        # Get the current route to preserve the shipment_id
+        $currentRoute = Invoke-RestMethod -Uri "$API_BASE_URL/routes/$($script:createdRouteId)" -Method Get
+        
         $updatedRoute = @{
+            shipment_id = $currentRoute.shipment_id  # Keep the same shipment_id
             status = "active"
             estimated_time = 25
             actual_time = 15
