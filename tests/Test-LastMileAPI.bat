@@ -6,7 +6,7 @@ set DEPLOYED_URL=http://last-mile-control-tower.vercel.app
 set API_BASE_URL=%DEPLOYED_URL%/api
 
 echo ========================================
-echo Last-Mile Delivery Control Tower API Test
+echo Last-Mile Delivery Control Tower API Test 
 echo Testing deployment at: %DEPLOYED_URL%
 echo ========================================
 
