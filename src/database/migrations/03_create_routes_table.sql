@@ -3,7 +3,7 @@
 -- Description: Create the routes table to store route information
 
 -- Create the routes table
-CREATE TABLE routes (
+CREATE TABLE IF NOT EXISTS routes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   shipment_id UUID NOT NULL REFERENCES shipments(id),
   waypoints JSONB NOT NULL,
@@ -15,5 +15,5 @@ CREATE TABLE routes (
 );
 
 -- Create indexes
-CREATE INDEX idx_routes_shipment_id ON routes(shipment_id);
-CREATE INDEX idx_routes_status ON routes(status);
+CREATE INDEX IF NOT EXISTS idx_routes_shipment_id ON routes(shipment_id);
+CREATE INDEX IF NOT EXISTS idx_routes_status ON routes(status);

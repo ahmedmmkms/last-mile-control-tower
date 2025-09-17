@@ -15,13 +15,18 @@ This sprint focuses on implementing the core backend APIs, database schema, and 
 ### Backend Development (Core Entities & APIs)
 
 #### 1. Database Implementation
-- [ ] Design and implement database schema for:
+- [x] Design and implement database schema for:
   - Shipments table (id, tracking_number, status, origin, destination, assigned_driver_id, created_at, updated_at)
   - Routes table (id, shipment_id, waypoints, status, estimated_time, actual_time, created_at, updated_at)
   - Drivers table (id, name, phone, vehicle_type, status, current_location, created_at, updated_at)
-- [ ] Create database migration files
-- [ ] Implement seed data for demo purposes
-- [ ] Set up database connection and configuration
+- [x] Create database migration files
+- [x] Implement seed data for demo purposes
+- [x] Set up database connection and configuration
+- [x] Test database connection and verify schema
+- [x] Enhance migration scripts to handle repeated runs (IF NOT EXISTS)
+- [x] Enhance seed scripts to handle repeated runs (ON CONFLICT)
+- [x] Test updated migration and seed scripts
+- [x] Verify data was properly seeded
 
 #### 2. Backend API Development
 - [ ] Implement Shipment controller with CRUD operations:

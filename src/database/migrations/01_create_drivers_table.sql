@@ -3,7 +3,7 @@
 -- Description: Create the drivers table to store driver information
 
 -- Create the drivers table
-CREATE TABLE drivers (
+CREATE TABLE IF NOT EXISTS drivers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
@@ -15,4 +15,4 @@ CREATE TABLE drivers (
 );
 
 -- Create indexes
-CREATE INDEX idx_drivers_status ON drivers(status);
+CREATE INDEX IF NOT EXISTS idx_drivers_status ON drivers(status);
