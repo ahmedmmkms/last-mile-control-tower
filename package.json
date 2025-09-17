@@ -12,6 +12,7 @@
     "test:api": "node tests/comprehensive-api-test.js",
     "test:api-vercel": "node tests/api-test-vercel.js",
     "test:api-ci": "node tests/ci-api-test.js",
+    "test:vercel": "node tests/test-vercel-deployment.js",
     "test:server": "jest tests/server.test.js",
     "test:smoke": "node tests/smoke-test.js",
     "test:acceptance": "node tests/acceptance-test.js",

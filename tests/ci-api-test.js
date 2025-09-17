@@ -3,6 +3,7 @@
 // Simple API Test Script for CI/CD Pipeline
 // This script performs basic API tests for the Vercel deployment
 
+require('dotenv').config();
 const axios = require('axios');
 
 // Get the deployed URL from environment variables
