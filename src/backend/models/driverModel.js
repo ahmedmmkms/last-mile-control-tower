@@ -20,10 +20,10 @@ async function createDriver(driverData) {
   const { name, phone, vehicle_type, status, current_location } = driverData;
   const query = `
     INSERT INTO drivers (name, phone, vehicle_type, status, current_location)
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ($1, $2, $3, $4, $5::jsonb)
     RETURNING *
   `;
-  const values = [name, phone, vehicle_type, status, current_location];
+  const values = [name, phone, vehicle_type, status, JSON.stringify(current_location)];
   const result = await client.query(query, values);
   return result.rows[0];
 }
@@ -33,11 +33,11 @@ async function updateDriver(id, driverData) {
   const { name, phone, vehicle_type, status, current_location } = driverData;
   const query = `
     UPDATE drivers
-    SET name = $1, phone = $2, vehicle_type = $3, status = $4, current_location = $5, updated_at = CURRENT_TIMESTAMP
+    SET name = $1, phone = $2, vehicle_type = $3, status = $4, current_location = $5::jsonb, updated_at = CURRENT_TIMESTAMP
     WHERE id = $6
     RETURNING *
   `;
-  const values = [name, phone, vehicle_type, status, current_location, id];
+  const values = [name, phone, vehicle_type, status, JSON.stringify(current_location), id];
   const result = await client.query(query, values);
   return result.rows[0];
 }

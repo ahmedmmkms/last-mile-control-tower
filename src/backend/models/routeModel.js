@@ -20,10 +20,10 @@ async function createRoute(routeData) {
   const { shipment_id, waypoints, status, estimated_time, actual_time } = routeData;
   const query = `
     INSERT INTO routes (shipment_id, waypoints, status, estimated_time, actual_time)
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ($1, $2::jsonb, $3, $4, $5)
     RETURNING *
   `;
-  const values = [shipment_id, waypoints, status, estimated_time, actual_time];
+  const values = [shipment_id, JSON.stringify(waypoints), status, estimated_time, actual_time];
   const result = await client.query(query, values);
   return result.rows[0];
 }
@@ -33,11 +33,11 @@ async function updateRoute(id, routeData) {
   const { shipment_id, waypoints, status, estimated_time, actual_time } = routeData;
   const query = `
     UPDATE routes
-    SET shipment_id = $1, waypoints = $2, status = $3, estimated_time = $4, actual_time = $5, updated_at = CURRENT_TIMESTAMP
+    SET shipment_id = $1, waypoints = $2::jsonb, status = $3, estimated_time = $4, actual_time = $5, updated_at = CURRENT_TIMESTAMP
     WHERE id = $6
     RETURNING *
   `;
-  const values = [shipment_id, waypoints, status, estimated_time, actual_time, id];
+  const values = [shipment_id, JSON.stringify(waypoints), status, estimated_time, actual_time, id];
   const result = await client.query(query, values);
   return result.rows[0];
 }

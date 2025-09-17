@@ -20,10 +20,10 @@ async function createShipment(shipmentData) {
   const { tracking_number, status, origin, destination, assigned_driver_id } = shipmentData;
   const query = `
     INSERT INTO shipments (tracking_number, status, origin, destination, assigned_driver_id)
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ($1, $2, $3::jsonb, $4::jsonb, $5)
     RETURNING *
   `;
-  const values = [tracking_number, status, origin, destination, assigned_driver_id];
+  const values = [tracking_number, status, JSON.stringify(origin), JSON.stringify(destination), assigned_driver_id];
   const result = await client.query(query, values);
   return result.rows[0];
 }
@@ -33,11 +33,11 @@ async function updateShipment(id, shipmentData) {
   const { tracking_number, status, origin, destination, assigned_driver_id } = shipmentData;
   const query = `
     UPDATE shipments
-    SET tracking_number = $1, status = $2, origin = $3, destination = $4, assigned_driver_id = $5, updated_at = CURRENT_TIMESTAMP
+    SET tracking_number = $1, status = $2, origin = $3::jsonb, destination = $4::jsonb, assigned_driver_id = $5, updated_at = CURRENT_TIMESTAMP
     WHERE id = $6
     RETURNING *
   `;
-  const values = [tracking_number, status, origin, destination, assigned_driver_id, id];
+  const values = [tracking_number, status, JSON.stringify(origin), JSON.stringify(destination), assigned_driver_id, id];
   const result = await client.query(query, values);
   return result.rows[0];
 }
