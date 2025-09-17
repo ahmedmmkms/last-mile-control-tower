@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "build-frontend": "cd src/frontend && npm run build",
+    "serve-frontend": "cd src/frontend && npm run preview",
     "test": "jest",
     "test:unit": "jest tests/controllers",
     "test:integration": "jest tests/integration",

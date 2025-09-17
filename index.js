@@ -8,8 +8,8 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 
-// Serve static files from the frontend directory
-app.use(express.static(path.join(__dirname, 'src', 'frontend')));
+// Serve static files from the frontend build directory
+app.use(express.static(path.join(__dirname, 'src', 'frontend', 'dist')));
 
 // API Routes
 app.get('/api', (req, res) => {
@@ -28,7 +28,7 @@ app.use('/api/routes', routeRoutes);
 
 // Serve the frontend index.html for all other routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src', 'frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, 'src', 'frontend', 'dist', 'index.html'));
 });
 
 // Connect to database and start server
