@@ -61,19 +61,19 @@ This sprint focuses on implementing the core backend APIs, database schema, and 
 ### Frontend Development (Dispatcher Dashboard)
 
 #### 1. Dashboard UI Implementation
-- [ ] Create dashboard layout with:
+- [x] Create dashboard layout with:
   - Header with navigation
   - Sidebar with menu options
   - Main content area for visualization
-- [ ] Implement shipment list view:
+- [x] Implement shipment list view:
   - Table with shipment details
   - Filter and search functionality
   - Status indicators
-- [ ] Implement route visualization:
+- [x] Implement route visualization:
   - Map component for route display
   - Waypoint markers
   - Route path visualization
-- [ ] Implement driver status panel:
+- [x] Implement driver status panel:
   - List of drivers with current status
   - Location indicators
   - Assignment status
