@@ -341,6 +341,69 @@ Run-Test "PUT Update Route" {
     }
 }
 
+# Test 14: DELETE Route
+Run-Test "DELETE Route" {
+    if ($script:createdRouteId) {
+        try {
+            $response = Invoke-RestMethod -Uri "$API_BASE_URL/routes/$($script:createdRouteId)" -Method Delete
+            if (-not $response.id) {
+                throw "Deleted route does not have an ID"
+            }
+            Write-Host "   Deleted route with ID: $($response.id)" -ForegroundColor Gray
+        }
+        catch {
+            # Handle the case where DELETE might fail on Vercel due to serverless limitations
+            Write-Host "   Note: DELETE operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+            throw $_.Exception.Message
+        }
+    } else {
+        Write-Host "   Skipping DELETE test - no route created" -ForegroundColor Yellow
+        throw "No route ID available for deletion"
+    }
+}
+
+# Test 15: DELETE Shipment
+Run-Test "DELETE Shipment" {
+    if ($script:createdShipmentId) {
+        try {
+            $response = Invoke-RestMethod -Uri "$API_BASE_URL/shipments/$($script:createdShipmentId)" -Method Delete
+            if (-not $response.id) {
+                throw "Deleted shipment does not have an ID"
+            }
+            Write-Host "   Deleted shipment with ID: $($response.id)" -ForegroundColor Gray
+        }
+        catch {
+            # Handle the case where DELETE might fail on Vercel due to serverless limitations
+            Write-Host "   Note: DELETE operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+            throw $_.Exception.Message
+        }
+    } else {
+        Write-Host "   Skipping DELETE test - no shipment created" -ForegroundColor Yellow
+        throw "No shipment ID available for deletion"
+    }
+}
+
+# Test 16: DELETE Driver
+Run-Test "DELETE Driver" {
+    if ($script:createdDriverId) {
+        try {
+            $response = Invoke-RestMethod -Uri "$API_BASE_URL/drivers/$($script:createdDriverId)" -Method Delete
+            if (-not $response.id) {
+                throw "Deleted driver does not have an ID"
+            }
+            Write-Host "   Deleted driver with ID: $($response.id)" -ForegroundColor Gray
+        }
+        catch {
+            # Handle the case where DELETE might fail on Vercel due to serverless limitations
+            Write-Host "   Note: DELETE operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+            throw $_.Exception.Message
+        }
+    } else {
+        Write-Host "   Skipping DELETE test - no driver created" -ForegroundColor Yellow
+        throw "No driver ID available for deletion"
+    }
+}
+
 # Display test results
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
@@ -356,6 +419,6 @@ if ($FailedTests -eq 0) {
     exit 0
 } else {
     Write-Host "❌ $FailedTests test(s) failed" -ForegroundColor Red
-    Write-Host "Note: POST/PUT operations may fail on Vercel serverless deployment due to limitations" -ForegroundColor Yellow
+    Write-Host "Note: POST/PUT/DELETE operations may fail on Vercel serverless deployment due to limitations" -ForegroundColor Yellow
     exit 1
 }
