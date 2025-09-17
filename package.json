@@ -9,6 +9,8 @@
     "build-frontend": "node build-frontend.js",
     "postinstall": "npm run build-frontend",
     "serve-frontend": "cd src/frontend && npm run preview",
+    "migrate": "node src/database/migrate.js",
+    "seed": "node src/database/seed.js",
     "test": "jest",
     "test:unit": "jest tests/controllers",
     "test:integration": "jest tests/integration",

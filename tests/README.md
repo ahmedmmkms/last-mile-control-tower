@@ -1,52 +1,46 @@
 # Testing Documentation
 
-This directory contains all the tests for the Last-Mile Delivery Control Tower application.
-
-## Test Structure
-
-- `controllers/` - Unit tests for controller functions
-- `integration/` - Integration tests for API endpoints
-- `fixtures/` - Test data fixtures
-- `config/` - Test configuration files
-
-## Running Tests
+## Backend Testing
 
 ### Unit Tests
-```bash
-npm run test:unit
-```
+Unit tests for controllers are located in `tests/controllers/` and use Jest with mocked database models.
 
 ### Integration Tests
+Integration tests for API endpoints are located in `tests/integration/` and test the full API flow with a test database.
+
+### Running Backend Tests
 ```bash
+# Run all backend tests
+npm test
+
+# Run unit tests only
+npm run test:unit
+
+# Run integration tests only
 npm run test:integration
 ```
 
-### API Tests for Vercel Deployment
+## Frontend Testing
+
+### Component Tests
+Component tests are located in `src/frontend/tests/` and use Vitest with React Testing Library.
+
+### Running Frontend Tests
 ```bash
-npm run test:api-vercel
+# Navigate to frontend directory
+cd src/frontend
+
+# Run frontend tests
+npm test
+
+# Run frontend tests with UI
+npm run test:ui
 ```
 
-### CI API Tests
-```bash
-npm run test:api-ci
-```
+## CI/CD Testing
+GitHub Actions workflows automatically run all tests on push and pull requests.
 
-### Comprehensive API Tests
-```bash
-npm run test:api
-```
-
-## Test Environment
-
-The tests can run against:
-1. Local development server (default)
-2. Vercel deployment (using DEPLOYED_URL environment variable)
-
-To run tests against the Vercel deployment:
-```bash
-DEPLOYED_URL=https://your-app-name.vercel.app npm run test:api
-```
-
-## Test Data
-
-Test data is defined in `fixtures/testData.js` and includes sample drivers, shipments, and routes that match the production database schema.
+### Test Environment
+- PostgreSQL database for integration tests
+- Node.js 16.x and 18.x matrix testing
+- Automated API testing in CI pipeline
