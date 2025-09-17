@@ -7,7 +7,10 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
-    "test:server": "jest tests/server.test.js"
+    "test:server": "jest tests/server.test.js",
+    "test:smoke": "node tests/smoke-test.js",
+    "test:acceptance": "node tests/acceptance-test.js",
+    "test:db": "node src/database/test-connection.js"
   },
   "keywords": [
     "last-mile",
