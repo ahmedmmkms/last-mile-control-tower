@@ -2,7 +2,7 @@
 REM Test-LastMileAPI.bat
 REM Batch script to test the Last-Mile Delivery Control Tower API on Vercel
 
-set DEPLOYED_URL=http://last-mile-control-tower.vercel.app
+set DEPLOYED_URL=https://last-mile-control-tower.vercel.app
 set API_BASE_URL=%DEPLOYED_URL%/api
 
 echo ========================================
