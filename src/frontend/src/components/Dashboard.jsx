@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText, Box, CssBaseline } from '@mui/material';
+import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, CssBaseline } from '@mui/material';
 import { Dashboard as DashboardIcon, LocalShipping as ShipmentIcon, DriveEta as DriverIcon, Route as RouteIcon } from '@mui/icons-material';
 import ShipmentList from '../components/ShipmentList';
 import DriverStatusPanel from '../components/DriverStatusPanel';
@@ -33,14 +33,16 @@ const Dashboard = () => {
         <Box sx={{ overflow: 'auto' }}>
           <List>
             {['Dashboard', 'Shipments', 'Drivers', 'Routes'].map((text, index) => (
-              <ListItem key={text} button>
-                <ListItemIcon>
-                  {index === 0 && <DashboardIcon />}
-                  {index === 1 && <ShipmentIcon />}
-                  {index === 2 && <DriverIcon />}
-                  {index === 3 && <RouteIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
+              <ListItem key={text} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    {index === 0 && <DashboardIcon />}
+                    {index === 1 && <ShipmentIcon />}
+                    {index === 2 && <DriverIcon />}
+                    {index === 3 && <RouteIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>

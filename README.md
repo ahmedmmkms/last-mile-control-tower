@@ -48,5 +48,7 @@ For information about setting up GitHub Actions for CI/CD, see our [GitHub Actio
 3. Set up database (see [Database Setup Guide](docs/database-setup-guide.md))
 4. Copy `.env.example` to `.env` and update with your database credentials
 5. Run database migrations: `node src/database/migrate.js`
-6. Start the development server: `npm run dev`
-7. Visit `http://localhost:3000` to view the API response
+6. (Optional) Run seed script to populate with sample data: `node src/database/seed.js`
+7. Start the development server: `npm run dev`
+8. In a separate terminal, start the frontend development server: `cd src/frontend && npm run dev`
+9. Visit `http://localhost:5173` to view the dashboard
