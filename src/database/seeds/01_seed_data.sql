@@ -1,13 +1,14 @@
 -- Seed data for the Last-Mile Delivery Control Tower database
 -- This file contains sample data for testing and demonstration purposes
 
--- Clear existing New York shipments
-DELETE FROM routes WHERE shipment_id IN (
-  SELECT id FROM shipments WHERE origin->>'address' ILIKE '%New York%' OR destination->>'address' ILIKE '%New York%'
-);
-DELETE FROM shipments WHERE origin->>'address' ILIKE '%New York%' OR destination->>'address' ILIKE '%New York%';
+-- Clear existing data in the correct order to avoid foreign key constraint violations
+-- First clear routes (they depend on shipments)
+DELETE FROM routes;
 
--- Clear all existing drivers (we'll replace them with Egyptian drivers)
+-- Then clear shipments (they depend on drivers)
+DELETE FROM shipments;
+
+-- Finally clear drivers
 DELETE FROM drivers;
 
 -- Insert Egyptian drivers
@@ -16,42 +17,42 @@ INSERT INTO drivers (id, name, phone, vehicle_type, status, current_location) VA
 ('22222222-2222-2222-2222-222222222222', 'Fatima Mahmoud', '+201112345678', 'bike', 'busy', '{"lat": 30.0516, "lng": 31.2487}'),
 ('33333333-3333-3333-3333-333333333333', 'Mohamed Ali', '+201223456789', 'van', 'available', '{"lat": 30.0427, "lng": 31.2317}'),
 ('44444444-4444-4444-4444-444444444444', 'Yasmine Khaled', '+201011111111', 'car', 'offline', '{"lat": 30.0778, "lng": 31.3227}'),
-('55555555-5555-5555-5555-555555555555', 'Omar Mustafa', '+201122222222', 'bike', 'available', '{"lat": 30.0176, "lng": 31.2167}'),
-('66666666-6666-6666-6666-666666666666', 'Nadia Samir', '+201233333333', 'van', 'busy', '{"lat": 30.0921, "lng": 31.3173}'),
-('77777777-7777-7777-7777-777777777777', 'Karim Adel', '+201044444444', 'car', 'available', '{"lat": 30.0214, "lng": 31.2152}'),
-('88888888-8888-8888-8888-888888888888', 'Salma Tarek', '+201155555555', 'bike', 'available', '{"lat": 30.0626, "lng": 31.3105}'),
-('99999999-9999-9999-9999-999999999999', 'Hassan Youssef', '+201266666666', 'van', 'offline', '{"lat": 30.0891, "lng": 31.3247}'),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Layla Mohamed', '+201077777777', 'car', 'available', '{"lat": 30.0474, "lng": 31.2336}'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Tarek Abbas', '+201188888888', 'bike', 'busy', '{"lat": 30.0321, "lng": 31.2219}'),
-('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Nourhan Essam', '+201299999999', 'van', 'available', '{"lat": 30.0723, "lng": 31.3165}'),
-('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Amr Fathy', '+201000000001', 'car', 'available', '{"lat": 30.0581, "lng": 31.3153}'),
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'Dina Walid', '+201111111112', 'bike', 'offline', '{"lat": 30.0122, "lng": 31.2103}'),
-('ffffffff-ffff-ffff-ffff-ffffffffffff', 'Islam Gamal', '+201222222223', 'van', 'available', '{"lat": 30.0882, "lng": 31.3292}'),
-('10000000-0000-0000-0000-000000000001', 'Mona Khaled', '+201033333334', 'car', 'busy', '{"lat": 30.0442, "lng": 31.2365}'),
-('10000000-0000-0000-0000-000000000002', 'Walid Sami', '+201144444445', 'bike', 'available', '{"lat": 30.0278, "lng": 31.2245}'),
-('10000000-0000-0000-0000-000000000003', 'Rania Farid', '+201255555556', 'van', 'available', '{"lat": 30.0791, "lng": 31.3254}'),
-('10000000-0000-0000-0000-000000000004', 'Hany Mostafa', '+201066666667', 'car', 'offline', '{"lat": 30.0612, "lng": 31.3139}'),
-('10000000-0000-0000-0000-000000000005', 'Amina Zaki', '+201177777778', 'bike', 'available', '{"lat": 30.0389, "lng": 31.2298}'),
-('10000000-0000-0000-0000-000000000006', 'Sameh Nabil', '+201288888889', 'van', 'busy', '{"lat": 30.0912, "lng": 31.3312}'),
-('10000000-0000-0000-0000-000000000007', 'Hoda Emad', '+201099999990', 'car', 'available', '{"lat": 30.0554, "lng": 31.3121}'),
-('10000000-0000-0000-0000-000000000008', 'Khaled Wael', '+201000000011', 'bike', 'available', '{"lat": 30.0156, "lng": 31.2134}'),
-('10000000-0000-0000-0000-000000000009', 'Samar Hisham', '+201111111122', 'van', 'offline', '{"lat": 30.0823, "lng": 31.3278}'),
-('10000000-0000-0000-0000-000000000010', 'Mahmoud Sobhy', '+201222222233', 'car', 'available', '{"lat": 30.0498, "lng": 31.2345}'),
-('10000000-0000-0000-0000-000000000011', 'Rasha Mamdouh', '+201033333344', 'bike', 'busy', '{"lat": 30.0267, "lng": 31.2234}'),
-('10000000-0000-0000-0000-000000000012', 'Essam Nagy', '+201144444455', 'van', 'available', '{"lat": 30.0745, "lng": 31.3189}'),
-('10000000-0000-0000-0000-000000000013', 'Noha Ashraf', '+201255555566', 'car', 'available', '{"lat": 30.0654, "lng": 31.3167}'),
-('10000000-0000-0000-0000-000000000014', 'Ashraf Kamal', '+201066666677', 'bike', 'offline', '{"lat": 30.0098, "lng": 31.2076}'),
-('10000000-0000-0000-0000-000000000015', 'Maha Refaat', '+201177777788', 'van', 'available', '{"lat": 30.0865, "lng": 31.3265}'),
-('10000000-0000-0000-0000-000000000016', 'Gamal Lotfy', '+201288888899', 'car', 'busy', '{"lat": 30.0523, "lng": 31.2378}'),
-('10000000-0000-0000-0000-000000000017', 'Heba Taha', '+201099999900', 'bike', 'available', '{"lat": 30.0345, "lng": 31.2267}'),
-('10000000-0000-0000-0000-000000000018', 'Taha Reda', '+201000000012', 'van', 'available', '{"lat": 30.0776, "lng": 31.3234}'),
-('10000000-0000-0000-0000-000000000019', 'Reem Saad', '+201111111123', 'car', 'offline', '{"lat": 30.0698, "lng": 31.3198}'),
-('10000000-0000-0000-0000-000000000020', 'Saad Ezzat', '+201222222234', 'bike', 'available', '{"lat": 30.0198, "lng": 31.2156}'),
-('10000000-0000-0000-0000-000000000021', 'Dalia Kamal', '+201012345678', 'van', 'available', '{"lat": 30.0934, "lng": 31.3345}'),
-('10000000-0000-0000-0000-000000000022', 'Kamal Adel', '+201123456789', 'car', 'busy', '{"lat": 30.0412, "lng": 31.2321}'),
-('10000000-0000-0000-0000-000000000023', 'Adel Hassan', '+201234567890', 'bike', 'available', '{"lat": 30.0287, "lng": 31.2256}'),
-('10000000-0000-0000-0000-000000000024', 'Hassan Omar', '+201045678901', 'van', 'offline', '{"lat": 30.0812, "lng": 31.3289}'),
-('10000000-0000-0000-0000-000000000025', 'Omar Youssef', '+201156789012', 'car', 'available', '{"lat": 30.0578, "lng": 31.3145}')
+('55555555-5555-5555-5555-555555555555', 'Omar Mustafa', '+201233333333', 'bike', 'available', '{"lat": 30.0176, "lng": 31.2167}'),
+('66666666-6666-6666-6666-666666666666', 'Nadia Samir', '+201044444444', 'van', 'busy', '{"lat": 30.0921, "lng": 31.3173}'),
+('77777777-7777-7777-7777-777777777777', 'Karim Adel', '+201155555555', 'bike', 'available', '{"lat": 30.0214, "lng": 31.2152}'),
+('88888888-8888-8888-8888-888888888888', 'Salma Tarek', '+201266666666', 'car', 'available', '{"lat": 30.0626, "lng": 31.3105}'),
+('99999999-9999-9999-9999-999999999999', 'Hassan Youssef', '+201077777777', 'van', 'offline', '{"lat": 30.0891, "lng": 31.3247}'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Layla Mohamed', '+201188888888', 'car', 'available', '{"lat": 30.0474, "lng": 31.2336}'),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Tarek Abbas', '+201299999999', 'bike', 'busy', '{"lat": 30.0321, "lng": 31.2219}'),
+('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Nourhan Essam', '+201000000001', 'van', 'available', '{"lat": 30.0723, "lng": 31.3165}'),
+('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Amr Fathy', '+201111111112', 'car', 'available', '{"lat": 30.0581, "lng": 31.3153}'),
+('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'Dina Walid', '+201222222223', 'bike', 'offline', '{"lat": 30.0122, "lng": 31.2103}'),
+('ffffffff-ffff-ffff-ffff-ffffffffffff', 'Islam Gamal', '+201033333334', 'van', 'available', '{"lat": 30.0882, "lng": 31.3292}'),
+('10000000-0000-0000-0000-000000000001', 'Mona Khaled', '+201144444445', 'car', 'busy', '{"lat": 30.0442, "lng": 31.2365}'),
+('10000000-0000-0000-0000-000000000002', 'Walid Sami', '+201255555556', 'bike', 'available', '{"lat": 30.0278, "lng": 31.2245}'),
+('10000000-0000-0000-0000-000000000003', 'Rania Farid', '+201066666667', 'van', 'available', '{"lat": 30.0791, "lng": 31.3254}'),
+('10000000-0000-0000-0000-000000000004', 'Hany Mostafa', '+201177777778', 'car', 'offline', '{"lat": 30.0612, "lng": 31.3139}'),
+('10000000-0000-0000-0000-000000000005', 'Amina Zaki', '+201288888889', 'bike', 'available', '{"lat": 30.0389, "lng": 31.2298}'),
+('10000000-0000-0000-0000-000000000006', 'Sameh Nabil', '+201099999990', 'van', 'busy', '{"lat": 30.0912, "lng": 31.3312}'),
+('10000000-0000-0000-0000-000000000007', 'Hoda Emad', '+201000000011', 'car', 'available', '{"lat": 30.0554, "lng": 31.3121}'),
+('10000000-0000-0000-0000-000000000008', 'Khaled Wael', '+201111111122', 'bike', 'available', '{"lat": 30.0156, "lng": 31.2134}'),
+('10000000-0000-0000-0000-000000000009', 'Samar Hisham', '+201222222233', 'van', 'offline', '{"lat": 30.0823, "lng": 31.3278}'),
+('10000000-0000-0000-0000-000000000010', 'Mahmoud Sobhy', '+201033333344', 'car', 'available', '{"lat": 30.0498, "lng": 31.2345}'),
+('10000000-0000-0000-0000-000000000011', 'Rasha Mamdouh', '+201144444455', 'bike', 'busy', '{"lat": 30.0267, "lng": 31.2234}'),
+('10000000-0000-0000-0000-000000000012', 'Essam Nagy', '+201255555566', 'van', 'available', '{"lat": 30.0745, "lng": 31.3189}'),
+('10000000-0000-0000-0000-000000000013', 'Noha Ashraf', '+201066666677', 'car', 'available', '{"lat": 30.0654, "lng": 31.3167}'),
+('10000000-0000-0000-0000-000000000014', 'Ashraf Kamal', '+201177777788', 'bike', 'offline', '{"lat": 30.0098, "lng": 31.2076}'),
+('10000000-0000-0000-0000-000000000015', 'Maha Refaat', '+201288888899', 'van', 'available', '{"lat": 30.0865, "lng": 31.3265}'),
+('10000000-0000-0000-0000-000000000016', 'Gamal Lotfy', '+201099999900', 'car', 'busy', '{"lat": 30.0523, "lng": 31.2378}'),
+('10000000-0000-0000-0000-000000000017', 'Heba Taha', '+201000000012', 'bike', 'available', '{"lat": 30.0345, "lng": 31.2267}'),
+('10000000-0000-0000-0000-000000000018', 'Taha Reda', '+201111111123', 'van', 'available', '{"lat": 30.0776, "lng": 31.3234}'),
+('10000000-0000-0000-0000-000000000019', 'Reem Saad', '+201222222234', 'car', 'offline', '{"lat": 30.0698, "lng": 31.3198}'),
+('10000000-0000-0000-0000-000000000020', 'Saad Ezzat', '+201033333344', 'bike', 'available', '{"lat": 30.0198, "lng": 31.2156}'),
+('10000000-0000-0000-0000-000000000021', 'Dalia Kamal', '+201144444455', 'van', 'available', '{"lat": 30.0934, "lng": 31.3345}'),
+('10000000-0000-0000-0000-000000000022', 'Kamal Adel', '+201255555566', 'car', 'busy', '{"lat": 30.0412, "lng": 31.2321}'),
+('10000000-0000-0000-0000-000000000023', 'Adel Hassan', '+201066666677', 'bike', 'available', '{"lat": 30.0287, "lng": 31.2256}'),
+('10000000-0000-0000-0000-000000000024', 'Hassan Omar', '+201177777788', 'van', 'offline', '{"lat": 30.0812, "lng": 31.3289}'),
+('10000000-0000-0000-0000-000000000025', 'Omar Youssef', '+201288888899', 'car', 'available', '{"lat": 30.0578, "lng": 31.3145}')
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert Cairo shipments
