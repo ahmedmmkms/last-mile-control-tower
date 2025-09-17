@@ -29,34 +29,34 @@ This sprint focuses on implementing the core backend APIs, database schema, and 
 - [x] Verify data was properly seeded
 
 #### 2. Backend API Development
-- [ ] Implement Shipment controller with CRUD operations:
+- [x] Implement Shipment controller with CRUD operations:
   - GET /api/shipments - List all shipments
   - GET /api/shipments/:id - Get specific shipment
   - POST /api/shipments - Create new shipment
   - PUT /api/shipments/:id - Update shipment
   - DELETE /api/shipments/:id - Delete shipment
-- [ ] Implement Route controller with CRUD operations:
+- [x] Implement Route controller with CRUD operations:
   - GET /api/routes - List all routes
   - GET /api/routes/:id - Get specific route
   - POST /api/routes - Create new route
   - PUT /api/routes/:id - Update route
   - DELETE /api/routes/:id - Delete route
-- [ ] Implement Driver controller with CRUD operations:
+- [x] Implement Driver controller with CRUD operations:
   - GET /api/drivers - List all drivers
   - GET /api/drivers/:id - Get specific driver
   - POST /api/drivers - Create new driver
   - PUT /api/drivers/:id - Update driver
   - DELETE /api/drivers/:id - Delete driver
-- [ ] Implement route assignment logic:
+- [x] Implement route assignment logic:
   - Algorithm to assign shipments to drivers based on proximity
   - Update shipment and driver status upon assignment
-- [ ] Add API documentation (Swagger/OpenAPI)
+- [x] Add API documentation (Swagger/OpenAPI)
 
 #### 3. Backend Testing
-- [ ] Create unit tests for all controller functions
-- [ ] Create integration tests for API endpoints
-- [ ] Implement test data fixtures
-- [ ] Configure test database environment
+- [x] Create unit tests for all controller functions
+- [x] Create integration tests for API endpoints
+- [x] Implement test data fixtures
+- [x] Configure test database environment
 
 ### Frontend Development (Dispatcher Dashboard)
 
