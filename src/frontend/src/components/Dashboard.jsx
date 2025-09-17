@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, CssBaseline } from '@mui/material';
-import { Dashboard as DashboardIcon, LocalShipping as ShipmentIcon, DriveEta as DriverIcon, Route as RouteIcon } from '@mui/icons-material';
+import { Dashboard as DashboardIcon, LocalShipping as ShipmentIcon, DriveEta as DriverIcon, Route as RouteIcon, AdminPanelSettings as AdminIcon } from '@mui/icons-material';
 import ShipmentList from '../components/ShipmentList';
 import DriverStatusPanel from '../components/DriverStatusPanel';
 import RouteVisualization from '../components/RouteVisualization';
+import AdminInterface from '../components/AdminInterface';
 
 const drawerWidth = 240;
 
 const Dashboard = () => {
+  const [activeView, setActiveView] = useState('dashboard');
+
+  const renderView = () => {
+    switch (activeView) {
+      case 'shipments':
+        return <ShipmentList />;
+      case 'drivers':
+        return <DriverStatusPanel />;
+      case 'routes':
+        return <RouteVisualization />;
+      case 'admin':
+        return <AdminInterface />;
+      default:
+        return (
+          <>
+            <ShipmentList />
+            <DriverStatusPanel />
+            <RouteVisualization />
+          </>
+        );
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -32,14 +56,18 @@ const Dashboard = () => {
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            {['Dashboard', 'Shipments', 'Drivers', 'Routes'].map((text, index) => (
+            {['Dashboard', 'Shipments', 'Drivers', 'Routes', 'Admin'].map((text, index) => (
               <ListItem key={text} disablePadding>
-                <ListItemButton>
+                <ListItemButton 
+                  onClick={() => setActiveView(text.toLowerCase())}
+                  selected={activeView === text.toLowerCase()}
+                >
                   <ListItemIcon>
                     {index === 0 && <DashboardIcon />}
                     {index === 1 && <ShipmentIcon />}
                     {index === 2 && <DriverIcon />}
                     {index === 3 && <RouteIcon />}
+                    {index === 4 && <AdminIcon />}
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
@@ -53,17 +81,12 @@ const Dashboard = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         <Typography variant="h4" gutterBottom>
-          Dispatcher Dashboard
+          {activeView === 'dashboard' ? 'Dispatcher Dashboard' : 
+           activeView === 'admin' ? 'Admin Interface' : 
+           `${activeView.charAt(0).toUpperCase() + activeView.slice(1)}`}
         </Typography>
         
-        {/* Shipment List */}
-        <ShipmentList />
-        
-        {/* Driver Status Panel */}
-        <DriverStatusPanel />
-        
-        {/* Route Visualization */}
-        <RouteVisualization />
+        {renderView()}
       </Box>
     </Box>
   );
