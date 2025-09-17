@@ -1,5 +1,6 @@
 // Route Controller
 const Route = require('../models/routeModel');
+const { isValidUUID } = require('../utils/uuidValidator');
 
 // Get all routes
 async function getAllRoutes(req, res) {
@@ -16,6 +17,12 @@ async function getAllRoutes(req, res) {
 async function getRouteById(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid route ID format' });
+    }
+    
     const route = await Route.getRouteById(id);
     
     if (!route) {
@@ -45,6 +52,12 @@ async function createRoute(req, res) {
 async function updateRoute(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid route ID format' });
+    }
+    
     const routeData = req.body;
     
     // Check if route exists
@@ -65,6 +78,11 @@ async function updateRoute(req, res) {
 async function deleteRoute(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid route ID format' });
+    }
     
     // Check if route exists
     const existingRoute = await Route.getRouteById(id);

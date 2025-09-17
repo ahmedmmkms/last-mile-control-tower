@@ -1,5 +1,6 @@
 // Driver Controller
 const Driver = require('../models/driverModel');
+const { isValidUUID } = require('../utils/uuidValidator');
 
 // Get all drivers
 async function getAllDrivers(req, res) {
@@ -16,6 +17,12 @@ async function getAllDrivers(req, res) {
 async function getDriverById(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid driver ID format' });
+    }
+    
     const driver = await Driver.getDriverById(id);
     
     if (!driver) {
@@ -45,6 +52,12 @@ async function createDriver(req, res) {
 async function updateDriver(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid driver ID format' });
+    }
+    
     const driverData = req.body;
     
     // Check if driver exists
@@ -65,6 +78,11 @@ async function updateDriver(req, res) {
 async function deleteDriver(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid driver ID format' });
+    }
     
     // Check if driver exists
     const existingDriver = await Driver.getDriverById(id);

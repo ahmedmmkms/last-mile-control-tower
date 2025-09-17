@@ -1,5 +1,6 @@
 // Shipment Controller
 const Shipment = require('../models/shipmentModel');
+const { isValidUUID } = require('../utils/uuidValidator');
 
 // Get all shipments
 async function getAllShipments(req, res) {
@@ -16,6 +17,12 @@ async function getAllShipments(req, res) {
 async function getShipmentById(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid shipment ID format' });
+    }
+    
     const shipment = await Shipment.getShipmentById(id);
     
     if (!shipment) {
@@ -45,6 +52,12 @@ async function createShipment(req, res) {
 async function updateShipment(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid shipment ID format' });
+    }
+    
     const shipmentData = req.body;
     
     // Check if shipment exists
@@ -65,6 +78,11 @@ async function updateShipment(req, res) {
 async function deleteShipment(req, res) {
   try {
     const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid shipment ID format' });
+    }
     
     // Check if shipment exists
     const existingShipment = await Shipment.getShipmentById(id);
