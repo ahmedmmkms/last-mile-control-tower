@@ -15,6 +15,13 @@ try {
   console.log('Current directory:', process.cwd());
   console.log('Frontend directory:', frontendDir);
   
+  // Install frontend dependencies first
+  console.log('Installing frontend dependencies...');
+  execSync('npm install', { 
+    cwd: frontendDir,
+    stdio: 'inherit'
+  });
+  
   // Run the build command
   console.log('Running npm run build in frontend directory...');
   execSync('npm run build', { 
