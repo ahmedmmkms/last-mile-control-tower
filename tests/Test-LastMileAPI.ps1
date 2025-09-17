@@ -118,6 +118,222 @@ Run-Test "Get Specific Route" {
     }
 }
 
+# Test 8: POST New Driver
+Run-Test "POST New Driver" {
+    $newDriver = @{
+        name = "Test Driver"
+        phone = "+1234567890"
+        vehicle_type = "car"
+        status = "available"
+        current_location = @{
+            lat = 40.7128
+            lng = -74.0060
+        }
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Uri "$API_BASE_URL/drivers" -Method Post -Body ($newDriver | ConvertTo-Json) -ContentType "application/json"
+        if (-not $response.id) {
+            throw "Created driver does not have an ID"
+        }
+        Write-Host "   Created driver with ID: $($response.id)" -ForegroundColor Gray
+        # Store the created driver ID for later tests
+        $script:createdDriverId = $response.id
+    }
+    catch {
+        # Handle the case where POST might fail on Vercel due to serverless limitations
+        Write-Host "   Note: POST operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+        throw $_.Exception.Message
+    }
+}
+
+# Test 9: PUT Update Driver
+Run-Test "PUT Update Driver" {
+    if ($script:createdDriverId) {
+        $updatedDriver = @{
+            name = "Updated Test Driver"
+            phone = "+0987654321"
+            vehicle_type = "bike"
+            status = "busy"
+            current_location = @{
+                lat = 40.7589
+                lng = -73.9851
+            }
+        }
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$API_BASE_URL/drivers/$($script:createdDriverId)" -Method Put -Body ($updatedDriver | ConvertTo-Json) -ContentType "application/json"
+            if ($response.name -ne "Updated Test Driver") {
+                throw "Driver was not updated correctly"
+            }
+            Write-Host "   Updated driver: $($response.name)" -ForegroundColor Gray
+        }
+        catch {
+            # Handle the case where PUT might fail on Vercel due to serverless limitations
+            Write-Host "   Note: PUT operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+            throw $_.Exception.Message
+        }
+    } else {
+        Write-Host "   Skipping PUT test - no driver created" -ForegroundColor Yellow
+        throw "No driver ID available for updating"
+    }
+}
+
+# Test 10: POST New Shipment
+Run-Test "POST New Shipment" {
+    $newShipment = @{
+        tracking_number = "TRK-TEST-001"
+        status = "pending"
+        origin = @{
+            address = "123 Test St, New York, NY"
+            lat = 40.7128
+            lng = -74.0060
+        }
+        destination = @{
+            address = "456 Test Ave, New York, NY"
+            lat = 40.7589
+            lng = -73.9851
+        }
+        assigned_driver_id = $null
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Uri "$API_BASE_URL/shipments" -Method Post -Body ($newShipment | ConvertTo-Json) -ContentType "application/json"
+        if (-not $response.id) {
+            throw "Created shipment does not have an ID"
+        }
+        Write-Host "   Created shipment with ID: $($response.id)" -ForegroundColor Gray
+        # Store the created shipment ID for later tests
+        $script:createdShipmentId = $response.id
+    }
+    catch {
+        # Handle the case where POST might fail on Vercel due to serverless limitations
+        Write-Host "   Note: POST operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+        throw $_.Exception.Message
+    }
+}
+
+# Test 11: PUT Update Shipment
+Run-Test "PUT Update Shipment" {
+    if ($script:createdShipmentId) {
+        $updatedShipment = @{
+            tracking_number = "TRK-TEST-001-UPDATED"
+            status = "assigned"
+            origin = @{
+                address = "123 Updated St, New York, NY"
+                lat = 40.7128
+                lng = -74.0060
+            }
+            destination = @{
+                address = "456 Updated Ave, New York, NY"
+                lat = 40.7589
+                lng = -73.9851
+            }
+            assigned_driver_id = $null
+        }
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$API_BASE_URL/shipments/$($script:createdShipmentId)" -Method Put -Body ($updatedShipment | ConvertTo-Json) -ContentType "application/json"
+            if ($response.tracking_number -ne "TRK-TEST-001-UPDATED") {
+                throw "Shipment was not updated correctly"
+            }
+            Write-Host "   Updated shipment: $($response.tracking_number)" -ForegroundColor Gray
+        }
+        catch {
+            # Handle the case where PUT might fail on Vercel due to serverless limitations
+            Write-Host "   Note: PUT operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+            throw $_.Exception.Message
+        }
+    } else {
+        Write-Host "   Skipping PUT test - no shipment created" -ForegroundColor Yellow
+        throw "No shipment ID available for updating"
+    }
+}
+
+# Test 12: POST New Route
+Run-Test "POST New Route" {
+    # First get a shipment ID to associate with the route
+    $shipments = Invoke-RestMethod -Uri "$API_BASE_URL/shipments" -Method Get
+    if ($shipments.Length -gt 0) {
+        $shipmentId = $shipments[0].id
+        
+        $newRoute = @{
+            shipment_id = $shipmentId
+            waypoints = @(
+                @{
+                    lat = 40.7128
+                    lng = -74.0060
+                },
+                @{
+                    lat = 40.7589
+                    lng = -73.9851
+                }
+            )
+            status = "pending"
+            estimated_time = 30
+            actual_time = $null
+        }
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$API_BASE_URL/routes" -Method Post -Body ($newRoute | ConvertTo-Json) -ContentType "application/json"
+            if (-not $response.id) {
+                throw "Created route does not have an ID"
+            }
+            Write-Host "   Created route with ID: $($response.id)" -ForegroundColor Gray
+            # Store the created route ID for later tests
+            $script:createdRouteId = $response.id
+        }
+        catch {
+            # Handle the case where POST might fail on Vercel due to serverless limitations
+            Write-Host "   Note: POST operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+            throw $_.Exception.Message
+        }
+    } else {
+        throw "No shipments found to associate with route"
+    }
+}
+
+# Test 13: PUT Update Route
+Run-Test "PUT Update Route" {
+    if ($script:createdRouteId) {
+        $updatedRoute = @{
+            status = "active"
+            estimated_time = 25
+            actual_time = 15
+            waypoints = @(
+                @{
+                    lat = 40.7128
+                    lng = -74.0060
+                },
+                @{
+                    lat = 40.7589
+                    lng = -73.9851
+                },
+                @{
+                    lat = 40.7505
+                    lng = -73.9934
+                }
+            )
+        }
+        
+        try {
+            $response = Invoke-RestMethod -Uri "$API_BASE_URL/routes/$($script:createdRouteId)" -Method Put -Body ($updatedRoute | ConvertTo-Json) -ContentType "application/json"
+            if ($response.status -ne "active") {
+                throw "Route was not updated correctly"
+            }
+            Write-Host "   Updated route status: $($response.status)" -ForegroundColor Gray
+        }
+        catch {
+            # Handle the case where PUT might fail on Vercel due to serverless limitations
+            Write-Host "   Note: PUT operations may fail on Vercel serverless deployment" -ForegroundColor Yellow
+            throw $_.Exception.Message
+        }
+    } else {
+        Write-Host "   Skipping PUT test - no route created" -ForegroundColor Yellow
+        throw "No route ID available for updating"
+    }
+}
+
 # Display test results
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
@@ -133,5 +349,6 @@ if ($FailedTests -eq 0) {
     exit 0
 } else {
     Write-Host "❌ $FailedTests test(s) failed" -ForegroundColor Red
+    Write-Host "Note: POST/PUT operations may fail on Vercel serverless deployment due to limitations" -ForegroundColor Yellow
     exit 1
 }
