@@ -15,7 +15,5 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
-  ],
-  "buildCommand": "npm run build-frontend",
-  "outputDirectory": "src/frontend/dist"
+  ]
 }
