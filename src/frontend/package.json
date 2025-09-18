@@ -12,7 +12,8 @@
     "test:ui": "vitest --ui",
     "test:pwa": "node src/services/pwaTestSuite.js",
     "test:pwa-dev": "vite --mode development && node src/services/pwaTestSuite.js",
-    "verify:pwa": "node verify-pwa-integration.js"
+    "verify:pwa": "node verify-pwa-integration.js",
+    "troubleshoot:pwa": "vite preview --port 3001 && open http://localhost:3001/pwa-troubleshooter.html"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
