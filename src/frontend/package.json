@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:pwa": "node src/services/pwaTestSuite.js",
+    "test:pwa-dev": "vite --mode development && node src/services/pwaTestSuite.js",
+    "verify:pwa": "node verify-pwa-integration.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

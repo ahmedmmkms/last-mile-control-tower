@@ -121,6 +121,37 @@ class NotificationService {
       );
     }
   }
+
+  // Send a push notification to the service worker
+  async sendPushNotification(title, options) {
+    if (!this.swRegistration) {
+      console.log('Service worker not initialized');
+      return false;
+    }
+
+    try {
+      // Send a message to the service worker to show a notification
+      this.swRegistration.active.postMessage({
+        type: 'SHOW_NOTIFICATION',
+        title,
+        options
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to send push notification:', error);
+      return false;
+    }
+  }
+
+  // Check if push notifications are supported
+  isPushSupported() {
+    return 'serviceWorker' in navigator && 'PushManager' in window;
+  }
+
+  // Check if notifications are enabled
+  areNotificationsEnabled() {
+    return this.permission === 'granted';
+  }
 }
 
 // Create a singleton instance

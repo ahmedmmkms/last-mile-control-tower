@@ -7,6 +7,7 @@ import {
   Typography
 } from '@mui/material';
 import { Download as DownloadIcon } from '@mui/icons-material';
+import pwaManager from '../services/pwaService';
 
 const PWADetection = () => {
   const [isPWA, setIsPWA] = useState(false);
@@ -15,27 +16,8 @@ const PWADetection = () => {
   useEffect(() => {
     // Check if the app is running as a PWA
     const checkPWA = () => {
-      // Method 1: Check if display mode is standalone
-      if (window.matchMedia('(display-mode: standalone)').matches) {
-        setIsPWA(true);
-        return;
-      }
-      
-      // Method 2: Check if the app was launched via a shortcut
-      if (window.navigator.standalone === true) {
-        setIsPWA(true);
-        return;
-      }
-      
-      // Method 3: Check if we're in an iframe (some PWAs use this)
-      if (window.self !== window.top) {
-        // This is inside an iframe, might be a PWA wrapper
-        setIsPWA(true);
-        return;
-      }
-      
-      // If none of the above, we're likely in a browser
-      setIsPWA(false);
+      const status = pwaManager.getPWAStatus();
+      setIsPWA(status.isPWA);
     };
 
     checkPWA();

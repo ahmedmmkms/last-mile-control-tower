@@ -1,4 +1,4 @@
-// WebSocket service for real-time communication
+// WebSocket service for real-time communication with offline support
 class WebSocketService {
   constructor() {
     this.ws = null;
@@ -9,6 +9,8 @@ class WebSocketService {
     this.isConnected = false;
     this.url = null;
     this.connectionTimeout = null;
+    this.offlineBuffer = []; // Buffer for messages when offline
+    this.visibilityChangeListener = null;
   }
 
   // Connect to WebSocket server
@@ -35,6 +37,9 @@ class WebSocketService {
         this.isConnected = true;
         this.reconnectAttempts = 0;
         this.notifyListeners('open', event);
+        
+        // Send any buffered messages
+        this.sendBufferedMessages();
       };
       
       this.ws.onmessage = (event) => {
@@ -113,8 +118,53 @@ class WebSocketService {
         return false;
       }
     } else {
-      console.warn('WebSocket not connected, message not sent:', message);
+      console.warn('WebSocket not connected, buffering message:', message);
+      // Buffer the message for when we reconnect
+      this.bufferMessage(message);
       return false;
+    }
+  }
+
+  // Buffer message for offline sending
+  bufferMessage(message) {
+    // Add timestamp to message
+    const bufferedMessage = {
+      message,
+      timestamp: Date.now(),
+      id: Math.random().toString(36).substr(2, 9)
+    };
+    
+    // Add to buffer (keep only last 100 messages)
+    this.offlineBuffer.push(bufferedMessage);
+    if (this.offlineBuffer.length > 100) {
+      this.offlineBuffer.shift();
+    }
+    
+    console.log('Message buffered for offline sending:', message);
+  }
+
+  // Send buffered messages when connection is restored
+  async sendBufferedMessages() {
+    if (this.offlineBuffer.length === 0) {
+      return;
+    }
+    
+    console.log(`Sending ${this.offlineBuffer.length} buffered messages`);
+    
+    // Send messages one by one
+    for (const buffered of this.offlineBuffer) {
+      try {
+        const success = this.send(buffered.message);
+        if (success) {
+          // Remove from buffer on success
+          this.offlineBuffer = this.offlineBuffer.filter(msg => msg.id !== buffered.id);
+        }
+      } catch (error) {
+        console.error('Error sending buffered message:', error);
+      }
+      
+      // Small delay between messages
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
   }
 
@@ -205,12 +255,63 @@ class WebSocketService {
     return {
       isConnected: this.isConnected,
       reconnectAttempts: this.reconnectAttempts,
-      maxReconnectAttempts: this.maxReconnectAttempts
+      maxReconnectAttempts: this.maxReconnectAttempts,
+      bufferedMessages: this.offlineBuffer.length
     };
+  }
+
+  // Start monitoring page visibility for connection management
+  startVisibilityMonitoring() {
+    if (this.visibilityChangeListener) {
+      return; // Already monitoring
+    }
+    
+    this.visibilityChangeListener = () => {
+      if (document.hidden) {
+        console.log('Page hidden, connection may be paused');
+      } else {
+        console.log('Page visible, checking connection status');
+        // If we were connected but connection seems lost, try to reconnect
+        if (this.url && !this.isConnected) {
+          console.log('Attempting to reconnect due to page visibility');
+          this.connect(this.url);
+        }
+      }
+    };
+    
+    document.addEventListener('visibilitychange', this.visibilityChangeListener);
+  }
+
+  // Stop monitoring page visibility
+  stopVisibilityMonitoring() {
+    if (this.visibilityChangeListener) {
+      document.removeEventListener('visibilitychange', this.visibilityChangeListener);
+      this.visibilityChangeListener = null;
+    }
+  }
+
+  // Handle online/offline events
+  handleOnlineOfflineEvents() {
+    window.addEventListener('online', () => {
+      console.log('Browser came online, attempting to reconnect');
+      if (this.url && !this.isConnected) {
+        this.reconnectAttempts = 0; // Reset reconnect attempts
+        this.connect(this.url);
+      }
+    });
+    
+    window.addEventListener('offline', () => {
+      console.log('Browser went offline, connection paused');
+      this.isConnected = false;
+      this.notifyListeners('offline', {});
+    });
   }
 }
 
 // Create a singleton instance
 const webSocketService = new WebSocketService();
+
+// Initialize online/offline event handlers
+webSocketService.handleOnlineOfflineEvents();
 
 export default webSocketService;

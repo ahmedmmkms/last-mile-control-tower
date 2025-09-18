@@ -8,6 +8,8 @@ import AssignmentDetail from './AssignmentDetail';
 import PWAInstallPrompt from './PWAInstallPrompt';
 import notificationService from '../services/notificationService';
 import offlineDataService from '../services/offlineDataService';
+import webSocketService from '../services/webSocketService';
+import pwaManager from '../services/pwaService';
 
 const theme = createTheme({
   palette: {
@@ -24,17 +26,35 @@ const DriverApp = () => {
   const isAuthenticated = localStorage.getItem('driverAuthenticated') === 'true';
 
   useEffect(() => {
+    // Initialize PWA manager
+    const initPWA = async () => {
+      try {
+        await pwaManager.init();
+        console.log('PWA Manager initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize PWA Manager:', error);
+      }
+    };
+
+    initPWA();
+  }, []);
+
+  useEffect(() => {
     // Initialize notification service
     const initNotifications = async () => {
-      await notificationService.initServiceWorker();
-      const hasPermission = await notificationService.requestPermission();
-      
-      if (hasPermission) {
-        console.log('Notifications permission granted');
-        // Subscribe to push notifications if needed
-        // const subscription = await notificationService.subscribeToPush();
-      } else {
-        console.log('Notifications permission denied');
+      try {
+        await notificationService.initServiceWorker();
+        const hasPermission = await notificationService.requestPermission();
+        
+        if (hasPermission) {
+          console.log('Notifications permission granted');
+          // Subscribe to push notifications if needed
+          // const subscription = await notificationService.subscribeToPush();
+        } else {
+          console.log('Notifications permission denied');
+        }
+      } catch (error) {
+        console.error('Failed to initialize notification service:', error);
       }
     };
 
@@ -65,6 +85,35 @@ const DriverApp = () => {
     // Cleanup on unmount
     return () => {
       offlineDataService.stopBackgroundSync();
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    // Initialize WebSocket service
+    const initWebSocket = () => {
+      try {
+        // Start monitoring page visibility
+        webSocketService.startVisibilityMonitoring();
+        
+        // Connect to WebSocket if authenticated
+        if (isAuthenticated) {
+          const wsUrl = process.env.NODE_ENV === 'production' 
+            ? `wss://${window.location.host}/ws` 
+            : 'ws://localhost:3000/ws';
+          
+          webSocketService.connect(wsUrl);
+        }
+      } catch (error) {
+        console.error('Failed to initialize WebSocket service:', error);
+      }
+    };
+
+    initWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      webSocketService.close();
+      webSocketService.stopVisibilityMonitoring();
     };
   }, [isAuthenticated]);
 

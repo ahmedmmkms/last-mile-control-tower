@@ -23,7 +23,7 @@ export default defineConfig({
         orientation: 'portrait-primary'
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\//,
@@ -40,7 +40,10 @@ export default defineConfig({
             }
           }
         ]
-      }
+      },
+      // Use our custom service worker
+      injectRegister: 'auto',
+      swFilename: 'sw.js'
     })
   ],
   server: {

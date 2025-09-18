@@ -9,53 +9,47 @@ import {
   useTheme
 } from '@mui/material';
 import { Download as DownloadIcon } from '@mui/icons-material';
+import pwaManager from '../services/pwaService';
 
 const PWAInstallPrompt = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Listen for the beforeinstallprompt event
+  // Listen for installation availability
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e) => {
-      // Prevent the mini-infobar from appearing on mobile
-      e.preventDefault();
-      
-      // Stash the event so it can be triggered later
-      setDeferredPrompt(e);
-      
-      // Show the install prompt
-      setShowInstallPrompt(true);
+    const handleInstallAvailability = (available) => {
+      setShowInstallPrompt(available);
     };
 
-    // Add event listener
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    // Set up callback for installation availability changes
+    pwaManager.onInstallAvailabilityChange(handleInstallAvailability);
 
-    // Clean up event listener
+    // Check initial status
+    const status = pwaManager.getPWAStatus();
+    setShowInstallPrompt(status.installAvailable);
+
+    // Clean up
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      pwaManager.onInstallAvailabilityChange(null);
     };
   }, []);
 
   // Handle install button click
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-
-    // Show the install prompt
-    deferredPrompt.prompt();
-
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
-
-    // We've used the prompt, and can't use it again, throw it away
-    setDeferredPrompt(null);
-    
-    // Hide the prompt
-    setShowInstallPrompt(false);
-    
-    // Log the result
-    console.log(`User response to the install prompt: ${outcome}`);
+    try {
+      const accepted = await pwaManager.promptInstall();
+      if (accepted) {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      // Hide the prompt regardless of user choice
+      setShowInstallPrompt(false);
+    } catch (error) {
+      console.error('Error prompting installation:', error);
+      setShowInstallPrompt(false);
+    }
   };
 
   // Handle close button click

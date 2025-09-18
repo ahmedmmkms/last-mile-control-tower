@@ -1,0 +1,7 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#1976d2" rx="40"/>
+  <circle cx="256" cy="256" r="170" fill="white"/>
+  <rect x="128" y="128" width="256" height="256" fill="#1976d2" rx="20"/>
+  <text x="256" y="276" font-family="Arial, sans-serif" font-size="128" 
+        fill="white" text-anchor="middle" dominant-baseline="middle" font-weight="bold">LD</text>
+</svg>

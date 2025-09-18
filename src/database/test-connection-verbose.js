@@ -15,8 +15,9 @@ async function verboseTest() {
   console.log('  DB_USER:', process.env.DB_USER);
   console.log('  DB_PASSWORD:', process.env.DB_PASSWORD ? '[SET]' : '[NOT SET]');
   
-  // Create a new client
-  const client = new Client({
+  // Test 1: Standard connection
+  console.log('\n--- Test 1: Standard connection ---');
+  const client1 = new Client({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
@@ -29,15 +30,15 @@ async function verboseTest() {
   });
   
   try {
-    console.log('Attempting to connect to database...');
+    console.log('Attempting to connect to database (Test 1)...');
     const startTime = Date.now();
-    await client.connect();
+    await client1.connect();
     const connectDuration = Date.now() - startTime;
     console.log(`✅ Connected to database successfully in ${connectDuration}ms`);
     
     console.log('Executing test query...');
     const queryStartTime = Date.now();
-    const result = await client.query('SELECT version(), current_database(), current_user');
+    const result = await client1.query('SELECT version(), current_database(), current_user');
     const queryDuration = Date.now() - queryStartTime;
     console.log(`✅ Query executed successfully in ${queryDuration}ms`);
     
@@ -47,24 +48,68 @@ async function verboseTest() {
     console.log('  User:', result.rows[0].current_user);
     
     console.log('Disconnecting...');
-    await client.end();
+    await client1.end();
     console.log('✅ Disconnected successfully');
-    
-    console.log('🎉 All tests passed!');
-    process.exit(0);
   } catch (error) {
-    console.error('❌ Connection test failed:', error.message);
+    console.error('❌ Connection test 1 failed:', error.message);
     console.error('Error code:', error.code);
     console.error('Error stack:', error.stack);
     
     try {
-      await client.end();
+      await client1.end();
     } catch (endError) {
       console.error('Error closing connection:', endError.message);
     }
-    
-    process.exit(1);
   }
+  
+  // Test 2: Connection with connection string
+  console.log('\n--- Test 2: Connection string ---');
+  const connectionString = `postgresql://${process.env.DB_USER}:${encodeURIComponent(process.env.DB_PASSWORD)}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+  console.log('Connection string:', connectionString.replace(process.env.DB_PASSWORD, '****'));
+  
+  const client2 = new Client({
+    connectionString: connectionString,
+    ssl: {
+      rejectUnauthorized: false
+    },
+    connectionTimeoutMillis: 30000
+  });
+  
+  try {
+    console.log('Attempting to connect to database (Test 2)...');
+    const startTime = Date.now();
+    await client2.connect();
+    const connectDuration = Date.now() - startTime;
+    console.log(`✅ Connected to database successfully in ${connectDuration}ms`);
+    
+    console.log('Executing test query...');
+    const queryStartTime = Date.now();
+    const result = await client2.query('SELECT version(), current_database(), current_user');
+    const queryDuration = Date.now() - queryStartTime;
+    console.log(`✅ Query executed successfully in ${queryDuration}ms`);
+    
+    console.log('Database information:');
+    console.log('  Version:', result.rows[0].version);
+    console.log('  Database:', result.rows[0].current_database);
+    console.log('  User:', result.rows[0].current_user);
+    
+    console.log('Disconnecting...');
+    await client2.end();
+    console.log('✅ Disconnected successfully');
+  } catch (error) {
+    console.error('❌ Connection test 2 failed:', error.message);
+    console.error('Error code:', error.code);
+    console.error('Error stack:', error.stack);
+    
+    try {
+      await client2.end();
+    } catch (endError) {
+      console.error('Error closing connection:', endError.message);
+    }
+  }
+  
+  console.log('\n🎉 All tests completed!');
+  process.exit(0);
 }
 
 // Run test if this script is executed directly

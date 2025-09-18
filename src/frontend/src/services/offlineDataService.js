@@ -5,6 +5,7 @@ class OfflineDataService {
     this.dbVersion = 1;
     this.db = null;
     this.syncInterval = null;
+    this.isOnline = navigator.onLine;
   }
 
   // Initialize IndexedDB
@@ -39,6 +40,12 @@ class OfflineDataService {
         if (!db.objectStoreNames.contains('driverData')) {
           const store = db.createObjectStore('driverData', { keyPath: 'key' });
         }
+        
+        if (!db.objectStoreNames.contains('locationHistory')) {
+          const store = db.createObjectStore('locationHistory', { keyPath: 'id', autoIncrement: true });
+          store.createIndex('driverId', 'driverId', { unique: false });
+          store.createIndex('timestamp', 'timestamp', { unique: false });
+        }
       };
     });
   }
@@ -66,6 +73,11 @@ class OfflineDataService {
       request.onsuccess = () => {
         console.log('Data saved for sync:', syncData);
         resolve(request.result);
+        
+        // Trigger immediate sync if online
+        if (this.isOnline) {
+          this.syncPendingData();
+        }
       };
       
       request.onerror = () => {
@@ -155,8 +167,21 @@ class OfflineDataService {
 
   // Attempt to sync pending data
   async syncPendingData() {
+    // Don't sync if offline
+    if (!this.isOnline) {
+      console.log('Device is offline, skipping sync');
+      return;
+    }
+    
     try {
       const pendingData = await this.getPendingSyncData();
+      
+      if (pendingData.length === 0) {
+        console.log('No pending data to sync');
+        return;
+      }
+      
+      console.log(`Attempting to sync ${pendingData.length} items`);
       
       for (const item of pendingData) {
         // Skip items that have failed too many times
@@ -202,12 +227,24 @@ class OfflineDataService {
     
     this.syncInterval = setInterval(() => {
       // Only sync if online
-      if (navigator.onLine) {
+      if (this.isOnline) {
         this.syncPendingData();
       }
     }, interval);
     
     console.log(`Background sync started with interval: ${interval}ms`);
+    
+    // Set up online/offline event listeners
+    window.addEventListener('online', () => {
+      console.log('Connection restored, syncing pending data');
+      this.isOnline = true;
+      this.syncPendingData();
+    });
+    
+    window.addEventListener('offline', () => {
+      console.log('Connection lost, pausing sync');
+      this.isOnline = false;
+    });
   }
 
   // Stop background sync
@@ -322,6 +359,161 @@ class OfflineDataService {
         reject(request.error);
       };
     });
+  }
+
+  // Store driver location history
+  async storeLocationHistory(driverId, locationData) {
+    if (!this.db) {
+      await this.initDB();
+    }
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(['locationHistory'], 'readwrite');
+      const store = transaction.objectStore('locationHistory');
+      const locationEntry = {
+        driverId,
+        location: locationData,
+        timestamp: Date.now()
+      };
+      const request = store.add(locationEntry);
+      
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+      
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  }
+
+  // Get driver location history
+  async getLocationHistory(driverId, limit = 50) {
+    if (!this.db) {
+      await this.initDB();
+    }
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(['locationHistory'], 'readonly');
+      const store = transaction.objectStore('locationHistory');
+      const index = store.index('driverId');
+      const request = index.getAll(IDBKeyRange.only(driverId));
+      
+      request.onsuccess = () => {
+        // Sort by timestamp and limit results
+        const results = request.result
+          .sort((a, b) => b.timestamp - a.timestamp)
+          .slice(0, limit);
+        resolve(results);
+      };
+      
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  }
+
+  // Clear old location history
+  async clearOldLocationHistory(maxAgeHours = 24) {
+    if (!this.db) {
+      await this.initDB();
+    }
+    
+    const cutoffTime = Date.now() - (maxAgeHours * 60 * 60 * 1000);
+    
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(['locationHistory'], 'readwrite');
+      const store = transaction.objectStore('locationHistory');
+      const index = store.index('timestamp');
+      
+      // Open cursor to delete old entries
+      const request = index.openCursor(IDBKeyRange.upperBound(cutoffTime));
+      
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          cursor.delete();
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+      
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  }
+
+  // Export all cached data (for backup/debugging)
+  async exportAllData() {
+    if (!this.db) {
+      await this.initDB();
+    }
+    
+    const exportData = {
+      assignments: await this.getAllCachedAssignments(),
+      driverData: [],
+      locationHistory: [],
+      pendingUpdates: await this.getPendingSyncData()
+    };
+    
+    // Get all driver data
+    const driverTransaction = this.db.transaction(['driverData'], 'readonly');
+    const driverStore = driverTransaction.objectStore('driverData');
+    const driverRequest = driverStore.getAll();
+    
+    await new Promise((resolve, reject) => {
+      driverRequest.onsuccess = () => {
+        exportData.driverData = driverRequest.result;
+        resolve();
+      };
+      driverRequest.onerror = () => reject(driverRequest.error);
+    });
+    
+    // Get all location history
+    const locationTransaction = this.db.transaction(['locationHistory'], 'readonly');
+    const locationStore = locationTransaction.objectStore('locationHistory');
+    const locationRequest = locationStore.getAll();
+    
+    await new Promise((resolve, reject) => {
+      locationRequest.onsuccess = () => {
+        exportData.locationHistory = locationRequest.result;
+        resolve();
+      };
+      locationRequest.onerror = () => reject(locationRequest.error);
+    });
+    
+    return exportData;
+  }
+
+  // Import data (for restore/testing)
+  async importData(data) {
+    if (!this.db) {
+      await this.initDB();
+    }
+    
+    // Import assignments
+    for (const assignment of data.assignments || []) {
+      await this.cacheAssignment(assignment);
+    }
+    
+    // Import driver data
+    for (const driverData of data.driverData || []) {
+      await this.cacheDriverData(driverData.key, driverData.data);
+    }
+    
+    // Import location history
+    for (const location of data.locationHistory || []) {
+      await this.storeLocationHistory(location.driverId, location.location);
+    }
+    
+    // Import pending updates
+    for (const update of data.pendingUpdates || []) {
+      await this.saveForSync(update.endpoint, update.method, update.data);
+    }
+    
+    console.log('Data imported successfully');
   }
 }
 
