@@ -117,8 +117,8 @@ const RouteVisualization = () => {
     }
   };
 
-  // Default center for the map (New York City)
-  const center = [40.7128, -74.0060];
+  // Default center for the map (Cairo, Egypt)
+  const center = [30.0444, 31.2357];
 
   if (loading) {
     return (

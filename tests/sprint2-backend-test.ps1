@@ -139,14 +139,14 @@ try {
         tracking_number = "TRK$(Get-Random -Minimum 1000 -Maximum 9999)"
         status = "pending"
         origin = @{
-            address = "123 Main St, New York, NY"
-            latitude = 40.7128
-            longitude = -74.0060
+            address = "123 Main St, Cairo, Egypt"
+            latitude = 30.0444
+            longitude = 31.2357
         }
         destination = @{
-            address = "456 Oak Ave, Brooklyn, NY"
-            latitude = 40.6782
-            longitude = -73.9442
+            address = "456 Oak Ave, Giza, Egypt"
+            latitude = 30.0444
+            longitude = 31.2357
         }
     }
     

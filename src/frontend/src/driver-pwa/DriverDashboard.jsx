@@ -45,14 +45,14 @@ const DriverDashboard = () => {
       id: '1',
       trackingNumber: 'TRK001',
       status: 'assigned',
-      destination: '123 Main St, New York, NY',
+      destination: '123 Main St, Cairo, Egypt',
       estimatedTime: '30 min'
     },
     {
       id: '2',
       trackingNumber: 'TRK002',
       status: 'in_transit',
-      destination: '456 Oak Ave, Brooklyn, NY',
+      destination: '456 Oak Ave, Giza, Egypt',
       estimatedTime: '15 min'
     }
   ]);
@@ -73,7 +73,7 @@ const DriverDashboard = () => {
           id: `${assignments.length + 1}`,
           trackingNumber: `TRK00${assignments.length + 1}`,
           status: 'assigned',
-          destination: '789 New Assignment St, Manhattan, NY',
+          destination: '789 New Assignment St, Nasr City, Cairo',
           estimatedTime: `${Math.floor(Math.random() * 30) + 15} min`
         };
         
