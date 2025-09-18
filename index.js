@@ -22,7 +22,7 @@ app.use(express.json());
 const frontendDistPath = path.join(__dirname, 'src', 'frontend', 'dist');
 app.use(express.static(frontendDistPath));
 
-// Health check endpoint
+// Health check endpoint (placed before catch-all route)
 app.get('/api/health', async (req, res) => {
   try {
     // Test database connection
@@ -65,7 +65,7 @@ app.use('/api/drivers', driverRoutes);
 app.use('/api/shipments', shipmentRoutes);
 app.use('/api/routes', routeRoutes);
 
-// Serve the frontend index.html for all other routes
+// Serve the frontend index.html for all other routes (must be last)
 app.get('*', (req, res) => {
   res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
