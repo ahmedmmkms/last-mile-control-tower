@@ -25,12 +25,21 @@ app.use(express.static(frontendDistPath));
 // Health check endpoint (placed before catch-all route)
 app.get('/api/health', async (req, res) => {
   try {
+    console.log('Health check: Starting database connection test...');
+    
+    // Log environment variables (without sensitive data)
+    console.log('DB_HOST:', process.env.DB_HOST);
+    console.log('DB_PORT:', process.env.DB_PORT);
+    console.log('DB_NAME:', process.env.DB_NAME);
+    console.log('DB_USER:', process.env.DB_USER ? '****' + process.env.DB_USER.slice(-4) : 'NOT SET');
+    
     // Test database connection
-    console.log('Health check: Testing database connection...');
     const startTime = Date.now();
+    console.log('Health check: Executing test query...');
     const result = await query('SELECT 1 as db_connected');
     const duration = Date.now() - startTime;
     
+    console.log('Health check: Query successful');
     res.status(200).json({ 
       status: 'ok', 
       timestamp: new Date().toISOString(),
