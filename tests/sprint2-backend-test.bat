@@ -2,7 +2,7 @@
 REM Sprint 2 Backend Features Test Script
 REM This script tests the new backend features implemented for Sprint 2
 
-set BASE_URL=http://localhost:3000
+set BASE_URL=http://last-mile-control-tower.vercel.app
 set DRIVER_ID=123e4567-e89b-12d3-a456-426614174000
 
 echo 🧚 Sprint 2 Backend Features Test Script

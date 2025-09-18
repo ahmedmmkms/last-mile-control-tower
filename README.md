@@ -30,6 +30,7 @@ This project follows a 3-sprint development approach with CI/CD pipeline for Ver
 - [Sprint 0 Summary](docs/sprint-0-summary.md) - ✅ Completed
 - [Sprint 1 Plan](docs/sprint-1-plan.md) - 🚧 Planned
 - [Sprint 1 Progress](docs/sprint-1-summary.md) - ⏳ Not Started
+- [Sprint 2 Plan](docs/sprint-2-plan.md) - ✅ Completed
 
 ## Database Setup
 

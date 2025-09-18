@@ -5,6 +5,9 @@ import ShipmentList from '../components/ShipmentList';
 import DriverStatusPanel from '../components/DriverStatusPanel';
 import RouteVisualization from '../components/RouteVisualization';
 import AdminInterface from '../components/AdminInterface';
+import DispatcherNotifications from '../components/DispatcherNotifications';
+import OfflineTestComponent from '../components/OfflineTestComponent';
+import ResponsiveDesignTest from '../components/ResponsiveDesignTest';
 
 const drawerWidth = 240;
 
@@ -27,6 +30,8 @@ const Dashboard = () => {
             <ShipmentList />
             <DriverStatusPanel />
             <RouteVisualization />
+            <OfflineTestComponent />
+            <ResponsiveDesignTest />
           </>
         );
     }
@@ -38,9 +43,10 @@ const Dashboard = () => {
       {/* Header */}
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Last-Mile Delivery Control Tower
           </Typography>
+          <DispatcherNotifications />
         </Toolbar>
       </AppBar>
 

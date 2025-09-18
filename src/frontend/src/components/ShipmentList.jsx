@@ -12,17 +12,41 @@ import {
   Button,
   Chip,
   Box,
-  CircularProgress
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  useMediaQuery,
+  useTheme,
+  Collapse,
+  List,
+  ListItem,
+  ListItemText
 } from '@mui/material';
-import { Search as SearchIcon, Add as AddIcon } from '@mui/icons-material';
+import { 
+  Search as SearchIcon, 
+  Add as AddIcon, 
+  Timeline as TimelineIcon,
+  Close as CloseIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
+} from '@mui/icons-material';
 import ApiService from '../services/apiService';
+import ShipmentTimeline from './ShipmentTimeline';
 
 const ShipmentList = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredShipments, setFilteredShipments] = useState([]);
+  const [selectedShipment, setSelectedShipment] = useState(null);
+  const [timelineDialogOpen, setTimelineDialogOpen] = useState(false);
+  const [expandedRows, setExpandedRows] = useState(new Set());
 
   useEffect(() => {
     fetchShipments();
@@ -62,6 +86,21 @@ const ShipmentList = () => {
     }
   };
 
+  const handleViewTimeline = (shipment) => {
+    setSelectedShipment(shipment);
+    setTimelineDialogOpen(true);
+  };
+
+  const toggleRowExpansion = (shipmentId) => {
+    const newExpandedRows = new Set(expandedRows);
+    if (newExpandedRows.has(shipmentId)) {
+      newExpandedRows.delete(shipmentId);
+    } else {
+      newExpandedRows.add(shipmentId);
+    }
+    setExpandedRows(newExpandedRows);
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -80,12 +119,17 @@ const ShipmentList = () => {
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant={isMobile ? "h6" : "h5"} gutterBottom>
         Shipments
       </Typography>
       
       {/* Search Bar */}
-      <Box sx={{ display: 'flex', mb: 2 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        mb: 2,
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? 2 : 0
+      }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -95,49 +139,164 @@ const ShipmentList = () => {
           InputProps={{
             startAdornment: <SearchIcon sx={{ mr: 1 }} />,
           }}
+          size={isMobile ? "small" : "medium"}
         />
-        <Button variant="contained" startIcon={<AddIcon />} sx={{ ml: 2 }}>
+        <Button 
+          variant="contained" 
+          startIcon={<AddIcon />} 
+          sx={{ 
+            ml: isMobile ? 0 : 2,
+            mt: isMobile ? 0 : 0,
+            width: isMobile ? '100%' : 'auto'
+          }}
+          size={isMobile ? "small" : "medium"}
+        >
           Add Shipment
         </Button>
       </Box>
       
-      {/* Shipments Table */}
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Tracking Number</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Origin</TableCell>
-              <TableCell>Destination</TableCell>
-              <TableCell>Assigned Driver</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      {/* Shipments View */}
+      {isMobile ? (
+        // Mobile view - list with expandable details
+        <Paper>
+          <List>
             {filteredShipments.map((shipment) => (
-              <TableRow key={shipment.id}>
-                <TableCell>{shipment.tracking_number}</TableCell>
-                <TableCell>
-                  <Chip 
-                    label={shipment.status} 
-                    color={getStatusColor(shipment.status)} 
-                    size="small" 
-                  />
-                </TableCell>
-                <TableCell>
-                  {shipment.origin ? `${shipment.origin.lat}, ${shipment.origin.lng}` : 'N/A'}
-                </TableCell>
-                <TableCell>
-                  {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
-                </TableCell>
-                <TableCell>
-                  {shipment.assigned_driver_id || 'Unassigned'}
-                </TableCell>
-              </TableRow>
+              <React.Fragment key={shipment.id}>
+                <ListItem
+                  sx={{ 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-start',
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+                  }}
+                >
+                  <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    width: '100%',
+                    alignItems: 'center'
+                  }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                      {shipment.tracking_number}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Chip 
+                        label={shipment.status} 
+                        color={getStatusColor(shipment.status)} 
+                        size="small" 
+                        sx={{ mr: 1 }}
+                      />
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleViewTimeline(shipment)}
+                      >
+                        <TimelineIcon />
+                      </IconButton>
+                      <IconButton 
+                        size="small" 
+                        onClick={() => toggleRowExpansion(shipment.id)}
+                      >
+                        {expandedRows.has(shipment.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                  
+                  <Collapse in={expandedRows.has(shipment.id)} timeout="auto" unmountOnExit sx={{ width: '100%' }}>
+                    <Box sx={{ mt: 1 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        <strong>Origin:</strong> {shipment.origin ? `${shipment.origin.lat}, ${shipment.origin.lng}` : 'N/A'}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        <strong>Destination:</strong> {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        <strong>Driver:</strong> {shipment.assigned_driver_id || 'Unassigned'}
+                      </Typography>
+                    </Box>
+                  </Collapse>
+                </ListItem>
+              </React.Fragment>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </List>
+        </Paper>
+      ) : (
+        // Desktop view - full table
+        <TableContainer component={Paper}>
+          <Table size={isMobile ? "small" : "medium"}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Tracking Number</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Origin</TableCell>
+                <TableCell>Destination</TableCell>
+                <TableCell>Assigned Driver</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredShipments.map((shipment) => (
+                <TableRow key={shipment.id}>
+                  <TableCell>{shipment.tracking_number}</TableCell>
+                  <TableCell>
+                    <Chip 
+                      label={shipment.status} 
+                      color={getStatusColor(shipment.status)} 
+                      size={isMobile ? "small" : "medium"} 
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {shipment.origin ? `${shipment.origin.lat}, ${shipment.origin.lng}` : 'N/A'}
+                  </TableCell>
+                  <TableCell>
+                    {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
+                  </TableCell>
+                  <TableCell>
+                    {shipment.assigned_driver_id || 'Unassigned'}
+                  </TableCell>
+                  <TableCell>
+                    <IconButton 
+                      size={isMobile ? "small" : "medium"} 
+                      onClick={() => handleViewTimeline(shipment)}
+                      title="View Timeline"
+                    >
+                      <TimelineIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      
+      {/* Shipment Timeline Dialog */}
+      <Dialog 
+        open={timelineDialogOpen} 
+        onClose={() => setTimelineDialogOpen(false)} 
+        maxWidth="md" 
+        fullWidth
+        fullScreen={isMobile}
+      >
+        <DialogTitle>
+          Shipment Timeline
+          <IconButton
+            aria-label="close"
+            onClick={() => setTimelineDialogOpen(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedShipment && (
+            <ShipmentTimeline shipmentId={selectedShipment.id} />
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
