@@ -78,12 +78,6 @@ export default defineConfig({
   // Optimize dependencies that are known to cause issues
   optimizeDeps: {
     include: ['leaflet', 'react-leaflet', '@mui/material', '@mui/icons-material', 'recharts']
-  },
-  // Explicitly resolve problematic modules to prevent path resolution issues
-  resolve: {
-    alias: {
-      // Force correct resolution of leaflet modules
-      'leaflet': 'leaflet/dist/leaflet-src.esm.js'
-    }
   }
+  // Removed explicit alias resolution to prevent path resolution issues with leaflet modules
 })
