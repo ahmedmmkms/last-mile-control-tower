@@ -69,14 +69,15 @@ export default defineConfig({
           // Split vendor chunks to optimize bundle size
           vendor: ['react', 'react-dom'],
           material: ['@mui/material', '@mui/icons-material'],
-          leaflet: ['leaflet', 'react-leaflet']
+          leaflet: ['leaflet', 'react-leaflet'],
+          charts: ['recharts']
         }
       }
     }
   },
   // Optimize dependencies that are known to cause issues
   optimizeDeps: {
-    include: ['leaflet', 'react-leaflet', '@mui/material', '@mui/icons-material']
+    include: ['leaflet', 'react-leaflet', '@mui/material', '@mui/icons-material', 'recharts']
   },
   // Explicitly resolve problematic modules
   resolve: {
