@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Smoke test for database connection
-const { client, connect, disconnect } = require('./db');
+const { query, connect, disconnect } = require('./db');
 
 async function smokeTest() {
   try {
@@ -10,7 +10,7 @@ async function smokeTest() {
     console.log('✅ Database connection successful!');
     
     // Test basic query
-    const result = await client.query('SELECT 1 as test');
+    const result = await query('SELECT 1 as test');
     if (result.rows[0].test === 1) {
       console.log('✅ Basic database query successful!');
     } else {
@@ -19,7 +19,7 @@ async function smokeTest() {
     }
     
     // Test table existence
-    const tables = await client.query(`
+    const tables = await query(`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 

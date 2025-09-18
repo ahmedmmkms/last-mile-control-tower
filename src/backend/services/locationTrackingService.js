@@ -1,5 +1,5 @@
 // Location Tracking Service
-const { client } = require('../../database/db');
+const { query } = require('../../database/db');
 
 // Validate location data
 function validateLocationData(location) {
@@ -26,8 +26,8 @@ function validateLocationData(location) {
 async function storeDriverLocationHistory(driverId, location) {
   try {
     // Get current location history
-    const query = 'SELECT location_history FROM drivers WHERE id = $1';
-    const result = await client.query(query, [driverId]);
+    const queryText = 'SELECT location_history FROM drivers WHERE id = $1';
+    const result = await query(queryText, [driverId]);
     
     if (result.rows.length === 0) {
       throw new Error('Driver not found');
@@ -54,7 +54,7 @@ async function storeDriverLocationHistory(driverId, location) {
       RETURNING location_history
     `;
     
-    const updateResult = await client.query(updateQuery, [JSON.stringify(trimmedHistory), driverId]);
+    const updateResult = await query(updateQuery, [JSON.stringify(trimmedHistory), driverId]);
     return updateResult.rows[0].location_history;
   } catch (error) {
     console.error('Error storing driver location history:', error);
@@ -65,7 +65,7 @@ async function storeDriverLocationHistory(driverId, location) {
 // Store tracking data
 async function storeTrackingData(shipmentId, driverId, location, eventType, metadata) {
   try {
-    const query = `
+    const queryText = `
       INSERT INTO tracking (shipment_id, driver_id, location, event_type, metadata)
       VALUES ($1, $2, $3::jsonb, $4, $5::jsonb)
       RETURNING *
@@ -79,7 +79,7 @@ async function storeTrackingData(shipmentId, driverId, location, eventType, meta
       JSON.stringify(metadata || {})
     ];
     
-    const result = await client.query(query, values);
+    const result = await query(queryText, values);
     return result.rows[0];
   } catch (error) {
     console.error('Error storing tracking data:', error);
@@ -90,13 +90,13 @@ async function storeTrackingData(shipmentId, driverId, location, eventType, meta
 // Get driver location history
 async function getDriverLocationHistory(driverId, limit = 50) {
   try {
-    const query = `
+    const queryText = `
       SELECT location_history 
       FROM drivers 
       WHERE id = $1
     `;
     
-    const result = await client.query(query, [driverId]);
+    const result = await query(queryText, [driverId]);
     
     if (result.rows.length === 0) {
       throw new Error('Driver not found');
@@ -115,14 +115,14 @@ async function getDriverLocationHistory(driverId, limit = 50) {
 // Get tracking data for a shipment
 async function getShipmentTrackingData(shipmentId) {
   try {
-    const query = `
+    const queryText = `
       SELECT * 
       FROM tracking 
       WHERE shipment_id = $1 
       ORDER BY timestamp ASC
     `;
     
-    const result = await client.query(query, [shipmentId]);
+    const result = await query(queryText, [shipmentId]);
     return result.rows;
   } catch (error) {
     console.error('Error fetching shipment tracking data:', error);

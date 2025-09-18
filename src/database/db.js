@@ -1,9 +1,9 @@
 // Database connection module
 require('dotenv').config();
-const { Client } = require('pg');
+const { Pool } = require('pg');
 
-// Create a new PostgreSQL client
-const client = new Client({
+// Create a new PostgreSQL connection pool
+const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
@@ -11,24 +11,31 @@ const client = new Client({
   database: process.env.DB_NAME,
   ssl: {
     rejectUnauthorized: false
-  }
+  },
+  // Connection pool settings
+  max: 20, // Maximum number of clients in the pool
+  min: 5,  // Minimum number of clients in the pool
+  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
 });
 
-// Function to connect to the database
+// Function to connect to the database (initialize pool)
 async function connect() {
   try {
-    await client.connect();
+    // Test the connection
+    const client = await pool.connect();
     console.log('Connected to the database successfully');
+    client.release(); // Return the client to the pool
   } catch (error) {
     console.error('Error connecting to the database:', error);
     throw error;
   }
 }
 
-// Function to disconnect from the database
+// Function to disconnect from the database (end pool)
 async function disconnect() {
   try {
-    await client.end();
+    await pool.end();
     console.log('Disconnected from the database');
   } catch (error) {
     console.error('Error disconnecting from the database:', error);
@@ -36,8 +43,24 @@ async function disconnect() {
   }
 }
 
+// Query function that automatically handles client acquisition and release
+async function query(text, params) {
+  const start = Date.now();
+  try {
+    const res = await pool.query(text, params);
+    const duration = Date.now() - start;
+    console.log('Executed query', { text, duration, rows: res.rowCount });
+    return res;
+  } catch (error) {
+    const duration = Date.now() - start;
+    console.error('Error executing query', { text, duration, error: error.message });
+    throw error;
+  }
+}
+
 module.exports = {
-  client,
+  pool,
   connect,
   disconnect,
+  query
 };

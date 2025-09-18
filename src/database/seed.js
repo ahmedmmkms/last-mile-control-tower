@@ -3,7 +3,7 @@
 // Seed data runner script
 const fs = require('fs');
 const path = require('path');
-const { client, connect, disconnect } = require('./db');
+const { query, connect, disconnect } = require('./db');
 
 async function runSeeds() {
   try {
@@ -32,7 +32,7 @@ async function runSeeds() {
       const sql = fs.readFileSync(seedPath, 'utf8');
       
       try {
-        await client.query(sql);
+        await query(sql);
         console.log(`Successfully executed: ${file}`);
       } catch (error) {
         console.error(`Error executing ${file}:`, error);
