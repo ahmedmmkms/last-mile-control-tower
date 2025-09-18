@@ -12,11 +12,12 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   },
-  // Connection pool settings
-  max: 20, // Maximum number of clients in the pool
-  min: 5,  // Minimum number of clients in the pool
-  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  // Connection pool settings optimized for Vercel serverless environment
+  max: 10, // Maximum number of clients in the pool (reduced for serverless)
+  min: 2,  // Minimum number of clients in the pool
+  idleTimeoutMillis: 10000, // Close idle clients after 10 seconds (shorter for serverless)
+  connectionTimeoutMillis: 5000, // Return an error after 5 seconds if connection could not be established (increased from 2 seconds)
+  query_timeout: 10000, // Query timeout of 10 seconds
 });
 
 // Function to connect to the database (initialize pool)

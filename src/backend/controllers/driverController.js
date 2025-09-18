@@ -3,14 +3,25 @@ const Driver = require('../models/driverModel');
 const { isValidUUID } = require('../utils/uuidValidator');
 const { validateLocationData, storeDriverLocationHistory, storeTrackingData } = require('../services/locationTrackingService');
 
-// Get all drivers
+// Get all drivers with retry logic
 async function getAllDrivers(req, res) {
-  try {
-    const drivers = await Driver.getAllDrivers();
-    res.status(200).json(drivers);
-  } catch (error) {
-    console.error('Error fetching drivers:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      const drivers = await Driver.getAllDrivers();
+      res.status(200).json(drivers);
+      return;
+    } catch (error) {
+      retries--;
+      console.error(`Error fetching drivers (retries left: ${retries}):`, error);
+      if (retries === 0 || !error.message.includes('timeout')) {
+        // If it's not a timeout error or we're out of retries, return error
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
   }
 }
 

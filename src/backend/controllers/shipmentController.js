@@ -3,14 +3,25 @@ const Shipment = require('../models/shipmentModel');
 const { isValidUUID } = require('../utils/uuidValidator');
 const { storeTrackingData } = require('../services/locationTrackingService');
 
-// Get all shipments
+// Get all shipments with retry logic
 async function getAllShipments(req, res) {
-  try {
-    const shipments = await Shipment.getAllShipments();
-    res.status(200).json(shipments);
-  } catch (error) {
-    console.error('Error fetching shipments:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      const shipments = await Shipment.getAllShipments();
+      res.status(200).json(shipments);
+      return;
+    } catch (error) {
+      retries--;
+      console.error(`Error fetching shipments (retries left: ${retries}):`, error);
+      if (retries === 0 || !error.message.includes('timeout')) {
+        // If it's not a timeout error or we're out of retries, return error
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
   }
 }
 

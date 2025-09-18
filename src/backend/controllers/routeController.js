@@ -2,14 +2,25 @@
 const Route = require('../models/routeModel');
 const { isValidUUID } = require('../utils/uuidValidator');
 
-// Get all routes
+// Get all routes with retry logic
 async function getAllRoutes(req, res) {
-  try {
-    const routes = await Route.getAllRoutes();
-    res.status(200).json(routes);
-  } catch (error) {
-    console.error('Error fetching routes:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      const routes = await Route.getAllRoutes();
+      res.status(200).json(routes);
+      return;
+    } catch (error) {
+      retries--;
+      console.error(`Error fetching routes (retries left: ${retries}):`, error);
+      if (retries === 0 || !error.message.includes('timeout')) {
+        // If it's not a timeout error or we're out of retries, return error
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
   }
 }
 
