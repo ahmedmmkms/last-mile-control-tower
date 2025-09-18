@@ -1,7 +1,7 @@
 // Socket.IO server for real-time communication
 const http = require('http');
 const { Server } = require('socket.io');
-const { app } = require('../index');
+const { app } = require('../../..');
 
 // Create HTTP server
 const server = http.createServer(app);

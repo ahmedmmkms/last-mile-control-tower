@@ -17,13 +17,13 @@ async function getShipmentById(id) {
 
 // Create a new shipment
 async function createShipment(shipmentData) {
-  const { tracking_number, status, origin, destination, assigned_driver_id } = shipmentData;
+  const { tracking_number, status, origin, destination, assigned_driver_id, cod_amount } = shipmentData;
   const queryText = `
-    INSERT INTO shipments (tracking_number, status, origin, destination, assigned_driver_id)
-    VALUES ($1, $2, $3::jsonb, $4::jsonb, $5)
+    INSERT INTO shipments (tracking_number, status, origin, destination, assigned_driver_id, cod_amount)
+    VALUES ($1, $2, $3::jsonb, $4::jsonb, $5, $6)
     RETURNING *
   `;
-  const values = [tracking_number, status, JSON.stringify(origin), JSON.stringify(destination), assigned_driver_id];
+  const values = [tracking_number, status, JSON.stringify(origin), JSON.stringify(destination), assigned_driver_id, cod_amount];
   const result = await query(queryText, values);
   return result.rows[0];
 }

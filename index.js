@@ -76,11 +76,17 @@ app.get('/api', (req, res) => {
 const driverRoutes = require('./src/backend/routes/driverRoutes');
 const shipmentRoutes = require('./src/backend/routes/shipmentRoutes');
 const routeRoutes = require('./src/backend/routes/routeRoutes');
+const codRoutes = require('./src/backend/routes/codRoutes');
+const slaRoutes = require('./src/backend/routes/slaRoutes');
+const analyticsRoutes = require('./src/backend/routes/analyticsRoutes');
 
 // Register routes
 app.use('/api/drivers', driverRoutes);
 app.use('/api/shipments', shipmentRoutes);
 app.use('/api/routes', routeRoutes);
+app.use('/api/cod', codRoutes);
+app.use('/api/sla', slaRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Serve the frontend index.html for all other routes (must be last)
 app.get('*', (req, res) => {

@@ -10,6 +10,9 @@ import {
 import ShipmentManagement from './ShipmentManagement';
 import DriverManagement from './DriverManagement';
 import RouteManagement from './RouteManagement';
+import CODManagement from './CODManagement';
+import CODReconciliation from './CODReconciliation';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 const AdminInterface = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -35,6 +38,9 @@ const AdminInterface = () => {
           <Tab label="Shipments" />
           <Tab label="Drivers" />
           <Tab label="Routes" />
+          <Tab label="COD" />
+          <Tab label="Reconciliation" />
+          <Tab label="Analytics" />
         </Tabs>
       </Paper>
 
@@ -43,6 +49,9 @@ const AdminInterface = () => {
       {activeTab === 0 && <ShipmentManagement />}
       {activeTab === 1 && <DriverManagement />}
       {activeTab === 2 && <RouteManagement />}
+      {activeTab === 3 && <CODManagement />}
+      {activeTab === 4 && <CODReconciliation />}
+      {activeTab === 5 && <AnalyticsDashboard />}
     </Box>
   );
 };
