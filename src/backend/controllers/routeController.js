@@ -4,26 +4,29 @@ const { isValidUUID } = require('../utils/uuidValidator');
 
 // Get all routes with retry logic
 async function getAllRoutes(req, res) {
+  console.log('getAllRoutes: Starting request processing');
   let retries = 3;
   while (retries > 0) {
     try {
-      console.log(`Attempting to fetch routes (retries left: ${retries})`);
+      console.log(`getAllRoutes: Attempting to fetch routes (retries left: ${retries})`);
+      const startTime = Date.now();
       const routes = await Route.getAllRoutes();
-      console.log(`Successfully fetched ${routes.length} routes`);
+      const duration = Date.now() - startTime;
+      console.log(`getAllRoutes: Successfully fetched ${routes.length} routes in ${duration}ms`);
       res.status(200).json(routes);
       return;
     } catch (error) {
       retries--;
-      console.error(`Error fetching routes (retries left: ${retries}):`, error);
+      console.error(`getAllRoutes: Error fetching routes (retries left: ${retries}):`, error);
       if (retries === 0 || !error.message.includes('timeout')) {
         // If it's not a timeout error or we're out of retries, return error
-        console.error('Final error when fetching routes:', error);
+        console.error('getAllRoutes: Final error when fetching routes:', error);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
       // Wait a bit before retrying with exponential backoff
       const waitTime = Math.pow(2, 3 - retries) * 100;
-      console.log(`Waiting ${waitTime}ms before retrying...`);
+      console.log(`getAllRoutes: Waiting ${waitTime}ms before retrying...`);
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }

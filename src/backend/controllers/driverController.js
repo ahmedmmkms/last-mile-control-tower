@@ -5,26 +5,29 @@ const { validateLocationData, storeDriverLocationHistory, storeTrackingData } = 
 
 // Get all drivers with retry logic
 async function getAllDrivers(req, res) {
+  console.log('getAllDrivers: Starting request processing');
   let retries = 3;
   while (retries > 0) {
     try {
-      console.log(`Attempting to fetch drivers (retries left: ${retries})`);
+      console.log(`getAllDrivers: Attempting to fetch drivers (retries left: ${retries})`);
+      const startTime = Date.now();
       const drivers = await Driver.getAllDrivers();
-      console.log(`Successfully fetched ${drivers.length} drivers`);
+      const duration = Date.now() - startTime;
+      console.log(`getAllDrivers: Successfully fetched ${drivers.length} drivers in ${duration}ms`);
       res.status(200).json(drivers);
       return;
     } catch (error) {
       retries--;
-      console.error(`Error fetching drivers (retries left: ${retries}):`, error);
+      console.error(`getAllDrivers: Error fetching drivers (retries left: ${retries}):`, error);
       if (retries === 0 || !error.message.includes('timeout')) {
         // If it's not a timeout error or we're out of retries, return error
-        console.error('Final error when fetching drivers:', error);
+        console.error('getAllDrivers: Final error when fetching drivers:', error);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
       // Wait a bit before retrying with exponential backoff
       const waitTime = Math.pow(2, 3 - retries) * 100;
-      console.log(`Waiting ${waitTime}ms before retrying...`);
+      console.log(`getAllDrivers: Waiting ${waitTime}ms before retrying...`);
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }

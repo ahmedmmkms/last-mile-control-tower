@@ -5,26 +5,29 @@ const { storeTrackingData } = require('../services/locationTrackingService');
 
 // Get all shipments with retry logic
 async function getAllShipments(req, res) {
+  console.log('getAllShipments: Starting request processing');
   let retries = 3;
   while (retries > 0) {
     try {
-      console.log(`Attempting to fetch shipments (retries left: ${retries})`);
+      console.log(`getAllShipments: Attempting to fetch shipments (retries left: ${retries})`);
+      const startTime = Date.now();
       const shipments = await Shipment.getAllShipments();
-      console.log(`Successfully fetched ${shipments.length} shipments`);
+      const duration = Date.now() - startTime;
+      console.log(`getAllShipments: Successfully fetched ${shipments.length} shipments in ${duration}ms`);
       res.status(200).json(shipments);
       return;
     } catch (error) {
       retries--;
-      console.error(`Error fetching shipments (retries left: ${retries}):`, error);
+      console.error(`getAllShipments: Error fetching shipments (retries left: ${retries}):`, error);
       if (retries === 0 || !error.message.includes('timeout')) {
         // If it's not a timeout error or we're out of retries, return error
-        console.error('Final error when fetching shipments:', error);
+        console.error('getAllShipments: Final error when fetching shipments:', error);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
       // Wait a bit before retrying with exponential backoff
       const waitTime = Math.pow(2, 3 - retries) * 100;
-      console.log(`Waiting ${waitTime}ms before retrying...`);
+      console.log(`getAllShipments: Waiting ${waitTime}ms before retrying...`);
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }

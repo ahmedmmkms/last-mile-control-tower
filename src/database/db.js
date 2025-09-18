@@ -2,9 +2,6 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-// Track connection state
-let isConnected = false;
-
 // Create a new PostgreSQL connection pool
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -16,25 +13,20 @@ const pool = new Pool({
     rejectUnauthorized: false
   },
   // Connection pool settings optimized for Vercel serverless environment
-  max: 5, // Maximum number of clients in the pool (reduced for serverless)
+  max: 3, // Maximum number of clients in the pool (reduced for serverless)
   min: 0,  // Minimum number of clients in the pool (0 for serverless)
-  idleTimeoutMillis: 5000, // Close idle clients after 5 seconds (shorter for serverless)
-  connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection could not be established
-  query_timeout: 15000, // Query timeout of 15 seconds
+  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  connectionTimeoutMillis: 30000, // Return an error after 30 seconds if connection could not be established
+  query_timeout: 30000, // Query timeout of 30 seconds
 });
 
 // Function to connect to the database (initialize pool)
 async function connect() {
-  if (isConnected) {
-    return;
-  }
-  
   try {
     // Test the connection
     const client = await pool.connect();
     console.log('Connected to the database successfully');
     client.release(); // Return the client to the pool
-    isConnected = true;
   } catch (error) {
     console.error('Error connecting to the database:', error);
     throw error;
@@ -46,7 +38,6 @@ async function disconnect() {
   try {
     await pool.end();
     console.log('Disconnected from the database');
-    isConnected = false;
   } catch (error) {
     console.error('Error disconnecting from the database:', error);
     throw error;
@@ -55,9 +46,6 @@ async function disconnect() {
 
 // Query function that automatically handles client acquisition and release
 async function query(text, params) {
-  // Ensure we're connected before querying
-  await connect();
-  
   const start = Date.now();
   try {
     const res = await pool.query(text, params);

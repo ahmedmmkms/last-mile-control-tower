@@ -3,7 +3,7 @@
 # including WebSocket connections and enhanced REST APIs
 
 param(
-    [string]$BaseUrl = "http://localhost:3000",
+    [string]$BaseUrl = "http://last-mile-control-tower.vercel.app",
     [string]$DriverId = "123e4567-e89b-12d3-a456-426614174000"
 )
 

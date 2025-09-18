@@ -26,11 +26,16 @@ app.use(express.static(frontendDistPath));
 app.get('/api/health', async (req, res) => {
   try {
     // Test database connection
+    console.log('Health check: Testing database connection...');
+    const startTime = Date.now();
     const result = await query('SELECT 1 as db_connected');
+    const duration = Date.now() - startTime;
+    
     res.status(200).json({ 
       status: 'ok', 
       timestamp: new Date().toISOString(),
       database: 'connected',
+      dbTestDuration: `${duration}ms`,
       dbResult: result.rows[0]
     });
   } catch (error) {
@@ -39,7 +44,8 @@ app.get('/api/health', async (req, res) => {
       status: 'error', 
       timestamp: new Date().toISOString(),
       database: 'disconnected',
-      error: error.message
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
