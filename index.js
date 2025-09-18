@@ -2,12 +2,20 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
+const cors = require('cors');
 const { connect, disconnect } = require('./src/database/db');
 
 // Create Express app
 const app = express();
 
 // Middleware
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.DEPLOYED_URL || 'https://your-app-name.vercel.app' 
+    : true,
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Serve static files from the frontend build directory
