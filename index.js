@@ -49,11 +49,19 @@ app.get('/api/health', async (req, res) => {
     });
   } catch (error) {
     console.error('Health check failed:', error);
+    // Log additional error details
+    if (error.code) console.error('Error code:', error.code);
+    if (error.errno) console.error('Error errno:', error.errno);
+    if (error.syscall) console.error('Error syscall:', error.syscall);
+    if (error.severity) console.error('Error severity:', error.severity);
+    if (error.detail) console.error('Error detail:', error.detail);
+    
     res.status(500).json({ 
       status: 'error', 
       timestamp: new Date().toISOString(),
       database: 'disconnected',
       error: error.message,
+      code: error.code,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }

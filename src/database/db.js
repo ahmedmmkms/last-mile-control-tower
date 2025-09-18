@@ -2,13 +2,12 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-// Create a new PostgreSQL connection pool with Supabase-compatible settings
+// Create connection string for Supabase
+const connectionString = `postgresql://${process.env.DB_USER}:${encodeURIComponent(process.env.DB_PASSWORD)}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+
+// Create a new PostgreSQL connection pool with Supabase-specific settings
 const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  connectionString: connectionString,
   ssl: {
     rejectUnauthorized: false
   },
@@ -23,13 +22,11 @@ const pool = new Pool({
 // Function to connect to the database (initialize pool)
 async function connect() {
   try {
-    console.log('Attempting to connect to database...');
-    console.log('DB Connection params:', {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      database: process.env.DB_NAME
-    });
+    console.log('Attempting to connect to database using connection string...');
+    console.log('DB Host:', process.env.DB_HOST);
+    console.log('DB Port:', process.env.DB_PORT);
+    console.log('DB User:', process.env.DB_USER);
+    console.log('DB Name:', process.env.DB_NAME);
     
     // Test the connection
     const client = await pool.connect();
@@ -37,6 +34,12 @@ async function connect() {
     client.release(); // Return the client to the pool
   } catch (error) {
     console.error('Error connecting to the database:', error);
+    // Log additional error details
+    if (error.code) console.error('Error code:', error.code);
+    if (error.errno) console.error('Error errno:', error.errno);
+    if (error.syscall) console.error('Error syscall:', error.syscall);
+    if (error.severity) console.error('Error severity:', error.severity);
+    if (error.detail) console.error('Error detail:', error.detail);
     throw error;
   }
 }
@@ -64,6 +67,12 @@ async function query(text, params) {
   } catch (error) {
     const duration = Date.now() - start;
     console.error('Error executing query after', duration, 'ms:', error.message);
+    // Log additional error details
+    if (error.code) console.error('Error code:', error.code);
+    if (error.errno) console.error('Error errno:', error.errno);
+    if (error.syscall) console.error('Error syscall:', error.syscall);
+    if (error.severity) console.error('Error severity:', error.severity);
+    if (error.detail) console.error('Error detail:', error.detail);
     throw error;
   }
 }

@@ -19,10 +19,20 @@ async function getAllDrivers(req, res) {
     } catch (error) {
       retries--;
       console.error(`getAllDrivers: Error fetching drivers (retries left: ${retries}):`, error);
+      // Log additional error details
+      if (error.code) console.error('Error code:', error.code);
+      if (error.errno) console.error('Error errno:', error.errno);
+      if (error.syscall) console.error('Error syscall:', error.syscall);
+      if (error.severity) console.error('Error severity:', error.severity);
+      if (error.detail) console.error('Error detail:', error.detail);
+      
       if (retries === 0 || !error.message.includes('timeout')) {
         // If it's not a timeout error or we're out of retries, return error
         console.error('getAllDrivers: Final error when fetching drivers:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ 
+          error: 'Internal server error',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
         return;
       }
       // Wait a bit before retrying with exponential backoff
