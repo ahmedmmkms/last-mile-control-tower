@@ -63,7 +63,11 @@ try {
   console.log('Running npm run build in frontend directory...');
   execSync('npm run build', { 
     cwd: frontendDir,
-    stdio: 'inherit'
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      NODE_OPTIONS: '--max-old-space-size=4096'
+    }
   });
   
   console.log('Frontend build completed successfully!');
@@ -99,5 +103,6 @@ try {
   
 } catch (error) {
   console.error('Frontend build failed:', error.message);
+  console.error('Stack trace:', error.stack);
   process.exit(1);
 }

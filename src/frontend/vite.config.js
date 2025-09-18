@@ -59,5 +59,23 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './tests/setup.js',
     globals: true,
+  },
+  // Fix for Vercel build error - explicitly handle external dependencies
+  build: {
+    rollupOptions: {
+      external: [],
+      output: {
+        manualChunks: {
+          // Split vendor chunks to optimize bundle size
+          vendor: ['react', 'react-dom'],
+          material: ['@mui/material', '@mui/icons-material'],
+          leaflet: ['leaflet', 'react-leaflet']
+        }
+      }
+    }
+  },
+  // Optimize dependencies that are known to cause issues
+  optimizeDeps: {
+    include: ['leaflet', 'react-leaflet']
   }
 })
