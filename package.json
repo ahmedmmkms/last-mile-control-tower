@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build-frontend": "node build-frontend.js",
+    "build-frontend": "cd src/frontend && npm install && npm run build",
     "postinstall": "npm run build-frontend",
     "serve-frontend": "cd src/frontend && npm run preview",
     "migrate": "node src/database/migrate.js",

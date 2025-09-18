@@ -60,7 +60,7 @@ export default defineConfig({
     setupFiles: './tests/setup.js',
     globals: true,
   },
-  // Fix for Vercel build error - explicitly handle external dependencies
+  // Fix for Vercel build error - handle external dependencies properly
   build: {
     rollupOptions: {
       external: [],
@@ -76,6 +76,12 @@ export default defineConfig({
   },
   // Optimize dependencies that are known to cause issues
   optimizeDeps: {
-    include: ['leaflet', 'react-leaflet']
+    include: ['leaflet', 'react-leaflet', '@mui/material', '@mui/icons-material']
+  },
+  // Explicitly resolve problematic modules
+  resolve: {
+    alias: {
+      'leaflet': 'leaflet/dist/leaflet-src.esm.js'
+    }
   }
 })
