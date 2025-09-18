@@ -1,74 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1976d2" />
-    <meta name="description" content="Last-Mile Delivery Driver App - Progressive Web App with offline capabilities" />
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/logo192.png" />
-    <link rel="apple-touch-startup-image" href="/splash-screen.png" />
-    
-    <!-- Standard PWA Meta Tags -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Driver PWA" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    
-    <!-- iOS specific meta tags -->
-    <meta name="format-detection" content="telephone=no" />
-    
-    <!-- Windows Phone -->
-    <meta name="msapplication-TileColor" content="#1976d2" />
-    <meta name="msapplication-TileImage" content="/logo192.png" />
-    
-    <!-- Mobile browser colors -->
-    <meta name="theme-color" content="#1976d2" />
-    
-    <!-- PWA Splash Screen -->
-    <meta name="msapplication-config" content="browserconfig.xml" />
-    
-    <!-- Disable automatic detection of phone numbers -->
-    <meta name="format-detection" content="telephone=no" />
-    
-    <!-- Disable automatic detection of email addresses -->
-    <meta name="format-detection" content="email=no" />
-    
-    <!-- Disable automatic detection of addresses -->
-    <meta name="format-detection" content="address=no" />
-    
-    <!-- Add to Home Screen Prompts -->
-    <meta name="apple-mobile-web-app-title" content="Driver PWA">
-    <meta name="application-name" content="Driver PWA">
-    
-    <title>Last-Mile Delivery Driver App</title>
+    <link rel="icon" type="image/svg+xml" href="/logo192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Last-Mile Delivery Control Tower</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
   </head>
   <body>
     <div id="root"></div>
-    
-    <!-- PWA Installation Handling -->
-    <script>
-      // Handle PWA installation
-      window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent the mini-infobar from appearing on mobile
-        e.preventDefault();
-        // Stash the event so it can be triggered later
-        window.deferredPrompt = e;
-        // Show the install button or prompt
-        console.log('PWA installation available');
-      });
-      
-      // Handle PWA installation success
-      window.addEventListener('appinstalled', (evt) => {
-        console.log('PWA installed successfully');
-        // Clear the deferred prompt since it's no longer needed
-        window.deferredPrompt = null;
-      });
-    </script>
-    
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -8,7 +8,6 @@ import {
 } from 'react-leaflet';
 import { Paper, Typography, Box, CircularProgress, Chip, Avatar, Alert, useMediaQuery, useTheme } from '@mui/material';
 import { LocalShipping, Place, Error as ErrorIcon } from '@mui/icons-material';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import ApiService from '../services/apiService';
 import webSocketService from '../services/webSocketService';
