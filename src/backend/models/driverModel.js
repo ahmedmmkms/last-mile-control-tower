@@ -42,6 +42,32 @@ async function updateDriver(id, driverData) {
   return result.rows[0];
 }
 
+// Update driver location
+async function updateDriverLocation(id, current_location) {
+  const query = `
+    UPDATE drivers
+    SET current_location = $1::jsonb, updated_at = CURRENT_TIMESTAMP
+    WHERE id = $2
+    RETURNING *
+  `;
+  const values = [JSON.stringify(current_location), id];
+  const result = await client.query(query, values);
+  return result.rows[0];
+}
+
+// Update driver status
+async function updateDriverStatus(id, status) {
+  const query = `
+    UPDATE drivers
+    SET status = $1, updated_at = CURRENT_TIMESTAMP
+    WHERE id = $2
+    RETURNING *
+  `;
+  const values = [status, id];
+  const result = await client.query(query, values);
+  return result.rows[0];
+}
+
 // Delete a driver
 async function deleteDriver(id) {
   const query = 'DELETE FROM drivers WHERE id = $1 RETURNING *';
@@ -56,11 +82,27 @@ async function getAvailableDrivers() {
   return result.rows;
 }
 
+// Get driver assignments (shipments assigned to driver)
+async function getDriverAssignments(driverId) {
+  const query = `
+    SELECT s.*, d.name as driver_name
+    FROM shipments s
+    JOIN drivers d ON s.assigned_driver_id = d.id
+    WHERE s.assigned_driver_id = $1
+    ORDER BY s.created_at DESC
+  `;
+  const result = await client.query(query, [driverId]);
+  return result.rows;
+}
+
 module.exports = {
   getAllDrivers,
   getDriverById,
   createDriver,
   updateDriver,
+  updateDriverLocation,
+  updateDriverStatus,
   deleteDriver,
-  getAvailableDrivers
+  getAvailableDrivers,
+  getDriverAssignments
 };

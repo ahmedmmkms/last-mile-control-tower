@@ -15,6 +15,12 @@ router.post('/', shipmentController.createShipment);
 // PUT /api/shipments/:id - Update shipment
 router.put('/:id', shipmentController.updateShipment);
 
+// PUT /api/shipments/:id/status - Update shipment status with PoD
+router.put('/:id/status', shipmentController.updateShipmentStatus);
+
+// POST /api/shipments/:id/pod - Submit Proof of Delivery
+router.post('/:id/pod', shipmentController.submitPod);
+
 // DELETE /api/shipments/:id - Delete shipment
 router.delete('/:id', shipmentController.deleteShipment);
 

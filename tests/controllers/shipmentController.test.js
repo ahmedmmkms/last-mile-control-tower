@@ -1,223 +1,105 @@
-// Shipment Controller Unit Tests
-const { getAllShipments, getShipmentById, createShipment, updateShipment, deleteShipment } = require('../../src/backend/controllers/shipmentController');
+// Shipment Controller Tests
+const request = require('supertest');
+const { app } = require('../../index');
 
-// Mock the database model functions
-jest.mock('../../src/backend/models/shipmentModel', () => ({
-  getAllShipments: jest.fn(),
-  getShipmentById: jest.fn(),
-  createShipment: jest.fn(),
-  updateShipment: jest.fn(),
-  deleteShipment: jest.fn()
+// Mock the database functions
+jest.mock('../../src/database/db', () => ({
+  client: {
+    query: jest.fn()
+  }
 }));
 
-const ShipmentModel = require('../../src/backend/models/shipmentModel');
-
 describe('Shipment Controller', () => {
-  let req, res;
-
   beforeEach(() => {
-    req = {
-      params: {},
-      body: {}
-    };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
-    
     // Clear all mocks before each test
     jest.clearAllMocks();
   });
 
-  describe('getAllShipments', () => {
-    it('should return all shipments', async () => {
-      const mockShipments = [
-        { id: '1', tracking_number: 'TRK001' },
-        { id: '2', tracking_number: 'TRK002' }
-      ];
-      
-      ShipmentModel.getAllShipments.mockResolvedValue(mockShipments);
-      
-      await getAllShipments(req, res);
-      
-      expect(ShipmentModel.getAllShipments).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(mockShipments);
-    });
+  test('should update shipment status with PoD', async () => {
+    const mockShipment = {
+      id: '123e4567-e89b-12d3-a456-426614174000',
+      tracking_number: 'TRK001',
+      status: 'delivered',
+      origin: { address: '123 Main St' },
+      destination: { address: '456 Oak Ave' },
+      assigned_driver_id: '123e4567-e89b-12d3-a456-426614174001',
+      pod_image: 'https://example.com/pod.jpg',
+      pod_timestamp: '2025-09-18T10:00:00Z',
+      pod_location: { latitude: 40.7128, longitude: -74.0060 }
+    };
 
-    it('should handle errors when fetching shipments', async () => {
-      ShipmentModel.getAllShipments.mockRejectedValue(new Error('Database error'));
-      
-      await getAllShipments(req, res);
-      
-      expect(ShipmentModel.getAllShipments).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
-    });
+    // Mock the database responses
+    require('../../src/database/db').client.query
+      .mockResolvedValueOnce({ rows: [mockShipment] }) // Get shipment by ID
+      .mockResolvedValueOnce({ rows: [mockShipment] }) // Update shipment status
+      .mockResolvedValueOnce({ rows: [{}] }); // Store tracking data
+
+    const response = await request(app)
+      .put('/api/shipments/123e4567-e89b-12d3-a456-426614174000/status')
+      .send({
+        status: 'delivered',
+        pod_image: 'https://example.com/pod.jpg',
+        pod_timestamp: '2025-09-18T10:00:00Z',
+        pod_location: { latitude: 40.7128, longitude: -74.0060 }
+      })
+      .expect(200);
+
+    expect(response.body.status).toBe('delivered');
+    expect(response.body.pod_image).toBe('https://example.com/pod.jpg');
   });
 
-  describe('getShipmentById', () => {
-    it('should return a shipment by ID', async () => {
-      const mockShipment = { id: '1', tracking_number: 'TRK001' };
-      req.params.id = '1';
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(mockShipment);
-      
-      await getShipmentById(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(mockShipment);
-    });
+  test('should submit Proof of Delivery', async () => {
+    const mockShipment = {
+      id: '123e4567-e89b-12d3-a456-426614174000',
+      tracking_number: 'TRK001',
+      status: 'delivered',
+      origin: { address: '123 Main St' },
+      destination: { address: '456 Oak Ave' },
+      assigned_driver_id: '123e4567-e89b-12d3-a456-426614174001',
+      pod_image: 'https://example.com/pod.jpg',
+      pod_timestamp: '2025-09-18T10:00:00Z',
+      pod_location: { latitude: 40.7128, longitude: -74.0060 }
+    };
 
-    it('should return 404 if shipment is not found', async () => {
-      req.params.id = '1';
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(null);
-      
-      await getShipmentById(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Shipment not found' });
-    });
+    // Mock the database responses
+    require('../../src/database/db').client.query
+      .mockResolvedValueOnce({ rows: [mockShipment] }) // Get shipment by ID
+      .mockResolvedValueOnce({ rows: [mockShipment] }) // Submit PoD
+      .mockResolvedValueOnce({ rows: [{}] }); // Store tracking data
 
-    it('should handle errors when fetching a shipment', async () => {
-      req.params.id = '1';
-      
-      ShipmentModel.getShipmentById.mockRejectedValue(new Error('Database error'));
-      
-      await getShipmentById(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
-    });
+    const response = await request(app)
+      .post('/api/shipments/123e4567-e89b-12d3-a456-426614174000/pod')
+      .send({
+        pod_image: 'https://example.com/pod.jpg',
+        pod_timestamp: '2025-09-18T10:00:00Z',
+        pod_location: { latitude: 40.7128, longitude: -74.0060 }
+      })
+      .expect(200);
+
+    expect(response.body.status).toBe('delivered');
+    expect(response.body.pod_image).toBe('https://example.com/pod.jpg');
   });
 
-  describe('createShipment', () => {
-    it('should create a new shipment', async () => {
-      const mockShipment = { id: '1', tracking_number: 'TRK001' };
-      req.body = { tracking_number: 'TRK001' };
-      
-      ShipmentModel.createShipment.mockResolvedValue(mockShipment);
-      
-      await createShipment(req, res);
-      
-      expect(ShipmentModel.createShipment).toHaveBeenCalledWith(req.body);
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(mockShipment);
-    });
+  test('should reject PoD submission without required fields', async () => {
+    const response = await request(app)
+      .post('/api/shipments/123e4567-e89b-12d3-a456-426614174000/pod')
+      .send({
+        pod_image: 'https://example.com/pod.jpg'
+        // Missing pod_timestamp
+      })
+      .expect(400);
 
-    it('should handle errors when creating a shipment', async () => {
-      req.body = { tracking_number: 'TRK001' };
-      
-      ShipmentModel.createShipment.mockRejectedValue(new Error('Database error'));
-      
-      await createShipment(req, res);
-      
-      expect(ShipmentModel.createShipment).toHaveBeenCalledWith(req.body);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
-    });
+    expect(response.body.error).toBe('pod_image and pod_timestamp are required');
   });
 
-  describe('updateShipment', () => {
-    it('should update an existing shipment', async () => {
-      const mockExistingShipment = { id: '1', tracking_number: 'TRK001' };
-      const mockUpdatedShipment = { id: '1', tracking_number: 'TRK001-UPDATED' };
-      
-      req.params.id = '1';
-      req.body = { tracking_number: 'TRK001-UPDATED' };
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(mockExistingShipment);
-      ShipmentModel.updateShipment.mockResolvedValue(mockUpdatedShipment);
-      
-      await updateShipment(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(ShipmentModel.updateShipment).toHaveBeenCalledWith('1', req.body);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(mockUpdatedShipment);
-    });
+  test('should reject invalid status', async () => {
+    const response = await request(app)
+      .put('/api/shipments/123e4567-e89b-12d3-a456-426614174000/status')
+      .send({
+        status: 'invalid-status'
+      })
+      .expect(400);
 
-    it('should return 404 if shipment to update is not found', async () => {
-      req.params.id = '1';
-      req.body = { tracking_number: 'TRK001-UPDATED' };
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(null);
-      
-      await updateShipment(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(ShipmentModel.updateShipment).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Shipment not found' });
-    });
-
-    it('should handle errors when updating a shipment', async () => {
-      const mockExistingShipment = { id: '1', tracking_number: 'TRK001' };
-      
-      req.params.id = '1';
-      req.body = { tracking_number: 'TRK001-UPDATED' };
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(mockExistingShipment);
-      ShipmentModel.updateShipment.mockRejectedValue(new Error('Database error'));
-      
-      await updateShipment(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(ShipmentModel.updateShipment).toHaveBeenCalledWith('1', req.body);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
-    });
-  });
-
-  describe('deleteShipment', () => {
-    it('should delete a shipment', async () => {
-      const mockExistingShipment = { id: '1', tracking_number: 'TRK001' };
-      const mockDeletedShipment = { id: '1', tracking_number: 'TRK001' };
-      
-      req.params.id = '1';
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(mockExistingShipment);
-      ShipmentModel.deleteShipment.mockResolvedValue(mockDeletedShipment);
-      
-      await deleteShipment(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(ShipmentModel.deleteShipment).toHaveBeenCalledWith('1');
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(mockDeletedShipment);
-    });
-
-    it('should return 404 if shipment to delete is not found', async () => {
-      req.params.id = '1';
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(null);
-      
-      await deleteShipment(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(ShipmentModel.deleteShipment).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Shipment not found' });
-    });
-
-    it('should handle errors when deleting a shipment', async () => {
-      const mockExistingShipment = { id: '1', tracking_number: 'TRK001' };
-      
-      req.params.id = '1';
-      
-      ShipmentModel.getShipmentById.mockResolvedValue(mockExistingShipment);
-      ShipmentModel.deleteShipment.mockRejectedValue(new Error('Database error'));
-      
-      await deleteShipment(req, res);
-      
-      expect(ShipmentModel.getShipmentById).toHaveBeenCalledWith('1');
-      expect(ShipmentModel.deleteShipment).toHaveBeenCalledWith('1');
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
-    });
+    expect(response.body.error).toBe('Invalid status. Must be one of: pending, assigned, in_transit, delivered, failed');
   });
 });

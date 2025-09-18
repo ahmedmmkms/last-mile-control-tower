@@ -1,6 +1,7 @@
 // Driver Controller
 const Driver = require('../models/driverModel');
 const { isValidUUID } = require('../utils/uuidValidator');
+const { validateLocationData, storeDriverLocationHistory, storeTrackingData } = require('../services/locationTrackingService');
 
 // Get all drivers
 async function getAllDrivers(req, res) {
@@ -74,6 +75,100 @@ async function updateDriver(req, res) {
   }
 }
 
+// Update driver location
+async function updateDriverLocation(req, res) {
+  try {
+    const { id } = req.params;
+    const { current_location } = req.body;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid driver ID format' });
+    }
+    
+    // Validate location data
+    const validation = validateLocationData(current_location);
+    if (!validation.valid) {
+      return res.status(400).json({ error: validation.error });
+    }
+    
+    // Check if driver exists
+    const existingDriver = await Driver.getDriverById(id);
+    if (!existingDriver) {
+      return res.status(404).json({ error: 'Driver not found' });
+    }
+    
+    // Update driver location
+    const driver = await Driver.updateDriverLocation(id, current_location);
+    
+    // Store location history
+    await storeDriverLocationHistory(id, current_location);
+    
+    // Store tracking data
+    await storeTrackingData(null, id, current_location, 'location_update');
+    
+    res.status(200).json(driver);
+  } catch (error) {
+    console.error('Error updating driver location:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+// Update driver status
+async function updateDriverStatus(req, res) {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid driver ID format' });
+    }
+    
+    // Validate status
+    const validStatuses = ['available', 'busy', 'offline'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status. Must be one of: available, busy, offline' });
+    }
+    
+    // Check if driver exists
+    const existingDriver = await Driver.getDriverById(id);
+    if (!existingDriver) {
+      return res.status(404).json({ error: 'Driver not found' });
+    }
+    
+    const driver = await Driver.updateDriverStatus(id, status);
+    res.status(200).json(driver);
+  } catch (error) {
+    console.error('Error updating driver status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+// Get driver assignments
+async function getDriverAssignments(req, res) {
+  try {
+    const { id } = req.params;
+    
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return res.status(400).json({ error: 'Invalid driver ID format' });
+    }
+    
+    // Check if driver exists
+    const existingDriver = await Driver.getDriverById(id);
+    if (!existingDriver) {
+      return res.status(404).json({ error: 'Driver not found' });
+    }
+    
+    const assignments = await Driver.getDriverAssignments(id);
+    res.status(200).json(assignments);
+  } catch (error) {
+    console.error('Error fetching driver assignments:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 // Delete a driver
 async function deleteDriver(req, res) {
   try {
@@ -103,5 +198,8 @@ module.exports = {
   getDriverById,
   createDriver,
   updateDriver,
+  updateDriverLocation,
+  updateDriverStatus,
+  getDriverAssignments,
   deleteDriver
 };

@@ -42,6 +42,40 @@ async function updateShipment(id, shipmentData) {
   return result.rows[0];
 }
 
+// Update shipment status with PoD
+async function updateShipmentStatus(id, status, pod_image, pod_timestamp, pod_location) {
+  const query = `
+    UPDATE shipments
+    SET status = $1, 
+        pod_image = $2, 
+        pod_timestamp = $3, 
+        pod_location = $4::jsonb, 
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = $5
+    RETURNING *
+  `;
+  const values = [status, pod_image, pod_timestamp, JSON.stringify(pod_location || {}), id];
+  const result = await client.query(query, values);
+  return result.rows[0];
+}
+
+// Submit Proof of Delivery
+async function submitPod(id, pod_image, pod_timestamp, pod_location) {
+  const query = `
+    UPDATE shipments
+    SET pod_image = $1, 
+        pod_timestamp = $2, 
+        pod_location = $3::jsonb, 
+        status = 'delivered',
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = $4
+    RETURNING *
+  `;
+  const values = [pod_image, pod_timestamp, JSON.stringify(pod_location || {}), id];
+  const result = await client.query(query, values);
+  return result.rows[0];
+}
+
 // Delete a shipment
 async function deleteShipment(id) {
   const query = 'DELETE FROM shipments WHERE id = $1 RETURNING *';
@@ -68,6 +102,8 @@ module.exports = {
   getShipmentById,
   createShipment,
   updateShipment,
+  updateShipmentStatus,
+  submitPod,
   deleteShipment,
   getShipmentsByStatus,
   getShipmentsByDriverId
