@@ -1,46 +1,60 @@
-# Testing Documentation
+# Sprint 2 Backend Testing
 
-## Backend Testing
+This directory contains scripts to test the backend features implemented for Sprint 2.
 
-### Unit Tests
-Unit tests for controllers are located in `tests/controllers/` and use Jest with mocked database models.
+## Test Scripts
 
-### Integration Tests
-Integration tests for API endpoints are located in `tests/integration/` and test the full API flow with a test database.
+### PowerShell Script
+- **File**: `sprint2-backend-test.ps1`
+- **Usage**: 
+  ```powershell
+  .\sprint2-backend-test.ps1
+  ```
+- **Features**: Comprehensive testing with detailed output
+- **Parameters**: 
+  - `-BaseUrl` (default: http://localhost:3000)
+  - `-DriverId` (default: 123e4567-e89b-12d3-a456-426614174000)
 
-### Running Backend Tests
-```bash
-# Run all backend tests
-npm test
+### Batch Script
+- **File**: `sprint2-backend-test.bat`
+- **Usage**: 
+  ```cmd
+  sprint2-backend-test.bat
+  ```
+- **Features**: Simple command-line testing
+- **Note**: Requires `curl` to be available in the system PATH
 
-# Run unit tests only
-npm run test:unit
+## What's Tested
 
-# Run integration tests only
-npm run test:integration
+1. Basic API connectivity
+2. Driver management endpoints
+3. Shipment management endpoints
+4. Location tracking functionality
+5. Proof of Delivery (PoD) submission
+6. WebSocket server availability
+
+## Prerequisites
+
+1. The backend server must be running on the specified URL (default: http://localhost:3000)
+2. Database must be properly configured and migrated
+3. For the batch script, `curl` must be installed and available in the system PATH
+
+## Running the Tests
+
+### PowerShell
+```powershell
+# Basic usage
+.\sprint2-backend-test.ps1
+
+# With custom parameters
+.\sprint2-backend-test.ps1 -BaseUrl "http://your-server:port" -DriverId "your-driver-id"
 ```
 
-## Frontend Testing
-
-### Component Tests
-Component tests are located in `src/frontend/tests/` and use Vitest with React Testing Library.
-
-### Running Frontend Tests
-```bash
-# Navigate to frontend directory
-cd src/frontend
-
-# Run frontend tests
-npm test
-
-# Run frontend tests with UI
-npm run test:ui
+### Command Line (Batch)
+```cmd
+sprint2-backend-test.bat
 ```
 
-## CI/CD Testing
-GitHub Actions workflows automatically run all tests on push and pull requests.
+## Expected Results
 
-### Test Environment
-- PostgreSQL database for integration tests
-- Node.js 16.x and 18.x matrix testing
-- Automated API testing in CI pipeline
+All tests should pass with green checkmarks (✅) indicating successful execution of the backend features.
