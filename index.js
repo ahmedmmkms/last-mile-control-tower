@@ -3,7 +3,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const cors = require('cors');
-const { connect, disconnect } = require('./src/database/db');
+const { connect, disconnect, query } = require('./src/database/db');
 
 // Create Express app
 const app = express();
@@ -21,6 +21,28 @@ app.use(express.json());
 // Serve static files from the frontend build directory
 const frontendDistPath = path.join(__dirname, 'src', 'frontend', 'dist');
 app.use(express.static(frontendDistPath));
+
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test database connection
+    const result = await query('SELECT 1 as db_connected');
+    res.status(200).json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      database: 'connected',
+      dbResult: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Health check failed:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+      error: error.message
+    });
+  }
+});
 
 // API Routes
 app.get('/api', (req, res) => {

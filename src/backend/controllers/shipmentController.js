@@ -8,7 +8,9 @@ async function getAllShipments(req, res) {
   let retries = 3;
   while (retries > 0) {
     try {
+      console.log(`Attempting to fetch shipments (retries left: ${retries})`);
       const shipments = await Shipment.getAllShipments();
+      console.log(`Successfully fetched ${shipments.length} shipments`);
       res.status(200).json(shipments);
       return;
     } catch (error) {
@@ -16,11 +18,14 @@ async function getAllShipments(req, res) {
       console.error(`Error fetching shipments (retries left: ${retries}):`, error);
       if (retries === 0 || !error.message.includes('timeout')) {
         // If it's not a timeout error or we're out of retries, return error
+        console.error('Final error when fetching shipments:', error);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
-      // Wait a bit before retrying
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Wait a bit before retrying with exponential backoff
+      const waitTime = Math.pow(2, 3 - retries) * 100;
+      console.log(`Waiting ${waitTime}ms before retrying...`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }
 }

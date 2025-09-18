@@ -7,7 +7,9 @@ async function getAllRoutes(req, res) {
   let retries = 3;
   while (retries > 0) {
     try {
+      console.log(`Attempting to fetch routes (retries left: ${retries})`);
       const routes = await Route.getAllRoutes();
+      console.log(`Successfully fetched ${routes.length} routes`);
       res.status(200).json(routes);
       return;
     } catch (error) {
@@ -15,11 +17,14 @@ async function getAllRoutes(req, res) {
       console.error(`Error fetching routes (retries left: ${retries}):`, error);
       if (retries === 0 || !error.message.includes('timeout')) {
         // If it's not a timeout error or we're out of retries, return error
+        console.error('Final error when fetching routes:', error);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
-      // Wait a bit before retrying
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Wait a bit before retrying with exponential backoff
+      const waitTime = Math.pow(2, 3 - retries) * 100;
+      console.log(`Waiting ${waitTime}ms before retrying...`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }
 }
