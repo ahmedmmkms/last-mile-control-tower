@@ -309,12 +309,13 @@ const Dashboard = () => {
       {/* Main Content */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        <Typography variant="h4" gutterBottom>
-          {activeView === 'dashboard' ? t('dispatcher_dashboard') : 
-           activeView === 'admin' ? t('admin_interface') : 
-           activeView === 'sla' ? t('sla_monitoring_dashboard') :
-           t(activeView)}
-        </Typography>
+        {activeView !== 'admin' && (
+          <Typography variant="h4" gutterBottom>
+            {activeView === 'dashboard' ? t('dispatcher_dashboard') : 
+             activeView === 'sla' ? t('sla_monitoring_dashboard') :
+             t(activeView)}
+          </Typography>
+        )}
         
         {renderView()}
       </Box>
