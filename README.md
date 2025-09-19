@@ -3,12 +3,19 @@
 [![CI/CD](https://github.com/ahmedmmkms/last-mile-control-tower/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ahmedmmkms/last-mile-control-tower/actions/workflows/ci-cd.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D16.x-brightgreen.svg)](https://nodejs.org/)
+[![Vercel](https://vercelbadge.vercel.app/api/ahmedmmkms/last-mile-control-tower)](https://last-mile-control-tower.vercel.app)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
 A comprehensive last-mile delivery management system that provides real-time tracking, route optimization, and operational control for delivery operations.
 
 ## Table of Contents
 
+- [Live Demo](#live-demo)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
@@ -20,12 +27,19 @@ A comprehensive last-mile delivery management system that provides real-time tra
   - [Running the Application](#running-the-application)
 - [Scripts](#scripts)
 - [API Endpoints](#api-endpoints)
+- [API Documentation](#api-documentation)
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [CI/CD](#cicd)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
+- [About the Author](#about-the-author)
 - [License](#license)
+
+## Live Demo
+
+Check out the live demo of the Last-Mile Delivery Control Tower:
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo- brightgreen?style=for-the-badge)](https://last-mile-control-tower.vercel.app)
 
 ## Features
 
@@ -43,6 +57,26 @@ A comprehensive last-mile delivery management system that provides real-time tra
 - **Advanced Analytics** - Comprehensive analytics and reporting features
 - **Production Ready** - Application prepared for production deployment
 - **Enhanced UI/UX** - Refined user interface across all components
+
+## Screenshots
+
+### Admin Dashboard
+![Admin Dashboard](site_screens/last-mile-control-tower.vercel.app__admin.png)
+
+### RTL Support (Arabic)
+![RTL Support](site_screens/last-mile-control-tower.vercel.app__ar_rtl.png)
+
+### Desktop View
+![Desktop View](site_screens/last-mile-control-tower.vercel.app__desktop.png)
+
+### Drivers Management
+![Drivers Management](site_screens/last-mile-control-tower.vercel.app_drivers__desktop.png)
+
+### Routes Management
+![Routes Management](site_screens/last-mile-control-tower.vercel.app_routes__desktop.png)
+
+### Shipments Management
+![Shipments Management](site_screens/last-mile-control-tower.vercel.app_shipments__desktop.png)
 
 ## Architecture
 
@@ -202,6 +236,14 @@ Create a `.env` file based on `.env.example`:
 | `npm run test:integration` | Run integration tests |
 | `npm run test:api` | Run API tests |
 
+## API Documentation
+
+Explore the complete API documentation with Swagger:
+
+[![API Documentation](https://img.shields.io/badge/API-Documentation-FF6C37?style=for-the-badge&logo=swagger&logoColor=white)](https://last-mile-control-tower.vercel.app/api-docs)
+
+The API follows REST principles and provides comprehensive endpoints for managing all aspects of the delivery operations.
+
 ## API Endpoints
 
 ### COD Management
@@ -308,13 +350,29 @@ Workflows are defined in `.github/workflows/`:
    - Use Node.js >= 16.x
    - Consider using `nvm` to manage Node versions
 
-## Contributing
+## About the Author
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a pull request
+I deliver production‑grade commerce experiences — fast, bilingual, and reliable.
+
+**Architecture that holds**: modular monorepo, service boundaries, and serverless‑ready APIs.
+
+**Ops you can trust**: CI/CD, migrations, observability, performance/load testing hooks.
+
+**Great DX**: clean code, documentation, scripted acceptance, and smooth handoffs.
+
+**Customer‑centric UX**: accessibility and Arabic‑first details you don't have to ask for.
+
+### Contact:
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ahmedmmkms/)
+
+### Services:
+- Product engineering
+- Architecture
+- Cloud/DevOps
+- Developer experience
+- Performance optimization
+- Accessibility compliance
+- Internationalization (i18n)
 
 ## License
 
