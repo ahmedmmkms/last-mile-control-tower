@@ -23,8 +23,12 @@ import {
   ThemeProvider,
   createTheme,
   useMediaQuery,
-  useTheme
+  useTheme,
+  IconButton
 } from '@mui/material';
+import { 
+  Menu as MenuIcon
+} from '@mui/icons-material';
 import { 
   Dashboard as DashboardIcon, 
   LocalShipping as ShipmentIcon, 
@@ -54,6 +58,7 @@ const Dashboard = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [activeView, setActiveView] = useState('dashboard');
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { t, i18n: i18nInstance } = useTranslation();
 
   const handleLanguageChange = (event) => {
@@ -365,12 +370,22 @@ const Dashboard = () => {
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
           <Toolbar sx={{ 
             display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row',
-            alignItems: isMobile ? 'flex-start' : 'center',
+            flexDirection: isMobile ? 'row' : 'row',
+            alignItems: 'center',
             gap: isMobile ? 1 : 0,
             pt: isMobile ? 1 : 0,
             pb: isMobile ? 1 : 0
           }}>
+            {isMobile && (
+              <IconButton
+                color="inherit"
+                edge={i18nInstance.language === 'ar' ? "end" : "start"}
+                onClick={() => setMobileOpen(!mobileOpen)}
+                sx={{ mr: i18nInstance.language === 'ar' ? 0 : 2, ml: i18nInstance.language === 'ar' ? 2 : 0 }}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
             <Typography 
               variant={isMobile ? "h6" : "h6"} 
               noWrap 
@@ -406,7 +421,7 @@ const Dashboard = () => {
             <Box sx={{ 
               display: 'flex', 
               justifyContent: isMobile ? 'center' : 'flex-end',
-              width: isMobile ? '100%' : 'auto'
+              width: isMobile ? 'auto' : 'auto'
             }}>
               <DispatcherNotifications />
             </Box>
@@ -417,6 +432,8 @@ const Dashboard = () => {
         <Drawer
           variant={isMobile ? "temporary" : "permanent"}
           anchor={i18nInstance.language === 'ar' ? 'right' : 'left'}
+          open={isMobile ? mobileOpen : true}
+          onClose={isMobile ? () => setMobileOpen(false) : undefined}
           sx={{
             width: isMobile ? 0 : drawerWidth,
             flexShrink: 0,
@@ -427,8 +444,9 @@ const Dashboard = () => {
               left: i18nInstance.language === 'ar' ? 'auto' : 0,
             },
           }}
-          open={isMobile ? activeView !== 'dashboard' : undefined}
-          onClose={isMobile ? () => setActiveView('dashboard') : undefined}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
         >
           <Toolbar />
           <Box sx={{ overflow: 'auto' }}>
