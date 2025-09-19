@@ -159,7 +159,9 @@ const AnalyticsDashboard = () => {
   }));
 
   const geographicData = geographicAnalytics.slice(0, 10).map(location => ({
-    name: `${location.city}, ${location.country}`,
+    name: location.city && location.country ? 
+          `${location.city}, ${location.country}` : 
+          (location.city || location.country || 'Unassigned'),
     count: parseInt(location.delivery_count),
     completion: parseFloat(location.completion_rate)
   }));
@@ -177,6 +179,14 @@ const AnalyticsDashboard = () => {
     reconciled: parseFloat(day.reconciled_amount)
   }));
 
+  // Calculate KPIs
+  const totalDeliveries = deliveryAnalytics.reduce((sum, day) => sum + parseInt(day.total_deliveries || 0), 0);
+  const completionRate = deliveryAnalytics.length > 0 
+    ? (deliveryAnalytics.reduce((sum, day) => sum + parseFloat(day.completion_rate || 0), 0) / deliveryAnalytics.length).toFixed(2)
+    : 0;
+  const activeDrivers = driverAnalytics.length;
+  const codCollected = codAnalytics.reduce((sum, day) => sum + parseFloat(day.collected_amount || 0), 0).toFixed(0);
+
   if (loading && deliveryAnalytics.length === 0) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -186,245 +196,478 @@ const AnalyticsDashboard = () => {
   }
 
   return (
-    <Box sx={{ p: isMobile ? 1 : 3 }}>
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant={isMobile ? "h5" : "h4"}>Analytics Dashboard</Typography>
+    <Box sx={{ p: isMobile ? 2 : 3, backgroundColor: '#f5f7fa' }}>
+      {/* Header Section */}
+      <Box sx={{ 
+        mb: 3, 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'flex-start', sm: 'center' },
+        gap: 2
+      }}>
+        <Box>
+          <Typography variant={isMobile ? "h5" : "h4"} sx={{ fontWeight: 600, color: '#263238' }}>
+            Analytics Dashboard
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5 }}>
+            Comprehensive delivery performance insights
+          </Typography>
+        </Box>
+        
+        {/* Date Range Filters */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 2,
+          alignItems: 'center',
+          width: { xs: '100%', sm: 'auto' }
+        }}>
+          <TextField
+            size="small"
+            label="From Date"
+            type="date"
+            value={dateRange.from}
+            onChange={(e) => handleDateChange('from', e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: { xs: '100%', sm: 150 } }}
+          />
+          <TextField
+            size="small"
+            label="To Date"
+            type="date"
+            value={dateRange.to}
+            onChange={(e) => handleDateChange('to', e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: { xs: '100%', sm: 150 } }}
+          />
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={handleResetFilters}
+            sx={{ height: 40 }}
+          >
+            Reset
+          </Button>
+        </Box>
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
 
-      {/* Filters */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={4}>
-            <TextField
-              fullWidth
-              label="From Date"
-              type="date"
-              value={dateRange.from}
-              onChange={(e) => handleDateChange('from', e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              fullWidth
-              label="To Date"
-              type="date"
-              value={dateRange.to}
-              onChange={(e) => handleDateChange('to', e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={handleResetFilters}
-            >
-              Reset Filters
-            </Button>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      {/* Delivery Trends */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Delivery Trends</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={deliveryTrendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="deliveries" 
-                  name="Total Deliveries" 
-                  stroke={theme.palette.primary.main} 
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="completed" 
-                  name="Completed" 
-                  stroke={theme.palette.success.main} 
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="failed" 
-                  name="Failed" 
-                  stroke={theme.palette.error.main} 
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Key Metrics */}
+      {/* Key Metrics Row */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
+          <Card 
+            sx={{ 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <LocalShippingIcon sx={{ mr: 1, color: 'primary.main' }} />
-                <Typography color="textSecondary">Total Deliveries</Typography>
+                <Box sx={{ 
+                  width: 48, 
+                  height: 48, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'primary.light', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  mr: 2
+                }}>
+                  <LocalShippingIcon sx={{ color: 'primary.main' }} />
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">Total Deliveries</Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5 }}>
+                    {totalDeliveries}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="h4">
-                {deliveryAnalytics.reduce((sum, day) => sum + parseInt(day.total_deliveries || 0), 0)}
-              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
+          <Card 
+            sx={{ 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <TrendingUpIcon sx={{ mr: 1, color: 'success.main' }} />
-                <Typography color="textSecondary">Completion Rate</Typography>
+                <Box sx={{ 
+                  width: 48, 
+                  height: 48, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'success.light', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  mr: 2
+                }}>
+                  <TrendingUpIcon sx={{ color: 'success.main' }} />
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">Completion Rate</Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5 }}>
+                    {completionRate}%
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="h4">
-                {deliveryAnalytics.length > 0 
-                  ? (deliveryAnalytics.reduce((sum, day) => sum + parseFloat(day.completion_rate || 0), 0) / deliveryAnalytics.length).toFixed(2)
-                  : 0}%
-              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
+          <Card 
+            sx={{ 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <DriveEtaIcon sx={{ mr: 1, color: 'info.main' }} />
-                <Typography color="textSecondary">Active Drivers</Typography>
+                <Box sx={{ 
+                  width: 48, 
+                  height: 48, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'info.light', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  mr: 2
+                }}>
+                  <DriveEtaIcon sx={{ color: 'info.main' }} />
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">Active Drivers</Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5 }}>
+                    {activeDrivers}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="h4">{driverAnalytics.length}</Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
+          <Card 
+            sx={{ 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <PaidIcon sx={{ mr: 1, color: 'secondary.main' }} />
-                <Typography color="textSecondary">COD Collected</Typography>
+                <Box sx={{ 
+                  width: 48, 
+                  height: 48, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'secondary.light', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  mr: 2
+                }}>
+                  <PaidIcon sx={{ color: 'secondary.main' }} />
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">COD Collected</Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5 }}>
+                    EGP {codCollected}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="h4">
-                EGP {codAnalytics.reduce((sum, day) => sum + parseFloat(day.collected_amount || 0), 0).toFixed(0)}
-              </Typography>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
-      {/* Charts */}
+      {/* Main Charts Grid */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Top Driver Performance</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={driverPerformanceData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="deliveries" name="Total Deliveries" fill={theme.palette.primary.main} />
-                <Bar dataKey="completion" name="Completion Rate %" fill={theme.palette.success.main} />
-              </BarChart>
-            </ResponsiveContainer>
+        {/* Delivery Trends Chart - Full Width on Mobile, 2/3 on Desktop */}
+        <Grid item xs={12} lg={8}>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2, color: '#263238' }}>
+              Delivery Trends
+            </Typography>
+            <Box sx={{ height: { xs: 300, sm: 350, md: 400 } }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={deliveryTrendData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: 8, 
+                      border: '1px solid #eee',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="deliveries" 
+                    name="Total Deliveries" 
+                    stroke={theme.palette.primary.main} 
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="completed" 
+                    name="Completed" 
+                    stroke={theme.palette.success.main} 
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="failed" 
+                    name="Failed" 
+                    stroke={theme.palette.error.main} 
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Geographic Distribution</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={geographicData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="count" name="Delivery Count" fill={theme.palette.info.main} />
-                <Bar dataKey="completion" name="Completion Rate %" fill={theme.palette.success.main} />
-              </BarChart>
-            </ResponsiveContainer>
+
+        {/* Time Distribution Chart - Full Width on Mobile, 1/3 on Desktop */}
+        <Grid item xs={12} lg={4}>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2, color: '#263238' }}>
+              Time Distribution
+            </Typography>
+            <Box sx={{ height: { xs: 300, sm: 350, md: 400 } }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={timeDistributionData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="hour" 
+                    tick={{ fontSize: 10 }}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: 8, 
+                      border: '1px solid #eee',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="deliveries" 
+                    name="Deliveries" 
+                    fill={theme.palette.primary.main} 
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
       </Grid>
 
+      {/* Second Row Charts */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
+        {/* Geographic Distribution */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Time Distribution</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={timeDistributionData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="hour" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="deliveries" 
-                  name="Deliveries" 
-                  stroke={theme.palette.primary.main} 
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="completion" 
-                  name="Completion Rate %" 
-                  stroke={theme.palette.success.main} 
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2, color: '#263238' }}>
+              Geographic Distribution
+            </Typography>
+            <Box sx={{ height: { xs: 300, sm: 350 } }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={geographicData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="name" 
+                    tick={{ fontSize: 10 }}
+                    angle={isMobile ? -45 : 0}
+                    textAnchor={isMobile ? 'end' : 'middle'}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: 8, 
+                      border: '1px solid #eee',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="count" 
+                    name="Delivery Count" 
+                    fill={theme.palette.info.main} 
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
+
+        {/* Top Driver Performance */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>COD Trends</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={codTrendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="payments" 
-                  name="Payments" 
-                  stroke={theme.palette.secondary.main} 
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="collected" 
-                  name="Collected (EGP)" 
-                  stroke={theme.palette.success.main} 
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="reconciled" 
-                  name="Reconciled (EGP)" 
-                  stroke={theme.palette.info.main} 
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              height: '100%',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2, color: '#263238' }}>
+              Top Driver Performance
+            </Typography>
+            <Box sx={{ height: { xs: 300, sm: 350 } }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={driverPerformanceData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="name" 
+                    tick={{ fontSize: 10 }}
+                    angle={isMobile ? -45 : 0}
+                    textAnchor={isMobile ? 'end' : 'middle'}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: 8, 
+                      border: '1px solid #eee',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="deliveries" 
+                    name="Total Deliveries" 
+                    fill={theme.palette.success.main} 
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* COD Trends - Full Width */}
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper 
+            sx={{ 
+              p: 3,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              borderRadius: 2,
+              border: '1px solid rgba(0,0,0,0.05)'
+            }}
+          >
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2, color: '#263238' }}>
+              COD Trends
+            </Typography>
+            <Box sx={{ height: { xs: 300, sm: 350, md: 400 } }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={codTrendData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: 8, 
+                      border: '1px solid #eee',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="payments" 
+                    name="Payments" 
+                    stroke={theme.palette.secondary.main} 
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="collected" 
+                    name="Collected (EGP)" 
+                    stroke={theme.palette.success.main} 
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="reconciled" 
+                    name="Reconciled (EGP)" 
+                    stroke={theme.palette.info.main} 
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
       </Grid>
