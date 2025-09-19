@@ -95,7 +95,7 @@ const AnalyticsDashboard = () => {
       
       const geographicData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/analytics/geographic`, {
         method: 'GET',
-        params: geoParams
+        params: geographicParams
       });
       setGeographicAnalytics(geographicData);
       

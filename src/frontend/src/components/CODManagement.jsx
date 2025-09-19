@@ -40,11 +40,11 @@ import ApiService from '../services/apiService';
 const CODManagement = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [codRecords, setCodRecords] = useState([]);
+  const [codPayments, setCodPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingRecord, setEditingRecord] = useState(null);
+  const [selectedCodPayment, setSelectedCodPayment] = useState(null);
   const [filterStatus, setFilterStatus] = useState('');
   const [summary, setSummary] = useState(null);
 

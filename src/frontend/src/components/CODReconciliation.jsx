@@ -40,21 +40,25 @@ import ApiService from '../services/apiService';
 const CODReconciliation = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [reconciliationRecords, setReconciliationRecords] = useState([]);
+  const [codPayments, setCodPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
+  const [filterStatus, setFilterStatus] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [reconciling, setReconciling] = useState(false);
+  const [summary, setSummary] = useState(null);
 
   useEffect(() => {
     fetchCodPayments();
     fetchCodSummary();
-  }, [filterStatus]);
+  }, []);
 
   const fetchCodPayments = async () => {
     try {
       setLoading(true);
-      const filters = { status: filterStatus };
+      const filters = filterStatus ? { status: filterStatus } : {};
       const data = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod`, {
         method: 'GET',
         params: filters

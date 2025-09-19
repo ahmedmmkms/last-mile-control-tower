@@ -18,27 +18,53 @@ class ApiService {
       ...options.headers
     };
 
+    // Handle query parameters
+    let finalUrl = url;
+    if (options.params) {
+      const queryParams = new URLSearchParams();
+      for (const [key, value] of Object.entries(options.params)) {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value);
+        }
+      }
+      if (queryParams.toString()) {
+        finalUrl += (url.includes('?') ? '&' : '?') + queryParams.toString();
+      }
+    }
+
     const requestOptions = {
       ...options,
       headers: defaultHeaders
     };
 
+    // Remove params from requestOptions as we've handled them in the URL
+    delete requestOptions.params;
+
     try {
       // Try to make the request
-      const response = await fetch(url, requestOptions);
+      const response = await fetch(finalUrl, requestOptions);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        
+        if (errorData.error) {
+          errorMessage += `, message: ${errorData.error}`;
+        } else if (response.statusText) {
+          errorMessage += `, message: ${response.statusText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
       
       return await response.json();
     } catch (error) {
-      console.error(`Error making request to ${url}:`, error);
+      console.error(`Error making request to ${finalUrl}:`, error);
       
       // If we're offline, save the request for background sync
       if (!this.isOnline()) {
         try {
-          const offlineId = await offlineDataService.saveForSync(url, options.method || 'GET', options.body ? JSON.parse(options.body) : null);
+          const offlineId = await offlineDataService.saveForSync(finalUrl, options.method || 'GET', options.body ? JSON.parse(options.body) : null);
           console.log(`Request saved for background sync with ID: ${offlineId}`);
           
           // Return a special offline response
