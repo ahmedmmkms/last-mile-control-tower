@@ -309,7 +309,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        {activeView !== 'admin' && (
+        {activeView !== 'admin' && activeView !== 'shipments' && (
           <Typography variant="h4" gutterBottom>
             {activeView === 'dashboard' ? t('dispatcher_dashboard') : 
              activeView === 'sla' ? t('sla_monitoring_dashboard') :
