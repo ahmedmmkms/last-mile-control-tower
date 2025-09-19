@@ -44,10 +44,25 @@ const AdminInterface = () => {
           onChange={handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          centered
+          variant="fullWidth"
+          sx={{
+            '& .MuiTabs-indicator': {
+              transition: 'left 0.3s ease, width 0.3s ease',
+            }
+          }}
         >
           {tabLabels.map((label, index) => (
-            <Tab key={index} label={label} />
+            <Tab 
+              key={index} 
+              label={label}
+              sx={{
+                minWidth: 'auto',
+                paddingLeft: 2,
+                paddingRight: 2,
+                textTransform: 'none',
+                fontWeight: 500,
+              }}
+            />
           ))}
         </Tabs>
       </Paper>
