@@ -1,6 +1,5 @@
 # Last-Mile Delivery Control Tower
 
-[![CI/CD](https://github.com/ahmedmmkms/last-mile-control-tower/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ahmedmmkms/last-mile-control-tower/actions/workflows/ci-cd.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D16.x-brightgreen.svg)](https://nodejs.org/)
 [![Vercel](https://vercelbadge.vercel.app/api/ahmedmmkms/last-mile-control-tower)](https://last-mile-control-tower.vercel.app)
@@ -39,7 +38,7 @@ A comprehensive last-mile delivery management system that provides real-time tra
 
 Check out the live demo of the Last-Mile Delivery Control Tower:
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo- brightgreen?style=for-the-badge)](https://last-mile-control-tower.vercel.app)
+Live Demo (Web): <https://last-mile-control-tower.vercel.app>
 
 ## Features
 
@@ -66,7 +65,7 @@ Check out the live demo of the Last-Mile Delivery Control Tower:
 ### RTL Support (Arabic)
 ![RTL Support](site_screens/last-mile-control-tower.vercel.app__ar_rtl.png)
 
-### Desktop View
+### Main View
 ![Desktop View](site_screens/last-mile-control-tower.vercel.app__desktop.png)
 
 ### Drivers Management
@@ -239,8 +238,6 @@ Create a `.env` file based on `.env.example`:
 ## API Documentation
 
 Explore the complete API documentation with Swagger:
-
-[![API Documentation](https://img.shields.io/badge/API-Documentation-FF6C37?style=for-the-badge&logo=swagger&logoColor=white)](https://last-mile-control-tower.vercel.app/api-docs)
 
 The API follows REST principles and provides comprehensive endpoints for managing all aspects of the delivery operations.
 
