@@ -63,7 +63,11 @@ const Dashboard = () => {
       case 'routes':
         return <RouteVisualization />;
       case 'admin':
-        return <AdminInterface />;
+        return (
+          <Box sx={{ width: '100%' }}>
+            <AdminInterface />
+          </Box>
+        );
       case 'sla':
         return <SLAMonitoringDashboard />;
       default:
@@ -251,10 +255,16 @@ const Dashboard = () => {
       {/* Sidebar */}
       <Drawer
         variant="permanent"
+        anchor={i18nInstance.language === 'ar' ? 'right' : 'left'}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          [`& .MuiDrawer-paper`]: { 
+            width: drawerWidth, 
+            boxSizing: 'border-box',
+            right: i18nInstance.language === 'ar' ? 0 : 'auto',
+            left: i18nInstance.language === 'ar' ? 'auto' : 0,
+          },
         }}
       >
         <Toolbar />

@@ -26,6 +26,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ApiService from '../services/apiService';
+import { useTranslation } from 'react-i18next';
 
 const DriverManagement = () => {
   const [drivers, setDrivers] = useState([]);
@@ -34,6 +35,7 @@ const DriverManagement = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingDriver, setEditingDriver] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const { t } = useTranslation();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -172,6 +174,14 @@ const DriverManagement = () => {
     }
   };
 
+  const getStatusLabel = (status) => {
+    return t(`driver_status_${status}`) || status;
+  };
+
+  const getVehicleLabel = (vehicleType) => {
+    return t(`vehicle_type_${vehicleType}`) || vehicleType;
+  };
+
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
@@ -195,13 +205,13 @@ const DriverManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h5">Driver Management</Typography>
+        <Typography variant="h5">{t('driver_management')}</Typography>
         <Button 
           variant="contained" 
           startIcon={<AddIcon />} 
           onClick={() => handleOpenDialog()}
         >
-          Add Driver
+          {t('add_driver')}
         </Button>
       </Box>
 
@@ -209,12 +219,12 @@ const DriverManagement = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Vehicle</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>{t('name')}</TableCell>
+              <TableCell>{t('phone')}</TableCell>
+              <TableCell>{t('vehicle')}</TableCell>
+              <TableCell>{t('status')}</TableCell>
+              <TableCell>{t('location')}</TableCell>
+              <TableCell>{t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -223,11 +233,11 @@ const DriverManagement = () => {
                 <TableCell>{driver.name}</TableCell>
                 <TableCell>{driver.phone}</TableCell>
                 <TableCell>
-                  {getVehicleIcon(driver.vehicle_type)} {driver.vehicle_type}
+                  {getVehicleIcon(driver.vehicle_type)} {getVehicleLabel(driver.vehicle_type)}
                 </TableCell>
                 <TableCell>
                   <Chip 
-                    label={driver.status} 
+                    label={getStatusLabel(driver.status)} 
                     color={getStatusColor(driver.status)} 
                     size="small" 
                   />
@@ -244,7 +254,7 @@ const DriverManagement = () => {
                     size="small"
                     sx={{ mr: 1 }}
                   >
-                    Edit
+                    {t('edit')}
                   </Button>
                   <Button
                     startIcon={<DeleteIcon />}
@@ -252,7 +262,7 @@ const DriverManagement = () => {
                     size="small"
                     color="error"
                   >
-                    Delete
+                    {t('delete')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -264,13 +274,13 @@ const DriverManagement = () => {
       {/* Driver Form Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {editingDriver ? 'Edit Driver' : 'Add New Driver'}
+          {editingDriver ? t('edit_driver') : t('add_new_driver')}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }}>
             <TextField
               fullWidth
-              label="Name"
+              label={t('name')}
               name="name"
               value={formData.name}
               onChange={handleChange}
@@ -280,7 +290,7 @@ const DriverManagement = () => {
             
             <TextField
               fullWidth
-              label="Phone"
+              label={t('phone')}
               name="phone"
               value={formData.phone}
               onChange={handleChange}
@@ -289,38 +299,38 @@ const DriverManagement = () => {
             />
             
             <FormControl fullWidth margin="normal">
-              <InputLabel>Vehicle Type</InputLabel>
+              <InputLabel>{t('vehicle_type')}</InputLabel>
               <Select
                 name="vehicle_type"
                 value={formData.vehicle_type}
                 onChange={handleChange}
-                label="Vehicle Type"
+                label={t('vehicle_type')}
               >
-                <MenuItem value="bike">Bike</MenuItem>
-                <MenuItem value="car">Car</MenuItem>
-                <MenuItem value="van">Van</MenuItem>
+                <MenuItem value="bike">{t('vehicle_type_bike')}</MenuItem>
+                <MenuItem value="car">{t('vehicle_type_car')}</MenuItem>
+                <MenuItem value="van">{t('vehicle_type_van')}</MenuItem>
               </Select>
             </FormControl>
             
             <FormControl fullWidth margin="normal">
-              <InputLabel>Status</InputLabel>
+              <InputLabel>{t('status')}</InputLabel>
               <Select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                label="Status"
+                label={t('status')}
               >
-                <MenuItem value="available">Available</MenuItem>
-                <MenuItem value="busy">Busy</MenuItem>
-                <MenuItem value="offline">Offline</MenuItem>
+                <MenuItem value="available">{t('driver_status_available')}</MenuItem>
+                <MenuItem value="busy">{t('driver_status_busy')}</MenuItem>
+                <MenuItem value="offline">{t('driver_status_offline')}</MenuItem>
               </Select>
             </FormControl>
             
-            <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>Current Location</Typography>
+            <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>{t('current_location')}</Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
                 fullWidth
-                label="Latitude"
+                label={t('latitude')}
                 name="current_location.lat"
                 value={formData.current_location.lat}
                 onChange={handleChange}
@@ -328,7 +338,7 @@ const DriverManagement = () => {
               />
               <TextField
                 fullWidth
-                label="Longitude"
+                label={t('longitude')}
                 name="current_location.lng"
                 value={formData.current_location.lng}
                 onChange={handleChange}
@@ -338,9 +348,9 @@ const DriverManagement = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleCloseDialog}>{t('cancel')}</Button>
           <Button onClick={handleSubmit} variant="contained" color="primary">
-            {editingDriver ? 'Update' : 'Create'}
+            {editingDriver ? t('update') : t('create')}
           </Button>
         </DialogActions>
       </Dialog>

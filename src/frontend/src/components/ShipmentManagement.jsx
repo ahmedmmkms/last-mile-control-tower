@@ -26,6 +26,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ApiService from '../services/apiService';
+import { useTranslation } from 'react-i18next';
 
 const ShipmentManagement = () => {
   const [shipments, setShipments] = useState([]);
@@ -34,6 +35,7 @@ const ShipmentManagement = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingShipment, setEditingShipment] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const { t } = useTranslation();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -175,6 +177,10 @@ const ShipmentManagement = () => {
     }
   };
 
+  const getStatusLabel = (status) => {
+    return t(`shipment_status_${status}`) || status;
+  };
+
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
@@ -198,13 +204,13 @@ const ShipmentManagement = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h5">Shipment Management</Typography>
+        <Typography variant="h5">{t('shipment_management')}</Typography>
         <Button 
           variant="contained" 
           startIcon={<AddIcon />} 
           onClick={() => handleOpenDialog()}
         >
-          Add Shipment
+          {t('add_shipment')}
         </Button>
       </Box>
 
@@ -212,12 +218,12 @@ const ShipmentManagement = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Tracking Number</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Origin</TableCell>
-              <TableCell>Destination</TableCell>
-              <TableCell>Assigned Driver</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>{t('tracking_number')}</TableCell>
+              <TableCell>{t('status')}</TableCell>
+              <TableCell>{t('origin')}</TableCell>
+              <TableCell>{t('destination')}</TableCell>
+              <TableCell>{t('assigned_driver')}</TableCell>
+              <TableCell>{t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -226,7 +232,7 @@ const ShipmentManagement = () => {
                 <TableCell>{shipment.tracking_number}</TableCell>
                 <TableCell>
                   <Chip 
-                    label={shipment.status} 
+                    label={getStatusLabel(shipment.status)} 
                     color={getStatusColor(shipment.status)} 
                     size="small" 
                   />
@@ -247,7 +253,7 @@ const ShipmentManagement = () => {
                     size="small"
                     sx={{ mr: 1 }}
                   >
-                    Edit
+                    {t('edit')}
                   </Button>
                   <Button
                     startIcon={<DeleteIcon />}
@@ -255,7 +261,7 @@ const ShipmentManagement = () => {
                     size="small"
                     color="error"
                   >
-                    Delete
+                    {t('delete')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -267,13 +273,13 @@ const ShipmentManagement = () => {
       {/* Shipment Form Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
         <DialogTitle>
-          {editingShipment ? 'Edit Shipment' : 'Add New Shipment'}
+          {editingShipment ? t('edit_shipment') : t('add_new_shipment')}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }}>
             <TextField
               fullWidth
-              label="Tracking Number"
+              label={t('tracking_number')}
               name="tracking_number"
               value={formData.tracking_number}
               onChange={handleChange}
@@ -282,25 +288,25 @@ const ShipmentManagement = () => {
             />
             
             <FormControl fullWidth margin="normal">
-              <InputLabel>Status</InputLabel>
+              <InputLabel>{t('status')}</InputLabel>
               <Select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                label="Status"
+                label={t('status')}
               >
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="assigned">Assigned</MenuItem>
-                <MenuItem value="in_transit">In Transit</MenuItem>
-                <MenuItem value="delivered">Delivered</MenuItem>
-                <MenuItem value="failed">Failed</MenuItem>
+                <MenuItem value="pending">{t('shipment_status_pending')}</MenuItem>
+                <MenuItem value="assigned">{t('shipment_status_assigned')}</MenuItem>
+                <MenuItem value="in_transit">{t('shipment_status_in_transit')}</MenuItem>
+                <MenuItem value="delivered">{t('shipment_status_delivered')}</MenuItem>
+                <MenuItem value="failed">{t('shipment_status_failed')}</MenuItem>
               </Select>
             </FormControl>
             
-            <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>Origin</Typography>
+            <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>{t('origin')}</Typography>
             <TextField
               fullWidth
-              label="Address"
+              label={t('address')}
               name="origin.address"
               value={formData.origin.address}
               onChange={handleChange}
@@ -309,7 +315,7 @@ const ShipmentManagement = () => {
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
                 fullWidth
-                label="Latitude"
+                label={t('latitude')}
                 name="origin.lat"
                 value={formData.origin.lat}
                 onChange={handleChange}
@@ -317,7 +323,7 @@ const ShipmentManagement = () => {
               />
               <TextField
                 fullWidth
-                label="Longitude"
+                label={t('longitude')}
                 name="origin.lng"
                 value={formData.origin.lng}
                 onChange={handleChange}
@@ -325,10 +331,10 @@ const ShipmentManagement = () => {
               />
             </Box>
             
-            <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>Destination</Typography>
+            <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>{t('destination')}</Typography>
             <TextField
               fullWidth
-              label="Address"
+              label={t('address')}
               name="destination.address"
               value={formData.destination.address}
               onChange={handleChange}
@@ -337,7 +343,7 @@ const ShipmentManagement = () => {
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
                 fullWidth
-                label="Latitude"
+                label={t('latitude')}
                 name="destination.lat"
                 value={formData.destination.lat}
                 onChange={handleChange}
@@ -345,7 +351,7 @@ const ShipmentManagement = () => {
               />
               <TextField
                 fullWidth
-                label="Longitude"
+                label={t('longitude')}
                 name="destination.lng"
                 value={formData.destination.lng}
                 onChange={handleChange}
@@ -355,9 +361,9 @@ const ShipmentManagement = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleCloseDialog}>{t('cancel')}</Button>
           <Button onClick={handleSubmit} variant="contained" color="primary">
-            {editingShipment ? 'Update' : 'Create'}
+            {editingShipment ? t('update') : t('create')}
           </Button>
         </DialogActions>
       </Dialog>

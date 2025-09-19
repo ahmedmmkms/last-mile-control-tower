@@ -15,6 +15,8 @@ const resources = {
       "admin": "Admin",
       "settings": "Settings",
       "logout": "Logout",
+      "reconciliation": "Reconciliation",
+      "analytics": "Analytics",
       
       // Dashboard specific
       "dispatcher_dashboard": "Dispatcher Dashboard",
@@ -45,6 +47,22 @@ const resources = {
       "actions": "Actions",
       "view_details": "View Details",
       "update_status": "Update Status",
+      "shipment_management": "Shipment Management",
+      "add_shipment": "Add Shipment",
+      "edit_shipment": "Edit Shipment",
+      "add_new_shipment": "Add New Shipment",
+      "origin": "Origin",
+      "assigned_driver": "Assigned Driver",
+      "address": "Address",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      
+      // Shipment statuses
+      "shipment_status_pending": "Pending",
+      "shipment_status_assigned": "Assigned",
+      "shipment_status_in_transit": "In Transit",
+      "shipment_status_delivered": "Delivered",
+      "shipment_status_failed": "Failed",
       
       // Drivers
       "driver_list": "Driver List",
@@ -55,6 +73,22 @@ const resources = {
       "status_online": "Online",
       "status_offline": "Offline",
       "status_busy": "Busy",
+      "driver_management": "Driver Management",
+      "edit_driver": "Edit Driver",
+      "add_new_driver": "Add New Driver",
+      "vehicle": "Vehicle",
+      "location": "Location",
+      "vehicle_type": "Vehicle Type",
+      
+      // Driver statuses
+      "driver_status_available": "Available",
+      "driver_status_busy": "Busy",
+      "driver_status_offline": "Offline",
+      
+      // Vehicle types
+      "vehicle_type_bike": "Bike",
+      "vehicle_type_car": "Car",
+      "vehicle_type_van": "Van",
       
       // Routes
       "route_list": "Route List",
@@ -78,7 +112,10 @@ const resources = {
       "cancel": "Cancel",
       "delete": "Delete",
       "edit": "Edit",
-      "view": "View"
+      "view": "View",
+      "create": "Create",
+      "update": "Update",
+      "name": "Name"
     }
   },
   ar: {
@@ -93,6 +130,8 @@ const resources = {
       "admin": "الإدارة",
       "settings": "الإعدادات",
       "logout": "تسجيل الخروج",
+      "reconciliation": "التسوية",
+      "analytics": "التحليلات",
       
       // Dashboard specific
       "dispatcher_dashboard": "لوحة تحكم المرسل",
@@ -123,6 +162,22 @@ const resources = {
       "actions": "الإجراءات",
       "view_details": "عرض التفاصيل",
       "update_status": "تحديث الحالة",
+      "shipment_management": "إدارة الشحنات",
+      "add_shipment": "إضافة شحنة",
+      "edit_shipment": "تعديل الشحنة",
+      "add_new_shipment": "إضافة شحنة جديدة",
+      "origin": "المصدر",
+      "assigned_driver": "السائق المخصص",
+      "address": "العنوان",
+      "latitude": "خط العرض",
+      "longitude": "خط الطول",
+      
+      // Shipment statuses
+      "shipment_status_pending": "قيد الانتظار",
+      "shipment_status_assigned": "مخصص",
+      "shipment_status_in_transit": "قيد التوصيل",
+      "shipment_status_delivered": "تم التسليم",
+      "shipment_status_failed": "فشل",
       
       // Drivers
       "driver_list": "قائمة السائقين",
@@ -133,6 +188,22 @@ const resources = {
       "status_online": "متصل",
       "status_offline": "غير متصل",
       "status_busy": "مشغول",
+      "driver_management": "إدارة السائقين",
+      "edit_driver": "تعديل السائق",
+      "add_new_driver": "إضافة سائق جديد",
+      "vehicle": "المركبة",
+      "location": "الموقع",
+      "vehicle_type": "نوع المركبة",
+      
+      // Driver statuses
+      "driver_status_available": "متاح",
+      "driver_status_busy": "مشغول",
+      "driver_status_offline": "غير متصل",
+      
+      // Vehicle types
+      "vehicle_type_bike": "دراجة نارية",
+      "vehicle_type_car": "سيارة",
+      "vehicle_type_van": "شاحنة صغيرة",
       
       // Routes
       "route_list": "قائمة المسارات",
@@ -156,7 +227,10 @@ const resources = {
       "cancel": "إلغاء",
       "delete": "حذف",
       "edit": "تعديل",
-      "view": "عرض"
+      "view": "عرض",
+      "create": "إنشاء",
+      "update": "تحديث",
+      "name": "الاسم"
     }
   }
 };

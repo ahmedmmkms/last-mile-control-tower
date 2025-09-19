@@ -104,6 +104,16 @@ const getTheme = (direction) => createTheme({
         },
       },
     },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          '&[dir="rtl"]': {
+            left: 'auto',
+            right: 0,
+          },
+        },
+      },
+    },
   },
 });
 

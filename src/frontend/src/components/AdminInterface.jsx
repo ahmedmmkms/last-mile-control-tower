@@ -13,18 +13,29 @@ import RouteManagement from './RouteManagement';
 import CODManagement from './CODManagement';
 import CODReconciliation from './CODReconciliation';
 import AnalyticsDashboard from './AnalyticsDashboard';
+import { useTranslation } from 'react-i18next';
 
 const AdminInterface = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const { t } = useTranslation();
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
+  const tabLabels = [
+    t('shipments'),
+    t('drivers'),
+    t('routes'),
+    'COD',
+    t('reconciliation'),
+    t('analytics')
+  ];
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h4" gutterBottom>
-        Admin Interface
+        {t('admin_interface')}
       </Typography>
       
       <Paper sx={{ mb: 3 }}>
@@ -35,12 +46,9 @@ const AdminInterface = () => {
           textColor="primary"
           centered
         >
-          <Tab label="Shipments" />
-          <Tab label="Drivers" />
-          <Tab label="Routes" />
-          <Tab label="COD" />
-          <Tab label="Reconciliation" />
-          <Tab label="Analytics" />
+          {tabLabels.map((label, index) => (
+            <Tab key={index} label={label} />
+          ))}
         </Tabs>
       </Paper>
 
