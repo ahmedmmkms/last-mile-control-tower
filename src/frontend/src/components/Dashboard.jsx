@@ -19,7 +19,9 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  ThemeProvider,
+  createTheme
 } from '@mui/material';
 import { 
   Dashboard as DashboardIcon, 
@@ -42,6 +44,7 @@ import DispatcherNotifications from '../components/DispatcherNotifications';
 import SLAMonitoringDashboard from '../components/SLAMonitoringDashboard';
 import { useTranslation } from 'react-i18next';
 import i18n from '../localization/i18n';
+import theme from '../lib/theme';
 
 const drawerWidth = 240;
 
@@ -53,6 +56,17 @@ const Dashboard = () => {
     const newLanguage = event.target.value;
     i18nInstance.changeLanguage(newLanguage);
   };
+
+  // Create a theme instance with background image
+  const getThemedStyle = (isRtl) => ({
+    background: `linear-gradient(rgba(245, 245, 245, 0.9), rgba(245, 245, 245, 0.9)), 
+                 url('/src/assets/images/logistics-background.avif')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    minHeight: '100vh',
+    direction: isRtl ? 'rtl' : 'ltr',
+  });
 
   const renderView = () => {
     switch (activeView) {
@@ -74,25 +88,44 @@ const Dashboard = () => {
         return (
           <Box sx={{ width: '100%' }}>
             {/* Welcome Section */}
-            <Paper sx={{ p: 3, mb: 3, background: 'linear-gradient(135deg, #1976d2 0%, #2196f3 100%)', color: 'white' }}>
-              <Typography variant="h3" gutterBottom>
+            <Paper 
+              sx={{ 
+                p: { xs: 2, sm: 3 }, 
+                mb: 3, 
+                background: 'linear-gradient(135deg, #1a1a1a 0%, #404040 100%)',
+                color: 'white',
+                borderRadius: 2
+              }}
+            >
+              <Typography variant="h3" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2rem' } }}>
                 {t('welcome')} to Last-Mile Delivery Control Tower
               </Typography>
-              <Typography variant="h6" sx={{ opacity: 0.9 }}>
+              <Typography variant="h6" sx={{ opacity: 0.9, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                 {t('manage_delivery_operations')}
               </Typography>
             </Paper>
 
             {/* Quick Stats */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
+            <Grid container spacing={2} sx={{ mb: 3 }}>
               <Grid item xs={12} sm={6} md={3}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <ShipmentIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
-                      <Typography variant="h4">24</Typography>
+                <Card 
+                  sx={{ 
+                    height: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                      <ShipmentIcon sx={{ fontSize: 32, color: 'primary.main', mr: 1.5 }} />
+                      <Typography variant="h4" sx={{ fontWeight: 600 }}>24</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
                       {t('active_shipments')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -102,13 +135,24 @@ const Dashboard = () => {
                 </Card>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <DriverIcon sx={{ fontSize: 40, color: 'secondary.main', mr: 2 }} />
-                      <Typography variant="h4">18</Typography>
+                <Card 
+                  sx={{ 
+                    height: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                      <DriverIcon sx={{ fontSize: 32, color: 'secondary.main', mr: 1.5 }} />
+                      <Typography variant="h4" sx={{ fontWeight: 600 }}>18</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
                       {t('active_drivers')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -118,13 +162,24 @@ const Dashboard = () => {
                 </Card>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <CheckCircleIcon sx={{ fontSize: 40, color: 'success.main', mr: 2 }} />
-                      <Typography variant="h4">87%</Typography>
+                <Card 
+                  sx={{ 
+                    height: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                      <CheckCircleIcon sx={{ fontSize: 32, color: 'success.main', mr: 1.5 }} />
+                      <Typography variant="h4" sx={{ fontWeight: 600 }}>87%</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
                       {t('on_time_rate')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -134,13 +189,24 @@ const Dashboard = () => {
                 </Card>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <AccessTimeIcon sx={{ fontSize: 40, color: 'info.main', mr: 2 }} />
-                      <Typography variant="h4">42m</Typography>
+                <Card 
+                  sx={{ 
+                    height: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                      <AccessTimeIcon sx={{ fontSize: 32, color: 'info.main', mr: 1.5 }} />
+                      <Typography variant="h4" sx={{ fontWeight: 600 }}>42m</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
                       {t('avg_delivery_time')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -151,28 +217,46 @@ const Dashboard = () => {
               </Grid>
             </Grid>
 
-            {/* Recent Activity */}
-            <Grid container spacing={3}>
+            {/* Recent Activity and Quick Actions */}
+            <Grid container spacing={2}>
               <Grid item xs={12} md={8}>
-                <Paper sx={{ p: 3 }}>
-                  <Typography variant="h5" gutterBottom>
+                <Paper 
+                  sx={{ 
+                    p: { xs: 2, sm: 3 },
+                    borderRadius: 2
+                  }}
+                >
+                  <Typography variant="h5" gutterBottom sx={{ mb: 2, fontWeight: 600 }}>
                     {t('recent_activity')}
                   </Typography>
-                  <MaterialList>
+                  <MaterialList sx={{ py: 0 }}>
                     {[
                       { action: 'Shipment #DL-2023-001234 delivered', time: '2 minutes ago', status: 'success' },
                       { action: 'Driver John assigned to Route R-2023-0056', time: '15 minutes ago', status: 'info' },
                       { action: 'New shipment #DL-2023-001235 created', time: '1 hour ago', status: 'primary' },
                       { action: 'Shipment #DL-2023-001230 marked as delayed', time: '2 hours ago', status: 'warning' },
                     ].map((item, index) => (
-                      <ListItem key={index} sx={{ pl: 0, pr: 0 }}>
+                      <ListItem 
+                        key={index} 
+                        sx={{ 
+                          pl: 0, 
+                          pr: 0, 
+                          py: 1.5,
+                          borderBottom: index < 3 ? '1px solid rgba(0, 0, 0, 0.05)' : 'none'
+                        }}
+                      >
                         <ListItemText 
                           primary={item.action} 
                           secondary={item.time}
                           primaryTypographyProps={{ 
                             color: item.status === 'success' ? 'success.main' : 
                                    item.status === 'warning' ? 'warning.main' : 
-                                   item.status === 'info' ? 'info.main' : 'text.primary' 
+                                   item.status === 'info' ? 'info.main' : 'text.primary',
+                            fontWeight: 500
+                          }}
+                          secondaryTypographyProps={{
+                            color: 'text.secondary',
+                            fontSize: '0.85rem'
                           }}
                         />
                       </ListItem>
@@ -181,16 +265,25 @@ const Dashboard = () => {
                 </Paper>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Paper sx={{ p: 3 }}>
-                  <Typography variant="h5" gutterBottom>
+                <Paper 
+                  sx={{ 
+                    p: { xs: 2, sm: 3 },
+                    borderRadius: 2
+                  }}
+                >
+                  <Typography variant="h5" gutterBottom sx={{ mb: 2, fontWeight: 600 }}>
                     {t('quick_actions')}
                   </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                     <Button 
                       variant="contained" 
                       fullWidth
                       onClick={() => setActiveView('shipments')}
                       startIcon={<AddIcon />}
+                      sx={{ 
+                        py: 1.5,
+                        fontWeight: 600
+                      }}
                     >
                       {t('create_shipment')}
                     </Button>
@@ -199,6 +292,10 @@ const Dashboard = () => {
                       fullWidth
                       onClick={() => setActiveView('drivers')}
                       startIcon={<PersonAddIcon />}
+                      sx={{ 
+                        py: 1.5,
+                        fontWeight: 600
+                      }}
                     >
                       {t('add_driver')}
                     </Button>
@@ -207,6 +304,10 @@ const Dashboard = () => {
                       fullWidth
                       onClick={() => setActiveView('routes')}
                       startIcon={<RouteIcon />}
+                      sx={{ 
+                        py: 1.5,
+                        fontWeight: 600
+                      }}
                     >
                       {t('optimize_routes')}
                     </Button>
@@ -215,6 +316,10 @@ const Dashboard = () => {
                       fullWidth
                       onClick={() => setActiveView('admin')}
                       startIcon={<AdminIcon />}
+                      sx={{ 
+                        py: 1.5,
+                        fontWeight: 600
+                      }}
                     >
                       {t('system_settings')}
                     </Button>
@@ -228,98 +333,117 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      {/* Header */}
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Last-Mile Delivery Control Tower
-          </Typography>
-          <FormControl sx={{ minWidth: 120, mr: 2 }} size="small">
-            <Select
-              value={i18nInstance.language}
-              onChange={handleLanguageChange}
-              displayEmpty
-              inputProps={{ 'aria-label': 'Language' }}
-              sx={{ color: 'white', '& .MuiSelect-icon': { color: 'white' } }}
-            >
-              <MenuItem value="en">English</MenuItem>
-              <MenuItem value="ar">العربية</MenuItem>
-            </Select>
-          </FormControl>
-          <DispatcherNotifications />
-        </Toolbar>
-      </AppBar>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        {/* Header */}
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <Toolbar>
+            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+              Last-Mile Delivery Control Tower
+            </Typography>
+            <FormControl sx={{ minWidth: 120, mr: 2 }} size="small">
+              <Select
+                value={i18nInstance.language}
+                onChange={handleLanguageChange}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Language' }}
+                sx={{ color: 'white', '& .MuiSelect-icon': { color: 'white' } }}
+              >
+                <MenuItem value="en">English</MenuItem>
+                <MenuItem value="ar">العربية</MenuItem>
+              </Select>
+            </FormControl>
+            <DispatcherNotifications />
+          </Toolbar>
+        </AppBar>
 
-      {/* Sidebar */}
-      <Drawer
-        variant="permanent"
-        anchor={i18nInstance.language === 'ar' ? 'right' : 'left'}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { 
-            width: drawerWidth, 
-            boxSizing: 'border-box',
-            right: i18nInstance.language === 'ar' ? 0 : 'auto',
-            left: i18nInstance.language === 'ar' ? 'auto' : 0,
-          },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          {['dashboard', 'shipments', 'drivers', 'routes', 'sla_monitoring', 'admin'].map((key, index) => {
-            const isDisabled = key === 'sla_monitoring';
-            const text = t(key);
-            return (
-              <ListItem key={key} disablePadding>
-                <ListItemButton 
-                  onClick={() => !isDisabled && setActiveView(key)}
-                  selected={activeView === key}
-                  disabled={isDisabled}
-                  sx={isDisabled ? { 
-                    opacity: 0.5, 
-                    '&.Mui-disabled': { 
-                      opacity: 0.5,
-                      color: 'rgba(0, 0, 0, 0.38)',
-                      cursor: 'not-allowed'
-                    }
-                  } : {}}
-                >
-                  <ListItemIcon sx={isDisabled ? { color: 'rgba(0, 0, 0, 0.38)' } : {}}>
-                    {index === 0 && <DashboardIcon />}
-                    {index === 1 && <ShipmentIcon />}
-                    {index === 2 && <DriverIcon />}
-                    {index === 3 && <RouteIcon />}
-                    {index === 4 && <AssessmentIcon />}
-                    {index === 5 && <AdminIcon />}
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary={text} 
-                    sx={isDisabled ? { color: 'rgba(0, 0, 0, 0.38)' } : {}}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
+        {/* Sidebar */}
+        <Drawer
+          variant="permanent"
+          anchor={i18nInstance.language === 'ar' ? 'right' : 'left'}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: { 
+              width: drawerWidth, 
+              boxSizing: 'border-box',
+              right: i18nInstance.language === 'ar' ? 0 : 'auto',
+              left: i18nInstance.language === 'ar' ? 'auto' : 0,
+            },
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: 'auto' }}>
+            {['dashboard', 'shipments', 'drivers', 'routes', 'sla_monitoring', 'admin'].map((key, index) => {
+              const isDisabled = key === 'sla_monitoring';
+              const text = t(key);
+              return (
+                <ListItem key={key} disablePadding>
+                  <ListItemButton 
+                    onClick={() => !isDisabled && setActiveView(key)}
+                    selected={activeView === key}
+                    disabled={isDisabled}
+                    sx={isDisabled ? { 
+                      opacity: 0.5, 
+                      '&.Mui-disabled': { 
+                        opacity: 0.5,
+                        color: 'rgba(0, 0, 0, 0.38)',
+                        cursor: 'not-allowed'
+                      }
+                    } : {
+                      '&.Mui-selected': {
+                        backgroundColor: 'secondary.main',
+                        color: 'secondary.contrastText',
+                        '&:hover': {
+                          backgroundColor: 'secondary.dark',
+                        }
+                      }
+                    }}
+                  >
+                    <ListItemIcon sx={isDisabled ? { color: 'rgba(0, 0, 0, 0.38)' } : {
+                      color: activeView === key ? 'secondary.contrastText' : 'inherit'
+                    }}>
+                      {index === 0 && <DashboardIcon />}
+                      {index === 1 && <ShipmentIcon />}
+                      {index === 2 && <DriverIcon />}
+                      {index === 3 && <RouteIcon />}
+                      {index === 4 && <AssessmentIcon />}
+                      {index === 5 && <AdminIcon />}
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={text} 
+                      sx={isDisabled ? { color: 'rgba(0, 0, 0, 0.38)' } : {}}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </Box>
+        </Drawer>
+
+        {/* Main Content */}
+        <Box 
+          component="main" 
+          sx={{ 
+            flexGrow: 1, 
+            p: 3,
+            ...getThemedStyle(i18nInstance.language === 'ar')
+          }}
+        >
+          <Toolbar />
+          {activeView !== 'admin' && activeView !== 'shipments' && (
+            <Typography variant="h4" gutterBottom>
+              {activeView === 'dashboard' ? t('dispatcher_dashboard') : 
+               activeView === 'sla' ? t('sla_monitoring_dashboard') :
+               t(activeView)}
+            </Typography>
+          )}
+          
+          {renderView()}
         </Box>
-      </Drawer>
-
-      {/* Main Content */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        {activeView !== 'admin' && activeView !== 'shipments' && (
-          <Typography variant="h4" gutterBottom>
-            {activeView === 'dashboard' ? t('dispatcher_dashboard') : 
-             activeView === 'sla' ? t('sla_monitoring_dashboard') :
-             t(activeView)}
-          </Typography>
-        )}
-        
-        {renderView()}
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 

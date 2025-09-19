@@ -1,0 +1,59 @@
+/*
+ * Logistics Background Image
+ * Fallback CSS for background image handling
+ * 
+ * This file provides a fallback mechanism for the logistics background image
+ * used in the dashboard. It ensures that:
+ * 1. A solid color fallback is available when images can't load
+ * 2. Proper contrast is maintained for text readability
+ * 3. Reduced data mode is supported
+ * 4. Print styles are handled appropriately
+ */
+
+/* Base background with fallback */
+.dashboard-background {
+  background-color: #f5f5f5; /* Fallback solid color */
+  background-image: linear-gradient(rgba(245, 245, 245, 0.9), rgba(245, 245, 245, 0.9));
+}
+
+/* Enhanced background when images are supported */
+@media (prefers-reduced-data: no-preference) {
+  .dashboard-background {
+    background-image: 
+      linear-gradient(rgba(245, 245, 245, 0.9), rgba(245, 245, 245, 0.9)),
+      url('../images/logistics-background.avif');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+  
+  /* WebP fallback */
+  .dashboard-background {
+    background-image: 
+      linear-gradient(rgba(245, 245, 245, 0.9), rgba(245, 245, 245, 0.9)),
+      url('../images/logistics-background.webp');
+  }
+  
+  /* JPG/PNG ultimate fallback */
+  .dashboard-background {
+    background-image: 
+      linear-gradient(rgba(245, 245, 245, 0.9), rgba(245, 245, 245, 0.9)),
+      url('../images/logistics-background.jpg');
+  }
+}
+
+/* Print styles */
+@media print {
+  .dashboard-background {
+    background: none !important;
+    background-color: #ffffff !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .dashboard-background {
+    background-image: none;
+    background-color: #ffffff;
+  }
+}

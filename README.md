@@ -19,6 +19,9 @@ This project is an MVP for a Last-Mile Delivery Control Tower system that provid
 - **Production Ready** - Application prepared for production deployment ✅ COMPLETED
 - **Enhanced UI/UX** - Refined user interface across all components ✅ COMPLETED
 
+### Recent Enhancements
+- **Dashboard UI Refresh** - Modern, premium dashboard design with Charcoal/Slate base and Amber accents (see [UI Enhancement Changelog](CHANGELOG-UI-ENHANCEMENT.md))
+
 ## Project Structure
 
 - `src/backend` - Backend API services
