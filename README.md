@@ -235,12 +235,6 @@ Create a `.env` file based on `.env.example`:
 | `npm run test:integration` | Run integration tests |
 | `npm run test:api` | Run API tests |
 
-## API Documentation
-
-Explore the complete API documentation with Swagger:
-
-The API follows REST principles and provides comprehensive endpoints for managing all aspects of the delivery operations.
-
 ## API Endpoints
 
 ### COD Management
@@ -291,8 +285,6 @@ npm run test:integration # Integration tests
 npm run test:api       # API tests
 ```
 
-For detailed testing information, see our [Testing Guide](docs/testing-guide.md).
-
 ## Deployment
 
 ### Vercel Deployment
@@ -301,8 +293,6 @@ For detailed testing information, see our [Testing Guide](docs/testing-guide.md)
 2. Connect your GitHub repository
 3. Configure environment variables in Vercel dashboard
 4. Deploy the application
-
-For detailed instructions, see our [Vercel Deployment Guide](docs/vercel-deployment-guide.md).
 
 ## CI/CD
 
