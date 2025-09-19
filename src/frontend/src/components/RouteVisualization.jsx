@@ -11,6 +11,7 @@ import { LocalShipping, Place, Error as ErrorIcon } from '@mui/icons-material';
 import L from 'leaflet';
 import ApiService from '../services/apiService';
 import webSocketService from '../services/webSocketService';
+import { useTranslation } from 'react-i18next';
 
 // Fix for default marker icons in Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -33,6 +34,7 @@ const driverIcon = new L.Icon({
 const RouteVisualization = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t, i18n } = useTranslation();
   
   const [routes, setRoutes] = useState([]);
   const [drivers, setDrivers] = useState([]);
@@ -119,6 +121,29 @@ const RouteVisualization = () => {
   // Default center for the map (Cairo, Egypt)
   const center = [30.0444, 31.2357];
 
+  const getLocalizedStatus = (status) => {
+    switch (status) {
+      case 'available': return t('driver_status_available');
+      case 'busy': return t('driver_status_busy');
+      case 'offline': return t('driver_status_offline');
+      case 'pending': return t('shipment_status_pending');
+      case 'assigned': return t('shipment_status_assigned');
+      case 'in_transit': return t('shipment_status_in_transit');
+      case 'delivered': return t('shipment_status_delivered');
+      case 'failed': return t('shipment_status_failed');
+      default: return status;
+    }
+  };
+
+  const getLocalizedVehicleType = (vehicleType) => {
+    switch (vehicleType) {
+      case 'bike': return t('vehicle_type_bike');
+      case 'car': return t('vehicle_type_car');
+      case 'van': return t('vehicle_type_van');
+      default: return vehicleType;
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -146,10 +171,10 @@ const RouteVisualization = () => {
         gap: isMobile ? 2 : 0
       }}>
         <Typography variant={isMobile ? "h6" : "h5"} gutterBottom>
-          Route Visualization
+          {t('route_visualization')}
         </Typography>
         <Chip 
-          label={liveTracking ? "Live Tracking ON" : "Live Tracking OFF"} 
+          label={liveTracking ? t('live_tracking_on') : t('live_tracking_off')} 
           color={liveTracking ? "success" : "default"}
           onClick={() => setLiveTracking(!liveTracking)}
           sx={{ cursor: 'pointer' }}
@@ -201,14 +226,14 @@ const RouteVisualization = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <Place sx={{ mr: 1, color: 'primary.main' }} />
                       <Typography variant="subtitle2">
-                        Waypoint {index + 1}
+                        {t('waypoint')} {index + 1}
                       </Typography>
                     </Box>
                     <Typography variant="body2">
-                      Shipment: {route.shipment_id}
+                      {t('shipment')}: {route.shipment_id}
                     </Typography>
                     <Typography variant="body2">
-                      Status: {route.status}
+                      {t('status')}: {route.status}
                     </Typography>
                   </Popup>
                 </Marker>
@@ -233,13 +258,13 @@ const RouteVisualization = () => {
                   </Typography>
                 </Box>
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                  Vehicle: {driver.vehicle_type}
+                  {t('vehicle')}: {getLocalizedVehicleType(driver.vehicle_type)}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 1 }}>
-                  Status: {driver.status}
+                  {t('status')}: {getLocalizedStatus(driver.status)}
                 </Typography>
                 <Typography variant="caption">
-                  Last updated: {new Date(driver.last_active).toLocaleTimeString()}
+                  {t('last_updated')}: {new Date(driver.last_active).toLocaleTimeString()}
                 </Typography>
               </Popup>
             </Marker>
@@ -250,7 +275,7 @@ const RouteVisualization = () => {
       {/* Driver status summary */}
       <Box sx={{ mt: 2 }}>
         <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom>
-          Active Drivers ({drivers.length})
+          {t('active_drivers')} ({drivers.length})
         </Typography>
         <Box sx={{ 
           display: 'flex', 

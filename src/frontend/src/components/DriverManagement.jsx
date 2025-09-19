@@ -22,13 +22,17 @@ import {
   Select,
   MenuItem,
   Alert,
-  Snackbar
+  Snackbar,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ApiService from '../services/apiService';
 import { useTranslation } from 'react-i18next';
 
 const DriverManagement = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -215,8 +219,16 @@ const DriverManagement = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
+      <Box sx={{ 
+        overflowX: 'auto', 
+        maxWidth: '100%',
+        mb: 2
+      }}>
+        <TableContainer component={Paper} sx={{ 
+          minWidth: isMobile ? 600 : 'auto',
+          width: isMobile ? 600 : '100%'
+        }}>
+          <Table size={isMobile ? "small" : "medium"}>
           <TableHead>
             <TableRow>
               <TableCell>{t('name')}</TableCell>
@@ -270,9 +282,16 @@ const DriverManagement = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box>
 
       {/* Driver Form Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog 
+        open={openDialog} 
+        onClose={handleCloseDialog} 
+        maxWidth="md" 
+        fullWidth
+        fullScreen={isMobile}
+      >
         <DialogTitle>
           {editingDriver ? t('edit_driver') : t('add_new_driver')}
         </DialogTitle>

@@ -98,7 +98,7 @@ const Dashboard = () => {
               }}
             >
               <Typography variant="h3" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2rem' } }}>
-                {t('welcome')} to Last-Mile Delivery Control Tower
+                {t('welcome')}{i18nInstance.language === 'en' ? ' to ' : ' '}Last-Mile Delivery Control Tower
               </Typography>
               <Typography variant="h6" sx={{ opacity: 0.9, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                 {t('manage_delivery_operations')}
@@ -441,6 +441,16 @@ const Dashboard = () => {
           )}
           
           {renderView()}
+          
+          {/* Signature */}
+          <Box sx={{ 
+            mt: 4, 
+            textAlign: 'center', 
+            color: 'text.secondary',
+            fontSize: '0.875rem'
+          }}>
+            by AMM 2025
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>

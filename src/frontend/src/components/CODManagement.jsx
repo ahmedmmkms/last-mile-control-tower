@@ -24,7 +24,9 @@ import {
   CircularProgress,
   Grid,
   Card,
-  CardContent
+  CardContent,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -36,11 +38,13 @@ import {
 import ApiService from '../services/apiService';
 
 const CODManagement = () => {
-  const [codPayments, setCodPayments] = useState([]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [codRecords, setCodRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedCodPayment, setSelectedCodPayment] = useState(null);
+  const [editingRecord, setEditingRecord] = useState(null);
   const [filterStatus, setFilterStatus] = useState('');
   const [summary, setSummary] = useState(null);
 
@@ -296,8 +300,16 @@ const CODManagement = () => {
       </Box>
 
       {/* COD Payments Table */}
-      <TableContainer component={Paper}>
-        <Table>
+      <Box sx={{ 
+        overflowX: 'auto', 
+        maxWidth: '100%',
+        mb: 2
+      }}>
+        <TableContainer component={Paper} sx={{ 
+          minWidth: isMobile ? 600 : 'auto',
+          width: isMobile ? 600 : '100%'
+        }}>
+          <Table size={isMobile ? "small" : "medium"}>
           <TableHead>
             <TableRow>
               <TableCell>Shipment</TableCell>
@@ -358,9 +370,16 @@ const CODManagement = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box>
 
-      {/* Add/Edit COD Payment Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      {/* COD Payment Form Dialog */}
+      <Dialog 
+        open={openDialog} 
+        onClose={handleCloseDialog} 
+        maxWidth="sm" 
+        fullWidth
+        fullScreen={isMobile}
+      >
         <DialogTitle>
           {selectedCodPayment ? 'View COD Payment' : 'Add COD Payment'}
         </DialogTitle>

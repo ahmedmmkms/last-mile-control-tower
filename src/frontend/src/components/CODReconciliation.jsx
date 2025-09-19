@@ -25,7 +25,9 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActions
+  CardActions,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import {
   Sync as SyncIcon,
@@ -36,13 +38,13 @@ import {
 import ApiService from '../services/apiService';
 
 const CODReconciliation = () => {
-  const [codPayments, setCodPayments] = useState([]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [reconciliationRecords, setReconciliationRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('collected');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [summary, setSummary] = useState(null);
-  const [reconciling, setReconciling] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
 
   useEffect(() => {
     fetchCodPayments();
@@ -292,9 +294,17 @@ const CODReconciliation = () => {
         />
       </Box>
 
-      {/* COD Payments Table */}
-      <TableContainer component={Paper}>
-        <Table>
+      {/* Reconciliation Records Table */}
+      <Box sx={{ 
+        overflowX: 'auto', 
+        maxWidth: '100%',
+        mb: 2
+      }}>
+        <TableContainer component={Paper} sx={{ 
+          minWidth: isMobile ? 600 : 'auto',
+          width: isMobile ? 600 : '100%'
+        }}>
+          <Table size={isMobile ? "small" : "medium"}>
           <TableHead>
             <TableRow>
               <TableCell>Shipment</TableCell>
@@ -347,6 +357,7 @@ const CODReconciliation = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box>
     </Box>
   );
 };

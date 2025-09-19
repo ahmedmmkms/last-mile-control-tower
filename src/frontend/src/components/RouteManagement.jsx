@@ -23,19 +23,26 @@ import {
   MenuItem,
   Alert,
   Snackbar,
-  Autocomplete
+  Autocomplete,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import ApiService from '../services/apiService';
+import { useTranslation } from 'react-i18next';
 
 const RouteManagement = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [routes, setRoutes] = useState([]);
   const [shipments, setShipments] = useState([]);
+  const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingRoute, setEditingRoute] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const { t } = useTranslation();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -205,8 +212,16 @@ const RouteManagement = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
+      <Box sx={{ 
+        overflowX: 'auto', 
+        maxWidth: '100%',
+        mb: 2
+      }}>
+        <TableContainer component={Paper} sx={{ 
+          minWidth: isMobile ? 600 : 'auto',
+          width: isMobile ? 600 : '100%'
+        }}>
+          <Table size={isMobile ? "small" : "medium"}>
           <TableHead>
             <TableRow>
               <TableCell>Shipment</TableCell>
@@ -261,9 +276,16 @@ const RouteManagement = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Box>
 
       {/* Route Form Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+      <Dialog 
+        open={openDialog} 
+        onClose={handleCloseDialog} 
+        maxWidth="md" 
+        fullWidth
+        fullScreen={isMobile}
+      >
         <DialogTitle>
           {editingRoute ? 'Edit Route' : 'Add New Route'}
         </DialogTitle>

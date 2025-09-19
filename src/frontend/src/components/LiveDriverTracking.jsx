@@ -33,10 +33,12 @@ import {
 } from '@mui/icons-material';
 import webSocketService from '../services/webSocketService';
 import ApiService from '../services/apiService';
+import { useTranslation } from 'react-i18next';
 
 const LiveDriverTracking = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t, i18n } = useTranslation();
   
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +100,24 @@ const LiveDriverTracking = () => {
     }
   };
 
+  const getLocalizedStatus = (status) => {
+    switch (status) {
+      case 'available': return t('driver_status_available');
+      case 'busy': return t('driver_status_busy');
+      case 'offline': return t('driver_status_offline');
+      default: return status;
+    }
+  };
+
+  const getLocalizedVehicleType = (vehicleType) => {
+    switch (vehicleType) {
+      case 'bike': return t('vehicle_type_bike');
+      case 'car': return t('vehicle_type_car');
+      case 'van': return t('vehicle_type_van');
+      default: return vehicleType;
+    }
+  };
+
   const getBatteryIcon = (level) => {
     if (level === null || level === undefined) return <BatteryUnknown />;
     if (level > 70) return <BatteryFull />;
@@ -143,7 +163,7 @@ const LiveDriverTracking = () => {
   return (
     <Box>
       <Typography variant={isMobile ? "h6" : "h6"} gutterBottom>
-        Live Driver Tracking
+        {t('live_driver_tracking')}
       </Typography>
       
       {isMobile ? (
@@ -196,25 +216,25 @@ const LiveDriverTracking = () => {
                   <Collapse in={expandedRows.has(driver.id)} timeout="auto" unmountOnExit sx={{ width: '100%' }}>
                     <Box sx={{ mt: 1 }}>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Vehicle:</strong> {driver.vehicle_type}
+                        <strong>{t('vehicle')}:</strong> {getLocalizedVehicleType(driver.vehicle_type)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Location:</strong> {driver.current_location ? 
+                        <strong>{t('location')}:</strong> {driver.current_location ? 
                           `${driver.current_location.lat.toFixed(4)}, ${driver.current_location.lng.toFixed(4)}` : 
                           'No location'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Last Update:</strong> {driver.last_active ? 
+                        <strong>{t('last_update')}:</strong> {driver.last_active ? 
                           new Date(driver.last_active).toLocaleTimeString() : 
                           'Never'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Battery:</strong> {driver.battery_level !== undefined ? 
+                        <strong>{t('battery')}:</strong> {driver.battery_level !== undefined ? 
                           `${driver.battery_level}%` : 
                           'Unknown'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Assignment:</strong> {driver.assigned_shipment || 'None'}
+                        <strong>{t('assignment')}:</strong> {driver.assigned_shipment || t('none')}
                       </Typography>
                       <Box sx={{ display: 'flex', mt: 1 }}>
                         <Tooltip title="View on map">
@@ -257,14 +277,14 @@ const LiveDriverTracking = () => {
           <Table sx={{ minWidth: 650 }} aria-label="live driver tracking table">
             <TableHead>
               <TableRow>
-                <TableCell>Driver</TableCell>
-                <TableCell>Vehicle</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Last Update</TableCell>
-                <TableCell>Battery</TableCell>
-                <TableCell>Assignment</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t('driver')}</TableCell>
+                <TableCell>{t('vehicle')}</TableCell>
+                <TableCell>{t('status')}</TableCell>
+                <TableCell>{t('location')}</TableCell>
+                <TableCell>{t('last_update')}</TableCell>
+                <TableCell>{t('battery')}</TableCell>
+                <TableCell>{t('assignment')}</TableCell>
+                <TableCell>{t('actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -289,14 +309,14 @@ const LiveDriverTracking = () => {
                   </TableCell>
                   <TableCell>
                     <Chip 
-                      label={driver.vehicle_type} 
+                      label={getLocalizedVehicleType(driver.vehicle_type)} 
                       size="small" 
                       variant="outlined"
                     />
                   </TableCell>
                   <TableCell>
                     <Chip 
-                      label={driver.status} 
+                      label={getLocalizedStatus(driver.status)} 
                       size="small" 
                       color={getStatusColor(driver.status)}
                     />
@@ -308,7 +328,7 @@ const LiveDriverTracking = () => {
                       </Typography>
                     ) : (
                       <Typography variant="body2" color="text.secondary">
-                        No location
+                        {t('no_location')}
                       </Typography>
                     )}
                   </TableCell>
@@ -319,7 +339,7 @@ const LiveDriverTracking = () => {
                       </Typography>
                     ) : (
                       <Typography variant="body2" color="text.secondary">
-                        Never
+                        {t('never')}
                       </Typography>
                     )}
                   </TableCell>
@@ -333,7 +353,7 @@ const LiveDriverTracking = () => {
                       </Box>
                     ) : (
                       <Typography variant="body2" color="text.secondary">
-                        Unknown
+                        {t('unknown')}
                       </Typography>
                     )}
                   </TableCell>
@@ -346,12 +366,12 @@ const LiveDriverTracking = () => {
                       />
                     ) : (
                       <Typography variant="body2" color="text.secondary">
-                        None
+                        {t('none')}
                       </Typography>
                     )}
                   </TableCell>
                   <TableCell>
-                    <Tooltip title="View on map">
+                    <Tooltip title={t('view_on_map')}>
                       <IconButton 
                         size="small" 
                         onClick={() => handleViewOnMap(driver)}
@@ -360,7 +380,7 @@ const LiveDriverTracking = () => {
                         <Directions />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Call driver">
+                    <Tooltip title={t('call_driver')}>
                       <IconButton 
                         size="small" 
                         onClick={() => handleCallDriver(driver.phone)}

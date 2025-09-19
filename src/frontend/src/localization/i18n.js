@@ -115,7 +115,27 @@ const resources = {
       "view": "View",
       "create": "Create",
       "update": "Update",
-      "name": "Name"
+      "name": "Name",
+      
+      // Additional translations
+      "shipment_timeline": "Shipment Timeline",
+      "unassigned": "Unassigned",
+      "live_driver_tracking": "Live Driver Tracking",
+      "last_update": "Last Update",
+      "battery": "Battery",
+      "assignment": "Assignment",
+      "none": "None",
+      "no_location": "No location",
+      "never": "Never",
+      "unknown": "Unknown",
+      "view_on_map": "View on map",
+      "call_driver": "Call driver",
+      "route_visualization": "Route Visualization",
+      "live_tracking_on": "Live Tracking ON",
+      "live_tracking_off": "Live Tracking OFF",
+      "waypoint": "Waypoint",
+      "shipment": "Shipment",
+      "last_updated": "Last updated"
     }
   },
   ar: {
@@ -230,7 +250,27 @@ const resources = {
       "view": "عرض",
       "create": "إنشاء",
       "update": "تحديث",
-      "name": "الاسم"
+      "name": "الاسم",
+      
+      // Additional translations
+      "shipment_timeline": "جدول زمني الشحنة",
+      "unassigned": "غير مخصص",
+      "live_driver_tracking": "تتبع السائق المباشر",
+      "last_update": "آخر تحديث",
+      "battery": "البطارية",
+      "assignment": "التعيين",
+      "none": "لا شيء",
+      "no_location": "لا يوجد موقع",
+      "never": "أبداً",
+      "unknown": "غير معروف",
+      "view_on_map": "عرض على الخريطة",
+      "call_driver": "الاتصال بالسائق",
+      "route_visualization": "تصور المسار",
+      "live_tracking_on": "التتبع المباشر مفعل",
+      "live_tracking_off": "التتبع المباشر معطل",
+      "waypoint": "نقطة الطريق",
+      "shipment": "الشحنة",
+      "last_updated": "آخر تحديث"
     }
   }
 };

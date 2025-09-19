@@ -34,10 +34,12 @@ import {
 } from '@mui/icons-material';
 import ApiService from '../services/apiService';
 import ShipmentTimeline from './ShipmentTimeline';
+import { useTranslation } from 'react-i18next';
 
 const ShipmentList = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t, i18n } = useTranslation();
   
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,6 +88,17 @@ const ShipmentList = () => {
     }
   };
 
+  const getLocalizedStatus = (status) => {
+    switch (status) {
+      case 'pending': return t('shipment_status_pending');
+      case 'assigned': return t('shipment_status_assigned');
+      case 'in_transit': return t('shipment_status_in_transit');
+      case 'delivered': return t('shipment_status_delivered');
+      case 'failed': return t('shipment_status_failed');
+      default: return status;
+    }
+  };;
+
   const handleViewTimeline = (shipment) => {
     setSelectedShipment(shipment);
     setTimelineDialogOpen(true);
@@ -120,7 +133,7 @@ const ShipmentList = () => {
   return (
     <Box sx={{ mb: 4 }}>
       <Typography variant={isMobile ? "h6" : "h5"} gutterBottom>
-        Shipments
+        {t('shipment_list')}
       </Typography>
       
       {/* Search Bar */}
@@ -133,7 +146,7 @@ const ShipmentList = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search shipments..."
+          placeholder={t('search_shipments')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -151,7 +164,7 @@ const ShipmentList = () => {
           }}
           size={isMobile ? "small" : "medium"}
         >
-          Add Shipment
+          {t('add_shipment')}
         </Button>
       </Box>
       
@@ -180,7 +193,7 @@ const ShipmentList = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Chip 
-                        label={shipment.status} 
+                        label={getLocalizedStatus(shipment.status)} 
                         color={getStatusColor(shipment.status)} 
                         size="small" 
                         sx={{ mr: 1 }}
@@ -188,6 +201,7 @@ const ShipmentList = () => {
                       <IconButton 
                         size="small" 
                         onClick={() => handleViewTimeline(shipment)}
+                        title={t('view_details')}
                       >
                         <TimelineIcon />
                       </IconButton>
@@ -203,13 +217,13 @@ const ShipmentList = () => {
                   <Collapse in={expandedRows.has(shipment.id)} timeout="auto" unmountOnExit sx={{ width: '100%' }}>
                     <Box sx={{ mt: 1 }}>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Origin:</strong> {shipment.origin ? `${shipment.origin.lat}, ${shipment.origin.lng}` : 'N/A'}
+                        <strong>{t('origin')}:</strong> {shipment.origin ? `${shipment.origin.lat}, ${shipment.origin.lng}` : 'N/A'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Destination:</strong> {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
+                        <strong>{t('destination')}:</strong> {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Driver:</strong> {shipment.assigned_driver_id || 'Unassigned'}
+                        <strong>{t('assigned_driver')}:</strong> {shipment.assigned_driver_id || 'Unassigned'}
                       </Typography>
                     </Box>
                   </Collapse>
@@ -224,12 +238,12 @@ const ShipmentList = () => {
           <Table size={isMobile ? "small" : "medium"}>
             <TableHead>
               <TableRow>
-                <TableCell>Tracking Number</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Origin</TableCell>
-                <TableCell>Destination</TableCell>
-                <TableCell>Assigned Driver</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t('tracking_number')}</TableCell>
+                <TableCell>{t('status')}</TableCell>
+                <TableCell>{t('origin')}</TableCell>
+                <TableCell>{t('destination')}</TableCell>
+                <TableCell>{t('assigned_driver')}</TableCell>
+                <TableCell>{t('actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -238,7 +252,7 @@ const ShipmentList = () => {
                   <TableCell>{shipment.tracking_number}</TableCell>
                   <TableCell>
                     <Chip 
-                      label={shipment.status} 
+                      label={getLocalizedStatus(shipment.status)} 
                       color={getStatusColor(shipment.status)} 
                       size={isMobile ? "small" : "medium"} 
                     />
@@ -250,13 +264,13 @@ const ShipmentList = () => {
                     {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
                   </TableCell>
                   <TableCell>
-                    {shipment.assigned_driver_id || 'Unassigned'}
+                    {shipment.assigned_driver_id || t('unassigned')}
                   </TableCell>
                   <TableCell>
                     <IconButton 
                       size={isMobile ? "small" : "medium"} 
                       onClick={() => handleViewTimeline(shipment)}
-                      title="View Timeline"
+                      title={t('view_details')}
                     >
                       <TimelineIcon />
                     </IconButton>
@@ -277,7 +291,7 @@ const ShipmentList = () => {
         fullScreen={isMobile}
       >
         <DialogTitle>
-          Shipment Timeline
+          {t('shipment_timeline')}
           <IconButton
             aria-label="close"
             onClick={() => setTimelineDialogOpen(false)}
