@@ -1,7 +1,7 @@
 {
   "name": "last-mile-control-tower",
   "version": "1.0.0",
-  "description": "Last-Mile Delivery Control Tower MVP",
+  "description": "Last-Mile Delivery Control Tower MVP - PROJECT COMPLETED",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -28,7 +28,8 @@
     "last-mile",
     "delivery",
     "control-tower",
-    "logistics"
+    "logistics",
+    "completed-project"
   ],
   "author": "P2 Team",
   "license": "MIT",
