@@ -21,7 +21,9 @@ import {
   FormControl,
   InputLabel,
   ThemeProvider,
-  createTheme
+  createTheme,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import { 
   Dashboard as DashboardIcon, 
@@ -49,6 +51,8 @@ import theme from '../lib/theme';
 const drawerWidth = 240;
 
 const Dashboard = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [activeView, setActiveView] = useState('dashboard');
   const { t, i18n: i18nInstance } = useTranslation();
 
@@ -106,7 +110,7 @@ const Dashboard = () => {
             </Paper>
 
             {/* Quick Stats */}
-            <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid container spacing={isMobile ? 1 : 2} sx={{ mb: isMobile ? 1 : 3 }}>
               <Grid item xs={12} sm={6} md={3}>
                 <Card 
                   sx={{ 
@@ -115,20 +119,20 @@ const Dashboard = () => {
                     flexDirection: 'column',
                     transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                     '&:hover': {
-                      transform: 'translateY(-4px)',
+                      transform: isMobile ? 'none' : 'translateY(-4px)',
                       boxShadow: 4
                     }
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                      <ShipmentIcon sx={{ fontSize: 32, color: 'primary.main', mr: 1.5 }} />
-                      <Typography variant="h4" sx={{ fontWeight: 600 }}>24</Typography>
+                  <CardContent sx={{ flexGrow: 1, p: isMobile ? 1.5 : 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: isMobile ? 1 : 1.5 }}>
+                      <ShipmentIcon sx={{ fontSize: isMobile ? 24 : 32, color: 'primary.main', mr: isMobile ? 1 : 1.5 }} />
+                      <Typography variant={isMobile ? "h5" : "h4"} sx={{ fontWeight: 600 }}>{isMobile ? '24' : '24'}</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
+                    <Typography variant={isMobile ? "body1" : "h6"} gutterBottom sx={{ fontSize: isMobile ? '0.9rem' : '1.1rem', mb: isMobile ? 0.25 : 0.5 }}>
                       {t('active_shipments')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                       {t('currently_in_transit')}
                     </Typography>
                   </CardContent>
@@ -142,20 +146,20 @@ const Dashboard = () => {
                     flexDirection: 'column',
                     transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                     '&:hover': {
-                      transform: 'translateY(-4px)',
+                      transform: isMobile ? 'none' : 'translateY(-4px)',
                       boxShadow: 4
                     }
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                      <DriverIcon sx={{ fontSize: 32, color: 'secondary.main', mr: 1.5 }} />
-                      <Typography variant="h4" sx={{ fontWeight: 600 }}>18</Typography>
+                  <CardContent sx={{ flexGrow: 1, p: isMobile ? 1.5 : 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: isMobile ? 1 : 1.5 }}>
+                      <DriverIcon sx={{ fontSize: isMobile ? 24 : 32, color: 'secondary.main', mr: isMobile ? 1 : 1.5 }} />
+                      <Typography variant={isMobile ? "h5" : "h4"} sx={{ fontWeight: 600 }}>{isMobile ? '18' : '18'}</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
+                    <Typography variant={isMobile ? "body1" : "h6"} gutterBottom sx={{ fontSize: isMobile ? '0.9rem' : '1.1rem', mb: isMobile ? 0.25 : 0.5 }}>
                       {t('active_drivers')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                       {t('currently_on_duty')}
                     </Typography>
                   </CardContent>
@@ -169,20 +173,20 @@ const Dashboard = () => {
                     flexDirection: 'column',
                     transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                     '&:hover': {
-                      transform: 'translateY(-4px)',
+                      transform: isMobile ? 'none' : 'translateY(-4px)',
                       boxShadow: 4
                     }
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                      <CheckCircleIcon sx={{ fontSize: 32, color: 'success.main', mr: 1.5 }} />
-                      <Typography variant="h4" sx={{ fontWeight: 600 }}>87%</Typography>
+                  <CardContent sx={{ flexGrow: 1, p: isMobile ? 1.5 : 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: isMobile ? 1 : 1.5 }}>
+                      <CheckCircleIcon sx={{ fontSize: isMobile ? 24 : 32, color: 'success.main', mr: isMobile ? 1 : 1.5 }} />
+                      <Typography variant={isMobile ? "h5" : "h4"} sx={{ fontWeight: 600 }}>{isMobile ? '87%' : '87%'}</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
+                    <Typography variant={isMobile ? "body1" : "h6"} gutterBottom sx={{ fontSize: isMobile ? '0.9rem' : '1.1rem', mb: isMobile ? 0.25 : 0.5 }}>
                       {t('on_time_rate')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                       {t('deliveries_on_schedule')}
                     </Typography>
                   </CardContent>
@@ -196,20 +200,20 @@ const Dashboard = () => {
                     flexDirection: 'column',
                     transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                     '&:hover': {
-                      transform: 'translateY(-4px)',
+                      transform: isMobile ? 'none' : 'translateY(-4px)',
                       boxShadow: 4
                     }
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                      <AccessTimeIcon sx={{ fontSize: 32, color: 'info.main', mr: 1.5 }} />
-                      <Typography variant="h4" sx={{ fontWeight: 600 }}>42m</Typography>
+                  <CardContent sx={{ flexGrow: 1, p: isMobile ? 1.5 : 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: isMobile ? 1 : 1.5 }}>
+                      <AccessTimeIcon sx={{ fontSize: isMobile ? 24 : 32, color: 'info.main', mr: isMobile ? 1 : 1.5 }} />
+                      <Typography variant={isMobile ? "h5" : "h4"} sx={{ fontWeight: 600 }}>{isMobile ? '42m' : '42m'}</Typography>
                     </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontSize: '1.1rem', mb: 0.5 }}>
+                    <Typography variant={isMobile ? "body1" : "h6"} gutterBottom sx={{ fontSize: isMobile ? '0.9rem' : '1.1rem', mb: isMobile ? 0.25 : 0.5 }}>
                       {t('avg_delivery_time')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                       {t('average_time_per_delivery')}
                     </Typography>
                   </CardContent>
@@ -218,15 +222,23 @@ const Dashboard = () => {
             </Grid>
 
             {/* Recent Activity and Quick Actions */}
-            <Grid container spacing={2}>
+            <Grid container spacing={isMobile ? 1 : 2}>
               <Grid item xs={12} md={8}>
                 <Paper 
                   sx={{ 
-                    p: { xs: 2, sm: 3 },
+                    p: isMobile ? 1 : { xs: 2, sm: 3 },
                     borderRadius: 2
                   }}
                 >
-                  <Typography variant="h5" gutterBottom sx={{ mb: 2, fontWeight: 600 }}>
+                  <Typography 
+                    variant={isMobile ? "h6" : "h5"} 
+                    gutterBottom 
+                    sx={{ 
+                      mb: isMobile ? 1 : 2, 
+                      fontWeight: 600,
+                      fontSize: isMobile ? '1.1rem' : 'inherit'
+                    }}
+                  >
                     {t('recent_activity')}
                   </Typography>
                   <MaterialList sx={{ py: 0 }}>
@@ -239,9 +251,9 @@ const Dashboard = () => {
                       <ListItem 
                         key={index} 
                         sx={{ 
-                          pl: 0, 
-                          pr: 0, 
-                          py: 1.5,
+                          pl: isMobile ? 0 : 0, 
+                          pr: isMobile ? 0 : 0, 
+                          py: isMobile ? 1 : 1.5,
                           borderBottom: index < 3 ? '1px solid rgba(0, 0, 0, 0.05)' : 'none'
                         }}
                       >
@@ -252,11 +264,12 @@ const Dashboard = () => {
                             color: item.status === 'success' ? 'success.main' : 
                                    item.status === 'warning' ? 'warning.main' : 
                                    item.status === 'info' ? 'info.main' : 'text.primary',
-                            fontWeight: 500
+                            fontWeight: 500,
+                            fontSize: isMobile ? '0.85rem' : 'inherit'
                           }}
                           secondaryTypographyProps={{
                             color: 'text.secondary',
-                            fontSize: '0.85rem'
+                            fontSize: isMobile ? '0.75rem' : '0.85rem'
                           }}
                         />
                       </ListItem>
@@ -267,22 +280,31 @@ const Dashboard = () => {
               <Grid item xs={12} md={4}>
                 <Paper 
                   sx={{ 
-                    p: { xs: 2, sm: 3 },
+                    p: isMobile ? 1 : { xs: 2, sm: 3 },
                     borderRadius: 2
                   }}
                 >
-                  <Typography variant="h5" gutterBottom sx={{ mb: 2, fontWeight: 600 }}>
+                  <Typography 
+                    variant={isMobile ? "h6" : "h5"} 
+                    gutterBottom 
+                    sx={{ 
+                      mb: isMobile ? 1 : 2, 
+                      fontWeight: 600,
+                      fontSize: isMobile ? '1.1rem' : 'inherit'
+                    }}
+                  >
                     {t('quick_actions')}
                   </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 1 : 1.5 }}>
                     <Button 
                       variant="contained" 
                       fullWidth
                       onClick={() => setActiveView('shipments')}
                       startIcon={<AddIcon />}
                       sx={{ 
-                        py: 1.5,
-                        fontWeight: 600
+                        py: isMobile ? 1 : 1.5,
+                        fontWeight: 600,
+                        fontSize: isMobile ? '0.875rem' : 'inherit'
                       }}
                     >
                       {t('create_shipment')}
@@ -293,8 +315,9 @@ const Dashboard = () => {
                       onClick={() => setActiveView('drivers')}
                       startIcon={<PersonAddIcon />}
                       sx={{ 
-                        py: 1.5,
-                        fontWeight: 600
+                        py: isMobile ? 1 : 1.5,
+                        fontWeight: 600,
+                        fontSize: isMobile ? '0.875rem' : 'inherit'
                       }}
                     >
                       {t('add_driver')}
@@ -305,8 +328,9 @@ const Dashboard = () => {
                       onClick={() => setActiveView('routes')}
                       startIcon={<RouteIcon />}
                       sx={{ 
-                        py: 1.5,
-                        fontWeight: 600
+                        py: isMobile ? 1 : 1.5,
+                        fontWeight: 600,
+                        fontSize: isMobile ? '0.875rem' : 'inherit'
                       }}
                     >
                       {t('optimize_routes')}
@@ -317,8 +341,9 @@ const Dashboard = () => {
                       onClick={() => setActiveView('admin')}
                       startIcon={<AdminIcon />}
                       sx={{ 
-                        py: 1.5,
-                        fontWeight: 600
+                        py: isMobile ? 1 : 1.5,
+                        fontWeight: 600,
+                        fontSize: isMobile ? '0.875rem' : 'inherit'
                       }}
                     >
                       {t('system_settings')}
@@ -338,32 +363,62 @@ const Dashboard = () => {
         <CssBaseline />
         {/* Header */}
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-          <Toolbar>
-            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+          <Toolbar sx={{ 
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'flex-start' : 'center',
+            gap: isMobile ? 1 : 0,
+            pt: isMobile ? 1 : 0,
+            pb: isMobile ? 1 : 0
+          }}>
+            <Typography 
+              variant={isMobile ? "h6" : "h6"} 
+              noWrap 
+              component="div" 
+              sx={{ 
+                flexGrow: 1,
+                textAlign: isMobile ? 'center' : 'left',
+                width: isMobile ? '100%' : 'auto'
+              }}
+            >
               Last-Mile Delivery Control Tower
             </Typography>
-            <FormControl sx={{ minWidth: 120, mr: 2 }} size="small">
+            <FormControl sx={{ 
+              minWidth: isMobile ? 100 : 120, 
+              mr: isMobile ? 0 : 2,
+              width: isMobile ? '100%' : 'auto'
+            }} size="small">
               <Select
                 value={i18nInstance.language}
                 onChange={handleLanguageChange}
                 displayEmpty
                 inputProps={{ 'aria-label': 'Language' }}
-                sx={{ color: 'white', '& .MuiSelect-icon': { color: 'white' } }}
+                sx={{ 
+                  color: 'white', 
+                  '& .MuiSelect-icon': { color: 'white' },
+                  textAlign: 'left'
+                }}
               >
                 <MenuItem value="en">English</MenuItem>
                 <MenuItem value="ar">العربية</MenuItem>
               </Select>
             </FormControl>
-            <DispatcherNotifications />
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: isMobile ? 'center' : 'flex-end',
+              width: isMobile ? '100%' : 'auto'
+            }}>
+              <DispatcherNotifications />
+            </Box>
           </Toolbar>
         </AppBar>
 
         {/* Sidebar */}
         <Drawer
-          variant="permanent"
+          variant={isMobile ? "temporary" : "permanent"}
           anchor={i18nInstance.language === 'ar' ? 'right' : 'left'}
           sx={{
-            width: drawerWidth,
+            width: isMobile ? 0 : drawerWidth,
             flexShrink: 0,
             [`& .MuiDrawer-paper`]: { 
               width: drawerWidth, 
@@ -372,6 +427,8 @@ const Dashboard = () => {
               left: i18nInstance.language === 'ar' ? 'auto' : 0,
             },
           }}
+          open={isMobile ? activeView !== 'dashboard' : undefined}
+          onClose={isMobile ? () => setActiveView('dashboard') : undefined}
         >
           <Toolbar />
           <Box sx={{ overflow: 'auto' }}>
@@ -427,13 +484,20 @@ const Dashboard = () => {
           component="main" 
           sx={{ 
             flexGrow: 1, 
-            p: 3,
+            p: isMobile ? 1 : 3,
             ...getThemedStyle(i18nInstance.language === 'ar')
           }}
         >
           <Toolbar />
           {activeView !== 'admin' && activeView !== 'shipments' && (
-            <Typography variant="h4" gutterBottom>
+            <Typography 
+              variant={isMobile ? "h5" : "h4"} 
+              gutterBottom
+              sx={{ 
+                fontSize: isMobile ? '1.5rem' : '2rem',
+                mb: isMobile ? 1 : 2
+              }}
+            >
               {activeView === 'dashboard' ? t('dispatcher_dashboard') : 
                activeView === 'sla' ? t('sla_monitoring_dashboard') :
                t(activeView)}
@@ -444,10 +508,10 @@ const Dashboard = () => {
           
           {/* Signature */}
           <Box sx={{ 
-            mt: 4, 
+            mt: isMobile ? 2 : 4, 
             textAlign: 'center', 
             color: 'text.secondary',
-            fontSize: '0.875rem'
+            fontSize: isMobile ? '0.75rem' : '0.875rem'
           }}>
             by AMM 2025
           </Box>

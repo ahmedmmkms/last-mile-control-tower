@@ -135,7 +135,10 @@ const resources = {
       "live_tracking_off": "Live Tracking OFF",
       "waypoint": "Waypoint",
       "shipment": "Shipment",
-      "last_updated": "Last updated"
+      "last_updated": "Last updated",
+      "live_tracking_disconnected": "Live tracking disconnected. Reconnecting...",
+      "connection_error": "Connection error. Please check your network connection.",
+      "no_drivers_found": "No drivers found"
     }
   },
   ar: {
@@ -270,7 +273,10 @@ const resources = {
       "live_tracking_off": "التتبع المباشر معطل",
       "waypoint": "نقطة الطريق",
       "shipment": "الشحنة",
-      "last_updated": "آخر تحديث"
+      "last_updated": "آخر تحديث",
+      "live_tracking_disconnected": "تم قطع الاتصال بالتتبع المباشر. جاري إعادة الاتصال...",
+      "connection_error": "خطأ في الاتصال. يرجى التحقق من اتصال الشبكة.",
+      "no_drivers_found": "لم يتم العثور على سائقين"
     }
   }
 };

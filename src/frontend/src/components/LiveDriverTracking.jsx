@@ -168,7 +168,10 @@ const LiveDriverTracking = () => {
       
       {isMobile ? (
         // Mobile view - list with expandable details
-        <Paper>
+        <Paper sx={{ 
+          overflowX: 'auto',
+          maxWidth: '100%'
+        }}>
           <List>
             {drivers.map((driver) => (
               <React.Fragment key={driver.id}>
@@ -176,7 +179,8 @@ const LiveDriverTracking = () => {
                   sx={{ 
                     flexDirection: 'column', 
                     alignItems: 'flex-start',
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                    p: isMobile ? 1 : 2
                   }}
                 >
                   <Box sx={{ 
@@ -190,69 +194,75 @@ const LiveDriverTracking = () => {
                         sx={{ 
                           mr: 1, 
                           color: driver.status === 'available' ? 'success.main' : 
-                                 driver.status === 'busy' ? 'warning.main' : 'grey.500' 
+                                 driver.status === 'busy' ? 'warning.main' : 'grey.500',
+                          fontSize: isMobile ? '1rem' : '1.5rem'
                         }} 
                       />
-                      <Typography variant="subtitle1">
+                      <Typography 
+                        variant={isMobile ? "body1" : "subtitle1"}
+                        sx={{ 
+                          fontSize: isMobile ? '0.9rem' : 'inherit'
+                        }}
+                      >
                         {driver.name}
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Chip 
-                        label={driver.status} 
+                        label={getLocalizedStatus(driver.status)} 
                         size="small" 
                         color={getStatusColor(driver.status)}
-                        sx={{ mr: 1 }}
+                        sx={{ mr: 1, fontSize: isMobile ? '0.7rem' : 'inherit', height: isMobile ? 20 : 24 }}
                       />
                       <IconButton 
                         size="small" 
                         onClick={() => toggleRowExpansion(driver.id)}
                       >
-                        {expandedRows.has(driver.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        {expandedRows.has(driver.id) ? <ExpandLessIcon sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} /> : <ExpandMoreIcon sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />}
                       </IconButton>
                     </Box>
                   </Box>
                   
                   <Collapse in={expandedRows.has(driver.id)} timeout="auto" unmountOnExit sx={{ width: '100%' }}>
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                         <strong>{t('vehicle')}:</strong> {getLocalizedVehicleType(driver.vehicle_type)}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                         <strong>{t('location')}:</strong> {driver.current_location ? 
-                          `${driver.current_location.lat.toFixed(4)}, ${driver.current_location.lng.toFixed(4)}` : 
-                          'No location'}
+                          `${driver.current_location.lat.toFixed(2)}, ${driver.current_location.lng.toFixed(2)}` : 
+                          t('no_location')}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                         <strong>{t('last_update')}:</strong> {driver.last_active ? 
                           new Date(driver.last_active).toLocaleTimeString() : 
-                          'Never'}
+                          t('never')}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                         <strong>{t('battery')}:</strong> {driver.battery_level !== undefined ? 
                           `${driver.battery_level}%` : 
-                          'Unknown'}
+                          t('unknown')}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
                         <strong>{t('assignment')}:</strong> {driver.assigned_shipment || t('none')}
                       </Typography>
                       <Box sx={{ display: 'flex', mt: 1 }}>
-                        <Tooltip title="View on map">
+                        <Tooltip title={t('view_on_map')}>
                           <IconButton 
                             size="small" 
                             onClick={() => handleViewOnMap(driver)}
                             disabled={!driver.current_location}
                           >
-                            <Directions />
+                            <Directions sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Call driver">
+                        <Tooltip title={t('call_driver')}>
                           <IconButton 
                             size="small" 
                             onClick={() => handleCallDriver(driver.phone)}
                             disabled={!driver.phone}
                           >
-                            <Phone />
+                            <Phone sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />
                           </IconButton>
                         </Tooltip>
                       </Box>
@@ -264,137 +274,179 @@ const LiveDriverTracking = () => {
           </List>
           
           {drivers.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography color="text.secondary">
-                No drivers found
+            <Box sx={{ textAlign: 'center', py: isMobile ? 2 : 4 }}>
+              <Typography color="text.secondary" sx={{ fontSize: isMobile ? '0.875rem' : 'inherit' }}>
+                {t('no_drivers_found')}
               </Typography>
             </Box>
           )}
         </Paper>
       ) : (
         // Desktop view - full table
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="live driver tracking table">
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('driver')}</TableCell>
-                <TableCell>{t('vehicle')}</TableCell>
-                <TableCell>{t('status')}</TableCell>
-                <TableCell>{t('location')}</TableCell>
-                <TableCell>{t('last_update')}</TableCell>
-                <TableCell>{t('battery')}</TableCell>
-                <TableCell>{t('assignment')}</TableCell>
-                <TableCell>{t('actions')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {drivers.map((driver) => (
-                <TableRow
-                  key={driver.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <LocationOn 
-                        sx={{ 
-                          mr: 1, 
-                          color: driver.status === 'available' ? 'success.main' : 
-                                 driver.status === 'busy' ? 'warning.main' : 'grey.500' 
-                        }} 
-                      />
-                      <Typography variant="body2">
-                        {driver.name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={getLocalizedVehicleType(driver.vehicle_type)} 
-                      size="small" 
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={getLocalizedStatus(driver.status)} 
-                      size="small" 
-                      color={getStatusColor(driver.status)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {driver.current_location ? (
-                      <Typography variant="body2">
-                        {driver.current_location.lat.toFixed(4)}, {driver.current_location.lng.toFixed(4)}
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        {t('no_location')}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {driver.last_active ? (
-                      <Typography variant="body2">
-                        {new Date(driver.last_active).toLocaleTimeString()}
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        {t('never')}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {driver.battery_level !== undefined ? (
+        <Box sx={{ 
+          overflowX: 'auto', 
+          maxWidth: '100%',
+          mb: 2
+        }}>
+          <TableContainer component={Paper} sx={{ 
+            minWidth: 650,
+            width: '100%'
+          }}>
+            <Table sx={{ minWidth: 650 }} aria-label="live driver tracking table">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('driver')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('vehicle')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('status')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('location')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('last_update')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('battery')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('assignment')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('actions')}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {drivers.map((driver) => (
+                  <TableRow
+                    key={driver.id}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {getBatteryIcon(driver.battery_level)}
-                        <Typography variant="body2" sx={{ ml: 1 }}>
-                          {driver.battery_level}%
+                        <LocationOn 
+                          sx={{ 
+                            mr: 1, 
+                            color: driver.status === 'available' ? 'success.main' : 
+                                   driver.status === 'busy' ? 'warning.main' : 'grey.500',
+                            fontSize: isMobile ? '1rem' : '1.5rem'
+                          }} 
+                        />
+                        <Typography 
+                          variant="body2"
+                          sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                        >
+                          {driver.name}
                         </Typography>
                       </Box>
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        {t('unknown')}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {driver.assigned_shipment ? (
+                    </TableCell>
+                    <TableCell>
                       <Chip 
-                        label={driver.assigned_shipment} 
+                        label={getLocalizedVehicleType(driver.vehicle_type)} 
                         size="small" 
-                        color="primary"
+                        variant="outlined"
+                        sx={{ fontSize: isMobile ? '0.7rem' : 'inherit' }}
                       />
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        {t('none')}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title={t('view_on_map')}>
-                      <IconButton 
+                    </TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={getLocalizedStatus(driver.status)} 
                         size="small" 
-                        onClick={() => handleViewOnMap(driver)}
-                        disabled={!driver.current_location}
-                      >
-                        <Directions />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title={t('call_driver')}>
-                      <IconButton 
-                        size="small" 
-                        onClick={() => handleCallDriver(driver.phone)}
-                        disabled={!driver.phone}
-                      >
-                        <Phone />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                        color={getStatusColor(driver.status)}
+                        sx={{ fontSize: isMobile ? '0.7rem' : 'inherit' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {driver.current_location ? (
+                        <Typography 
+                          variant="body2"
+                          sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                        >
+                          {driver.current_location.lat.toFixed(2)}, {driver.current_location.lng.toFixed(2)}
+                        </Typography>
+                      ) : (
+                        <Typography 
+                          variant="body2" 
+                          color="text.secondary"
+                          sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                        >
+                          {t('no_location')}
+                        </Typography>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {driver.last_active ? (
+                        <Typography 
+                          variant="body2"
+                          sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                        >
+                          {new Date(driver.last_active).toLocaleTimeString()}
+                        </Typography>
+                      ) : (
+                        <Typography 
+                          variant="body2" 
+                          color="text.secondary"
+                          sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                        >
+                          {t('never')}
+                        </Typography>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {driver.battery_level !== undefined ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          {getBatteryIcon(driver.battery_level)}
+                          <Typography 
+                            variant="body2" 
+                            sx={{ ml: 1, fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                          >
+                            {driver.battery_level}%
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <Typography 
+                          variant="body2" 
+                          color="text.secondary"
+                          sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                        >
+                          {t('unknown')}
+                        </Typography>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {driver.assigned_shipment ? (
+                        <Chip 
+                          label={driver.assigned_shipment} 
+                          size="small" 
+                          color="primary"
+                          sx={{ fontSize: isMobile ? '0.7rem' : 'inherit' }}
+                        />
+                      ) : (
+                        <Typography 
+                          variant="body2" 
+                          color="text.secondary"
+                          sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                        >
+                          {t('none')}
+                        </Typography>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title={t('view_on_map')}>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleViewOnMap(driver)}
+                          disabled={!driver.current_location}
+                        >
+                          <Directions sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={t('call_driver')}>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleCallDriver(driver.phone)}
+                          disabled={!driver.phone}
+                        >
+                          <Phone sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      )}
       )}
     </Box>
   );

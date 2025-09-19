@@ -160,24 +160,35 @@ const RouteVisualization = () => {
     );
   }
 
-  return (
+    return (
     <Box>
       <Box sx={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        mb: 2,
+        mb: isMobile ? 1 : 2,
         flexDirection: isMobile ? 'column' : 'row',
-        gap: isMobile ? 2 : 0
+        gap: isMobile ? 1 : 0
       }}>
-        <Typography variant={isMobile ? "h6" : "h5"} gutterBottom>
+        <Typography 
+          variant={isMobile ? "h6" : "h5"} 
+          gutterBottom
+          sx={{ 
+            fontSize: isMobile ? '1.1rem' : 'inherit',
+            mb: isMobile ? 0 : 'inherit'
+          }}
+        >
           {t('route_visualization')}
         </Typography>
         <Chip 
           label={liveTracking ? t('live_tracking_on') : t('live_tracking_off')} 
           color={liveTracking ? "success" : "default"}
           onClick={() => setLiveTracking(!liveTracking)}
-          sx={{ cursor: 'pointer' }}
+          sx={{ 
+            cursor: 'pointer',
+            fontSize: isMobile ? '0.75rem' : 'inherit',
+            height: isMobile ? 24 : 32
+          }}
         />
       </Box>
       
@@ -186,22 +197,25 @@ const RouteVisualization = () => {
         <Alert 
           severity={connectionStatus === 'error' ? 'error' : 'warning'} 
           icon={<ErrorIcon />}
-          sx={{ mb: 2 }}
+          sx={{ 
+            mb: isMobile ? 1 : 2,
+            fontSize: isMobile ? '0.75rem' : 'inherit'
+          }}
         >
           {connectionStatus === 'disconnected' 
-            ? 'Live tracking disconnected. Reconnecting...' 
-            : 'Connection error. Please check your network connection.'}
+            ? t('live_tracking_disconnected') 
+            : t('connection_error')}
         </Alert>
       )}
       
       <Paper sx={{ 
-        height: isMobile ? 300 : 500, 
+        height: isMobile ? 250 : 500, 
         position: 'relative',
-        mb: isMobile ? 2 : 0
+        mb: isMobile ? 1 : 0
       }}>
         <MapContainer 
           center={center} 
-          zoom={isMobile ? 12 : 13} 
+          zoom={isMobile ? 11 : 13} 
           style={{ height: '100%', width: '100%' }}
           ref={mapRef}
         >
@@ -216,7 +230,7 @@ const RouteVisualization = () => {
               <Polyline
                 positions={route.waypoints}
                 color={route.status === 'active' ? 'blue' : 'gray'}
-                weight={isMobile ? 4 : 6}
+                weight={isMobile ? 3 : 6}
               />
               
               {/* Draw markers for waypoints */}
@@ -224,15 +238,24 @@ const RouteVisualization = () => {
                 <Marker position={[waypoint.lat, waypoint.lng]} key={index}>
                   <Popup>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Place sx={{ mr: 1, color: 'primary.main' }} />
-                      <Typography variant="subtitle2">
+                      <Place sx={{ mr: 1, color: 'primary.main', fontSize: isMobile ? '1rem' : '1.5rem' }} />
+                      <Typography 
+                        variant="subtitle2"
+                        sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                      >
                         {t('waypoint')} {index + 1}
                       </Typography>
                     </Box>
-                    <Typography variant="body2">
+                    <Typography 
+                      variant="body2"
+                      sx={{ fontSize: isMobile ? '0.75rem' : 'inherit', mb: 0.5 }}
+                    >
                       {t('shipment')}: {route.shipment_id}
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography 
+                      variant="body2"
+                      sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}
+                    >
                       {t('status')}: {route.status}
                     </Typography>
                   </Popup>
@@ -250,20 +273,32 @@ const RouteVisualization = () => {
             >
               <Popup>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <Avatar sx={{ width: 24, height: 24, mr: 1, bgcolor: 'primary.main' }}>
-                    <LocalShipping sx={{ fontSize: 16 }} />
+                  <Avatar sx={{ width: isMobile ? 20 : 24, height: isMobile ? 20 : 24, mr: 1, bgcolor: 'primary.main' }}>
+                    <LocalShipping sx={{ fontSize: isMobile ? 12 : 16 }} />
                   </Avatar>
-                  <Typography variant="subtitle2">
+                  <Typography 
+                    variant="subtitle2"
+                    sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}
+                  >
                     {driver.name}
                   </Typography>
                 </Box>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ mb: 1, fontSize: isMobile ? '0.75rem' : 'inherit' }}
+                >
                   {t('vehicle')}: {getLocalizedVehicleType(driver.vehicle_type)}
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ mb: 1, fontSize: isMobile ? '0.75rem' : 'inherit' }}
+                >
                   {t('status')}: {getLocalizedStatus(driver.status)}
                 </Typography>
-                <Typography variant="caption">
+                <Typography 
+                  variant="caption"
+                  sx={{ fontSize: isMobile ? '0.7rem' : 'inherit' }}
+                >
                   {t('last_updated')}: {new Date(driver.last_active).toLocaleTimeString()}
                 </Typography>
               </Popup>
@@ -273,23 +308,37 @@ const RouteVisualization = () => {
       </Paper>
       
       {/* Driver status summary */}
-      <Box sx={{ mt: 2 }}>
-        <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom>
+      <Box sx={{ mt: isMobile ? 1 : 2 }}>
+        <Typography 
+          variant={isMobile ? "subtitle1" : "h6"} 
+          gutterBottom
+          sx={{ 
+            fontSize: isMobile ? '0.9rem' : 'inherit',
+            mb: isMobile ? 0.5 : 'inherit'
+          }}
+        >
           {t('active_drivers')} ({drivers.length})
         </Typography>
         <Box sx={{ 
           display: 'flex', 
           flexWrap: 'wrap', 
-          gap: 1,
+          gap: isMobile ? 0.5 : 1,
           justifyContent: isMobile ? 'center' : 'flex-start'
         }}>
           {drivers.map(driver => (
             <Chip
               key={driver.id}
-              label={`${driver.name} (${driver.status})`}
+              label={`${driver.name} (${getLocalizedStatus(driver.status)})`}
               size={isMobile ? "small" : "medium"}
               color={driver.status === 'available' ? 'success' : driver.status === 'busy' ? 'warning' : 'default'}
-              icon={<LocalShipping />}
+              icon={<LocalShipping sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} />}
+              sx={{ 
+                fontSize: isMobile ? '0.7rem' : 'inherit',
+                height: isMobile ? 20 : 32,
+                '& .MuiChip-icon': {
+                  fontSize: isMobile ? '0.8rem' : '1rem'
+                }
+              }}
             />
           ))}
         </Box>

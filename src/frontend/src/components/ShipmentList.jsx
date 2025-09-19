@@ -171,7 +171,10 @@ const ShipmentList = () => {
       {/* Shipments View */}
       {isMobile ? (
         // Mobile view - list with expandable details
-        <Paper>
+        <Paper sx={{ 
+          overflowX: 'auto',
+          maxWidth: '100%'
+        }}>
           <List>
             {filteredShipments.map((shipment) => (
               <React.Fragment key={shipment.id}>
@@ -179,7 +182,8 @@ const ShipmentList = () => {
                   sx={{ 
                     flexDirection: 'column', 
                     alignItems: 'flex-start',
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                    p: isMobile ? 1 : 2
                   }}
                 >
                   <Box sx={{ 
@@ -188,7 +192,13 @@ const ShipmentList = () => {
                     width: '100%',
                     alignItems: 'center'
                   }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    <Typography 
+                      variant={isMobile ? "body1" : "subtitle1"} 
+                      sx={{ 
+                        fontWeight: 'bold',
+                        fontSize: isMobile ? '0.9rem' : 'inherit'
+                      }}
+                    >
                       {shipment.tracking_number}
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -196,34 +206,34 @@ const ShipmentList = () => {
                         label={getLocalizedStatus(shipment.status)} 
                         color={getStatusColor(shipment.status)} 
                         size="small" 
-                        sx={{ mr: 1 }}
+                        sx={{ mr: 1, fontSize: isMobile ? '0.7rem' : 'inherit', height: isMobile ? 20 : 24 }}
                       />
                       <IconButton 
                         size="small" 
                         onClick={() => handleViewTimeline(shipment)}
                         title={t('view_details')}
                       >
-                        <TimelineIcon />
+                        <TimelineIcon sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />
                       </IconButton>
                       <IconButton 
                         size="small" 
                         onClick={() => toggleRowExpansion(shipment.id)}
                       >
-                        {expandedRows.has(shipment.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        {expandedRows.has(shipment.id) ? <ExpandLessIcon sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} /> : <ExpandMoreIcon sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />}
                       </IconButton>
                     </Box>
                   </Box>
                   
                   <Collapse in={expandedRows.has(shipment.id)} timeout="auto" unmountOnExit sx={{ width: '100%' }}>
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        <strong>{t('origin')}:</strong> {shipment.origin ? `${shipment.origin.lat}, ${shipment.origin.lng}` : 'N/A'}
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
+                        <strong>{t('origin')}:</strong> {shipment.origin ? `${shipment.origin.lat.toFixed(2)}, ${shipment.origin.lng.toFixed(2)}` : 'N/A'}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        <strong>{t('destination')}:</strong> {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
+                        <strong>{t('destination')}:</strong> {shipment.destination ? `${shipment.destination.lat.toFixed(2)}, ${shipment.destination.lng.toFixed(2)}` : 'N/A'}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        <strong>{t('assigned_driver')}:</strong> {shipment.assigned_driver_id || 'Unassigned'}
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: isMobile ? '0.75rem' : 'inherit' }}>
+                        <strong>{t('assigned_driver')}:</strong> {shipment.assigned_driver_id || t('unassigned')}
                       </Typography>
                     </Box>
                   </Collapse>
@@ -234,52 +244,62 @@ const ShipmentList = () => {
         </Paper>
       ) : (
         // Desktop view - full table
-        <TableContainer component={Paper}>
-          <Table size={isMobile ? "small" : "medium"}>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('tracking_number')}</TableCell>
-                <TableCell>{t('status')}</TableCell>
-                <TableCell>{t('origin')}</TableCell>
-                <TableCell>{t('destination')}</TableCell>
-                <TableCell>{t('assigned_driver')}</TableCell>
-                <TableCell>{t('actions')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredShipments.map((shipment) => (
-                <TableRow key={shipment.id}>
-                  <TableCell>{shipment.tracking_number}</TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={getLocalizedStatus(shipment.status)} 
-                      color={getStatusColor(shipment.status)} 
-                      size={isMobile ? "small" : "medium"} 
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {shipment.origin ? `${shipment.origin.lat}, ${shipment.origin.lng}` : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {shipment.destination ? `${shipment.destination.lat}, ${shipment.destination.lng}` : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {shipment.assigned_driver_id || t('unassigned')}
-                  </TableCell>
-                  <TableCell>
-                    <IconButton 
-                      size={isMobile ? "small" : "medium"} 
-                      onClick={() => handleViewTimeline(shipment)}
-                      title={t('view_details')}
-                    >
-                      <TimelineIcon />
-                    </IconButton>
-                  </TableCell>
+        <Box sx={{ 
+          overflowX: 'auto', 
+          maxWidth: '100%',
+          mb: 2
+        }}>
+          <TableContainer component={Paper} sx={{ 
+            minWidth: 650,
+            width: '100%'
+          }}>
+            <Table size={isMobile ? "small" : "medium"}>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('tracking_number')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('status')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('origin')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('destination')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('assigned_driver')}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{t('actions')}</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {filteredShipments.map((shipment) => (
+                  <TableRow key={shipment.id}>
+                    <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>{shipment.tracking_number}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={getLocalizedStatus(shipment.status)} 
+                        color={getStatusColor(shipment.status)} 
+                        size={isMobile ? "small" : "medium"} 
+                        sx={{ fontSize: isMobile ? '0.7rem' : 'inherit' }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>
+                      {shipment.origin ? `${shipment.origin.lat.toFixed(2)}, ${shipment.origin.lng.toFixed(2)}` : 'N/A'}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>
+                      {shipment.destination ? `${shipment.destination.lat.toFixed(2)}, ${shipment.destination.lng.toFixed(2)}` : 'N/A'}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: isMobile ? '0.8rem' : 'inherit' }}>
+                      {shipment.assigned_driver_id || t('unassigned')}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton 
+                        size={isMobile ? "small" : "medium"} 
+                        onClick={() => handleViewTimeline(shipment)}
+                        title={t('view_details')}
+                      >
+                        <TimelineIcon sx={{ fontSize: isMobile ? '1rem' : '1.5rem' }} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       )}
       
       {/* Shipment Timeline Dialog */}
