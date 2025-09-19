@@ -1,6 +1,7 @@
 // Analytics Controller
 const Analytics = require('../models/analyticsModel');
 const { isValidUUID } = require('../utils/uuidValidator');
+const { validateDate } = require('../utils/dateValidator');
 
 // Get delivery analytics
 async function getDeliveryAnalytics(req, res) {
@@ -8,8 +9,14 @@ async function getDeliveryAnalytics(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     if (req.query.driver_id) {
       if (!isValidUUID(req.query.driver_id)) {
         return res.status(400).json({ error: 'Invalid driver ID format' });
@@ -18,26 +25,11 @@ async function getDeliveryAnalytics(req, res) {
     }
     
     const analytics = await Analytics.getDeliveryAnalytics(filters);
-    
-    // Enrich with calculated metrics
-    const enrichedAnalytics = analytics.map(day => {
-      const totalDeliveries = parseInt(day.total_deliveries) || 0;
-      const completedDeliveries = parseInt(day.completed_deliveries) || 0;
-      const failedDeliveries = parseInt(day.failed_deliveries) || 0;
-      
-      const completionRate = totalDeliveries > 0 ? (completedDeliveries / totalDeliveries * 100).toFixed(2) : 0;
-      const failureRate = totalDeliveries > 0 ? (failedDeliveries / totalDeliveries * 100).toFixed(2) : 0;
-      
-      return {
-        ...day,
-        completion_rate: completionRate,
-        failure_rate: failureRate,
-        avg_delivery_time_hours: parseFloat(day.avg_delivery_time_hours || 0).toFixed(2)
-      };
-    });
-    
-    res.status(200).json(enrichedAnalytics);
+    res.status(200).json(analytics);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching delivery analytics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -49,8 +41,14 @@ async function getDriverPerformanceAnalytics(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     
     const analytics = await Analytics.getDriverPerformanceAnalytics(filters);
     
@@ -59,24 +57,23 @@ async function getDriverPerformanceAnalytics(req, res) {
       const totalAssignments = parseInt(driver.total_assignments) || 0;
       const completedDeliveries = parseInt(driver.completed_deliveries) || 0;
       const failedDeliveries = parseInt(driver.failed_deliveries) || 0;
-      const onTimeDeliveries = parseInt(driver.on_time_deliveries) || 0;
+      const totalTime = parseFloat(driver.total_delivery_time) || 0;
       
-      const completionRate = totalAssignments > 0 ? (completedDeliveries / totalAssignments * 100).toFixed(2) : 0;
-      const failureRate = totalAssignments > 0 ? (failedDeliveries / totalAssignments * 100).toFixed(2) : 0;
-      const onTimeRate = completedDeliveries > 0 ? (onTimeDeliveries / completedDeliveries * 100).toFixed(2) : 0;
-      const avgDeliveryTime = parseFloat(driver.avg_delivery_time_hours || 0).toFixed(2);
+      const successRate = totalAssignments > 0 ? ((totalAssignments - failedDeliveries) / totalAssignments * 100).toFixed(2) : 0;
+      const avgDeliveryTime = completedDeliveries > 0 ? (totalTime / completedDeliveries).toFixed(2) : 0;
       
       return {
         ...driver,
-        completion_rate: completionRate,
-        failure_rate: failureRate,
-        on_time_rate: onTimeRate,
-        avg_delivery_time_hours: avgDeliveryTime
+        success_rate: successRate,
+        average_delivery_time: avgDeliveryTime
       };
     });
     
     res.status(200).json(enrichedAnalytics);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching driver performance analytics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -88,8 +85,14 @@ async function getGeographicAnalytics(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     if (req.query.driver_id) {
       if (!isValidUUID(req.query.driver_id)) {
         return res.status(400).json({ error: 'Invalid driver ID format' });
@@ -101,21 +104,25 @@ async function getGeographicAnalytics(req, res) {
     
     // Enrich with calculated metrics
     const enrichedAnalytics = analytics.map(location => {
-      const deliveryCount = parseInt(location.delivery_count) || 0;
-      const completedDeliveries = parseInt(location.completed_deliveries) || 0;
+      const totalShipments = parseInt(location.total_shipments) || 0;
+      const completedShipments = parseInt(location.completed_shipments) || 0;
+      const failedShipments = parseInt(location.failed_shipments) || 0;
       
-      const completionRate = deliveryCount > 0 ? (completedDeliveries / deliveryCount * 100).toFixed(2) : 0;
-      const avgDeliveryTime = parseFloat(location.avg_delivery_time_hours || 0).toFixed(2);
+      const successRate = totalShipments > 0 ? ((totalShipments - failedShipments) / totalShipments * 100).toFixed(2) : 0;
+      const completionRate = totalShipments > 0 ? (completedShipments / totalShipments * 100).toFixed(2) : 0;
       
       return {
         ...location,
-        completion_rate: completionRate,
-        avg_delivery_time_hours: avgDeliveryTime
+        success_rate: successRate,
+        completion_rate: completionRate
       };
     });
     
     res.status(200).json(enrichedAnalytics);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching geographic analytics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -127,8 +134,14 @@ async function getTimeBasedAnalytics(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     if (req.query.driver_id) {
       if (!isValidUUID(req.query.driver_id)) {
         return res.status(400).json({ error: 'Invalid driver ID format' });
@@ -141,20 +154,27 @@ async function getTimeBasedAnalytics(req, res) {
     // Enrich with calculated metrics
     const enrichedAnalytics = analytics.map(timeSlot => {
       const deliveryCount = parseInt(timeSlot.delivery_count) || 0;
-      const completedDeliveries = parseInt(timeSlot.completed_deliveries) || 0;
+      const completedCount = parseInt(timeSlot.completed_count) || 0;
+      const failedCount = parseInt(timeSlot.failed_count) || 0;
+      const totalTime = parseFloat(timeSlot.total_delivery_time) || 0;
       
-      const completionRate = deliveryCount > 0 ? (completedDeliveries / deliveryCount * 100).toFixed(2) : 0;
-      const avgDeliveryTime = parseFloat(timeSlot.avg_delivery_time_hours || 0).toFixed(2);
+      const successRate = deliveryCount > 0 ? ((deliveryCount - failedCount) / deliveryCount * 100).toFixed(2) : 0;
+      const completionRate = deliveryCount > 0 ? (completedCount / deliveryCount * 100).toFixed(2) : 0;
+      const avgDeliveryTime = completedCount > 0 ? (totalTime / completedCount).toFixed(2) : 0;
       
       return {
         ...timeSlot,
+        success_rate: successRate,
         completion_rate: completionRate,
-        avg_delivery_time_hours: avgDeliveryTime
+        average_delivery_time: avgDeliveryTime
       };
     });
     
     res.status(200).json(enrichedAnalytics);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching time-based analytics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -166,8 +186,14 @@ async function getCodAnalytics(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     if (req.query.driver_id) {
       if (!isValidUUID(req.query.driver_id)) {
         return res.status(400).json({ error: 'Invalid driver ID format' });
@@ -202,6 +228,9 @@ async function getCodAnalytics(req, res) {
     
     res.status(200).json(enrichedAnalytics);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching COD analytics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

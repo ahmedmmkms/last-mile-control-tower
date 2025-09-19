@@ -66,7 +66,7 @@ const CODManagement = () => {
     try {
       setLoading(true);
       const filters = filterStatus ? { status: filterStatus } : {};
-      const data = await ApiService.makeRequest('/api/cod', {
+      const data = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod`, {
         method: 'GET',
         params: filters
       });
@@ -81,7 +81,7 @@ const CODManagement = () => {
 
   const fetchCodSummary = async () => {
     try {
-      const data = await ApiService.makeRequest('/api/cod/summary', {
+      const data = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod/summary`, {
         method: 'GET'
       });
       setSummary(data);
@@ -92,7 +92,7 @@ const CODManagement = () => {
 
   const handleCreateCodPayment = async () => {
     try {
-      const response = await ApiService.makeRequest('/api/cod', {
+      const response = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -114,7 +114,7 @@ const CODManagement = () => {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      const response = await ApiService.makeRequest(`/api/cod/${id}/status`, {
+      const response = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

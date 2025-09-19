@@ -4,6 +4,7 @@ import offlineDataService from './offlineDataService';
 const API_BASE_URL = '/api';
 
 class ApiService {
+  static API_BASE_URL = API_BASE_URL;
   // Utility function to check if we're online
   static isOnline() {
     return navigator.onLine;

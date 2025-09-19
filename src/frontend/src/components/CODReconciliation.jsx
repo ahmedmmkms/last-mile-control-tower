@@ -55,7 +55,7 @@ const CODReconciliation = () => {
     try {
       setLoading(true);
       const filters = { status: filterStatus };
-      const data = await ApiService.makeRequest('/api/cod', {
+      const data = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod`, {
         method: 'GET',
         params: filters
       });
@@ -70,7 +70,7 @@ const CODReconciliation = () => {
 
   const fetchCodSummary = async () => {
     try {
-      const data = await ApiService.makeRequest('/api/cod/summary', {
+      const data = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod/summary`, {
         method: 'GET'
       });
       setSummary(data);
@@ -82,7 +82,7 @@ const CODReconciliation = () => {
   const handleReconcilePayment = async (id) => {
     try {
       setReconciling(true);
-      const response = await ApiService.makeRequest(`/api/cod/${id}/status`, {
+      const response = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/cod/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

@@ -76,14 +76,14 @@ const SLAMonitoringDashboard = () => {
       if (dateRange.to) metricsParams.date_to = dateRange.to;
       if (selectedDriver) metricsParams.driver_id = selectedDriver;
       
-      const metricsData = await ApiService.makeRequest('/api/sla/metrics', {
+      const metricsData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/sla/metrics`, {
         method: 'GET',
         params: metricsParams
       });
       setMetrics(metricsData);
       
       // Fetch driver SLA metrics
-      const driverMetricsData = await ApiService.makeRequest('/api/sla/drivers', {
+      const driverMetricsData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/sla/drivers`, {
         method: 'GET',
         params: {
           date_from: dateRange.from,
@@ -93,7 +93,7 @@ const SLAMonitoringDashboard = () => {
       setDriverMetrics(driverMetricsData);
       
       // Fetch delivery time distribution
-      const distributionData = await ApiService.makeRequest('/api/sla/distribution', {
+      const distributionData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/sla/distribution`, {
         method: 'GET',
         params: {
           date_from: dateRange.from,
@@ -107,7 +107,7 @@ const SLAMonitoringDashboard = () => {
       const overdueParams = {};
       if (selectedDriver) overdueParams.driver_id = selectedDriver;
       
-      const overdueData = await ApiService.makeRequest('/api/sla/overdue', {
+      const overdueData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/sla/overdue`, {
         method: 'GET',
         params: overdueParams
       });

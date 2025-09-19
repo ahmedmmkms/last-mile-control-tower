@@ -70,7 +70,7 @@ const AnalyticsDashboard = () => {
       if (dateRange.to) deliveryParams.date_to = dateRange.to;
       if (selectedDriver) deliveryParams.driver_id = selectedDriver;
       
-      const deliveryData = await ApiService.makeRequest('/api/analytics/deliveries', {
+      const deliveryData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/analytics/deliveries`, {
         method: 'GET',
         params: deliveryParams
       });
@@ -81,7 +81,7 @@ const AnalyticsDashboard = () => {
       if (dateRange.from) driverParams.date_from = dateRange.from;
       if (dateRange.to) driverParams.date_to = dateRange.to;
       
-      const driverData = await ApiService.makeRequest('/api/analytics/drivers', {
+      const driverData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/analytics/drivers`, {
         method: 'GET',
         params: driverParams
       });
@@ -93,9 +93,9 @@ const AnalyticsDashboard = () => {
       if (dateRange.to) geographicParams.date_to = dateRange.to;
       if (selectedDriver) geographicParams.driver_id = selectedDriver;
       
-      const geographicData = await ApiService.makeRequest('/api/analytics/geographic', {
+      const geographicData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/analytics/geographic`, {
         method: 'GET',
-        params: geographicParams
+        params: geoParams
       });
       setGeographicAnalytics(geographicData);
       
@@ -105,7 +105,7 @@ const AnalyticsDashboard = () => {
       if (dateRange.to) timeParams.date_to = dateRange.to;
       if (selectedDriver) timeParams.driver_id = selectedDriver;
       
-      const timeData = await ApiService.makeRequest('/api/analytics/time', {
+      const timeData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/analytics/time`, {
         method: 'GET',
         params: timeParams
       });
@@ -117,7 +117,7 @@ const AnalyticsDashboard = () => {
       if (dateRange.to) codParams.date_to = dateRange.to;
       if (selectedDriver) codParams.driver_id = selectedDriver;
       
-      const codData = await ApiService.makeRequest('/api/analytics/cod', {
+      const codData = await ApiService.makeRequest(`${ApiService.API_BASE_URL}/analytics/cod`, {
         method: 'GET',
         params: codParams
       });

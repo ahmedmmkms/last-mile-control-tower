@@ -2,6 +2,7 @@
 const COD = require('../models/codModel');
 const Shipment = require('../models/shipmentModel');
 const { isValidUUID } = require('../utils/uuidValidator');
+const { validateDate } = require('../utils/dateValidator');
 
 // Create a new COD payment
 async function createCodPayment(req, res) {
@@ -100,12 +101,21 @@ async function getAllCodPayments(req, res) {
     // Extract filters from query parameters
     if (req.query.status) filters.status = req.query.status;
     if (req.query.driver_id) filters.driver_id = req.query.driver_id;
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     
     const codPayments = await COD.getAllCodPayments(filters);
     res.status(200).json(codPayments);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching COD payments:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -155,12 +165,21 @@ async function getCodSummary(req, res) {
     
     // Extract filters from query parameters
     if (req.query.driver_id) filters.driver_id = req.query.driver_id;
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     
     const summary = await COD.getCodSummary(filters);
     res.status(200).json(summary);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching COD summary:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

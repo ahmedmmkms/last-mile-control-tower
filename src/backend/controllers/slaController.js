@@ -1,6 +1,7 @@
 // SLA Controller
 const SLA = require('../models/slaModel');
 const { isValidUUID } = require('../utils/uuidValidator');
+const { validateDate } = require('../utils/dateValidator');
 
 // Get shipment SLA metrics
 async function getShipmentSLAMetrics(req, res) {
@@ -8,8 +9,14 @@ async function getShipmentSLAMetrics(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     if (req.query.driver_id) {
       if (!isValidUUID(req.query.driver_id)) {
         return res.status(400).json({ error: 'Invalid driver ID format' });
@@ -29,15 +36,16 @@ async function getShipmentSLAMetrics(req, res) {
     const onTimeDeliveryRate = deliveredShipments > 0 ? (onTimeDeliveries / deliveredShipments * 100).toFixed(2) : 0;
     const overdueRate = totalShipments > 0 ? (overdueShipments / totalShipments * 100).toFixed(2) : 0;
     
-    const enrichedMetrics = {
+    res.status(200).json({
       ...metrics,
       delivery_rate: deliveryRate,
       on_time_delivery_rate: onTimeDeliveryRate,
       overdue_rate: overdueRate
-    };
-    
-    res.status(200).json(enrichedMetrics);
+    });
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching shipment SLA metrics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -49,8 +57,14 @@ async function getDriverSLAMetrics(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     
     const metrics = await SLA.getDriverSLAMetrics(filters);
     
@@ -75,6 +89,9 @@ async function getDriverSLAMetrics(req, res) {
     
     res.status(200).json(enrichedMetrics);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching driver SLA metrics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -86,8 +103,14 @@ async function getDeliveryTimeDistribution(req, res) {
     const filters = {};
     
     // Extract filters from query parameters
-    if (req.query.date_from) filters.date_from = new Date(req.query.date_from);
-    if (req.query.date_to) filters.date_to = new Date(req.query.date_to);
+    if (req.query.date_from) {
+      validateDate(req.query.date_from, 'date_from');
+      filters.date_from = new Date(req.query.date_from);
+    }
+    if (req.query.date_to) {
+      validateDate(req.query.date_to, 'date_to');
+      filters.date_to = new Date(req.query.date_to);
+    }
     if (req.query.driver_id) {
       if (!isValidUUID(req.query.driver_id)) {
         return res.status(400).json({ error: 'Invalid driver ID format' });
@@ -98,6 +121,9 @@ async function getDeliveryTimeDistribution(req, res) {
     const distribution = await SLA.getDeliveryTimeDistribution(filters);
     res.status(200).json(distribution);
   } catch (error) {
+    if (error.message.includes('Invalid date')) {
+      return res.status(400).json({ error: error.message });
+    }
     console.error('Error fetching delivery time distribution:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

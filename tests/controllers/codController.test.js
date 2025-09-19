@@ -294,6 +294,28 @@ describe('COD Controller', () => {
       expect(res.json).toHaveBeenCalledWith(mockCodPayments);
     });
 
+    it('should return 400 if date_from is invalid', async () => {
+      req.query = { date_from: 'invalid-date' };
+
+      await codController.getAllCodPayments(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ 
+        error: 'Invalid date format for date_from. Please use a valid date format (e.g., YYYY-MM-DD or ISO 8601)' 
+      });
+    });
+
+    it('should return 400 if date_to is invalid', async () => {
+      req.query = { date_to: 'invalid-date' };
+
+      await codController.getAllCodPayments(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ 
+        error: 'Invalid date format for date_to. Please use a valid date format (e.g., YYYY-MM-DD or ISO 8601)' 
+      });
+    });
+
     it('should return 500 if there is a server error', async () => {
       COD.getAllCodPayments.mockRejectedValue(new Error('Database error'));
 
@@ -395,6 +417,28 @@ describe('COD Controller', () => {
       expect(COD.getCodSummary).toHaveBeenCalledWith({});
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockSummary);
+    });
+
+    it('should return 400 if date_from is invalid', async () => {
+      req.query = { date_from: 'invalid-date' };
+
+      await codController.getCodSummary(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ 
+        error: 'Invalid date format for date_from. Please use a valid date format (e.g., YYYY-MM-DD or ISO 8601)' 
+      });
+    });
+
+    it('should return 400 if date_to is invalid', async () => {
+      req.query = { date_to: 'invalid-date' };
+
+      await codController.getCodSummary(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ 
+        error: 'Invalid date format for date_to. Please use a valid date format (e.g., YYYY-MM-DD or ISO 8601)' 
+      });
     });
 
     it('should return 500 if there is a server error', async () => {
