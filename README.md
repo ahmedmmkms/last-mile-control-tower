@@ -10,6 +10,25 @@
 
 A comprehensive last-mile delivery management system that provides real-time tracking, route optimization, and operational control for delivery operations.
 
+## Product Brief
+
+_Status: independent MVP with a live demo. Not yet used by real customers; the problem and metrics below are assumptions a pilot would test._
+
+**Problem.** Small delivery operations often dispatch by phone and chat. Dispatchers can't see where drivers are, proof of delivery gets disputed, and cash on delivery takes hours to reconcile at the end of the day.
+
+**Who it's for.** Dispatchers assigning and tracking deliveries, drivers on their own phones, and operations managers watching SLAs.
+
+**Key decisions and trade-offs**
+- **Driver app as a PWA, not a native app.** No app-store release and it runs on drivers' existing phones. Trade-off: weaker background location tracking.
+- **OTP proof of delivery** instead of photos or signatures: simple and verifiable, but it needs the customer's phone.
+- **Basic assignment rules instead of a full route optimizer,** so dispatchers stay in control; optimization comes later.
+- **COD reconciliation and SLA monitoring in the MVP,** because cash and lateness are the daily pain points.
+- **Simulated drivers and demo data,** so the demo works without a real fleet.
+
+**Deliberately out of scope:** advanced route optimization, native mobile apps, and integrations with stores or carriers.
+
+**What a pilot would measure:** on-time delivery rate against SLA, failed-delivery rate, time to reconcile each driver's cash, and dispatcher time per assignment.
+
 ## Table of Contents
 
 - [Live Demo](#live-demo)
@@ -31,7 +50,7 @@ A comprehensive last-mile delivery management system that provides real-time tra
 - [Deployment](#deployment)
 - [CI/CD](#cicd)
 - [Troubleshooting](#troubleshooting)
-- [About the Author](#about-the-author)
+- [About](#about)
 - [License](#license)
 
 ## Live Demo
@@ -54,7 +73,7 @@ Live Demo (Web): <https://last-mile-control-tower.vercel.app>
 - **Cash on Delivery (COD)** - Complete COD tracking and reconciliation functionality
 - **SLA Monitoring** - Real-time SLA monitoring dashboard with KPIs
 - **Advanced Analytics** - Comprehensive analytics and reporting features
-- **Production Ready** - Application prepared for production deployment
+- **Deployment Pipeline** - CI/CD to a live Vercel demo
 - **Enhanced UI/UX** - Refined user interface across all components
 
 ## Screenshots
@@ -337,29 +356,9 @@ Workflows are defined in `.github/workflows/`:
    - Use Node.js >= 16.x
    - Consider using `nvm` to manage Node versions
 
-## About the Author
+## About
 
-I deliver production‑grade commerce experiences — fast, bilingual, and reliable.
-
-**Architecture that holds**: modular monorepo, service boundaries, and serverless‑ready APIs.
-
-**Ops you can trust**: CI/CD, migrations, observability, performance/load testing hooks.
-
-**Great DX**: clean code, documentation, scripted acceptance, and smooth handoffs.
-
-**Customer‑centric UX**: accessibility and Arabic‑first details you don't have to ask for.
-
-### Contact:
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ahmedmmkms/)
-
-### Services:
-- Product engineering
-- Architecture
-- Cloud/DevOps
-- Developer experience
-- Performance optimization
-- Accessibility compliance
-- Internationalization (i18n)
+Built by **Ahmed Mahmoud Moustafa**, technical product manager and systems engineer, as part of an independent product portfolio. More case studies and projects: [github.com/ahmedmmkms](https://github.com/ahmedmmkms) · [LinkedIn](https://www.linkedin.com/in/ahmedmmkms/)
 
 ## License
 
